@@ -163,6 +163,7 @@ class probit_sin_wave_particle:
             plt.grid(True)
             plt.show()
         return
+        
 
 class probit_particle:
 #particles for prbit model class

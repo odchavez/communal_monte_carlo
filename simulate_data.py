@@ -22,7 +22,7 @@ class simulated_data:
                 
         if model== "probit_sin_wave":
             
-            omega_shift = [0,3]#,0,1,2,3]
+            omega_shift=params['omega_shift']
             temp_params={'p':len(omega_shift), 'b': omega_shift, 'B':np.identity(len(omega_shift))}
             #print("params=", params)
             #print("temp_params=", temp_params)

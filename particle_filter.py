@@ -147,3 +147,18 @@ class particle_filter:
     
     def get_particle(self, i):
         return(self.particle_list[i])
+    
+    def get_predictive_distribution(self, X_new):
+        self.predictive_distribution = np.zeros(self.PART_NUM)
+        if  self.model == "probit_sin_wave":
+            for pn in range(self.PART_NUM):
+                self.predictive_distribution[pn] = np.exp(self.particle_list[pn].evaluate_likelihood(X_new, Y=1))
+        else: 
+            print("get_predictive_distribution(self, X_new) not implemented")
+            
+        return(self.predictive_distribution)   
+            
+            
+            
+            
+            
