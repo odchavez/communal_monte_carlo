@@ -31,11 +31,16 @@ class simulated_data:
             self.p=params['p']
             self.N=params['N']
             self.N_batch = params['N_batch']
+            self.shards=params['shards']
             self.X={}
             self.Y={}
             f=1.0
             x = np.arange(self.N) # the points on the x axis for plotting
             self.b=np.zeros((self.N,self.p))
+            
+            for m in range(self.shards):
+                self.X["shard_"+str(m)]={}
+                self.Y["shard_"+str(m)]={}
             
             for os in range(self.p):
                 self.b[:,os] = [ 1.0*np.sin(np.pi*f * (i/(self.N*1.0)) + omega_shift[os]) for i in x]
@@ -46,18 +51,25 @@ class simulated_data:
                 plt.yticks(np.linspace(start=-2, stop=2, num=9))
                 plt.grid(True)
                 plt.show()
-                
+            
+            data_index=0
             for i in range(self.N):
-                self.X[str(i)] = np.random.uniform(-1,1,self.p*self.N_batch).reshape((self.N_batch,self.p))
-                self.Y[str(i)] = np.zeros(self.N_batch)
-                inner=self.X[str(i)].dot(self.b[i,])
+                key=str(i)+":"+str(i%self.shards)+":"+str(data_index)
+                print('key=',key)
+                s="shard_"+str(i%self.shards)
+                self.X[s][key] = np.random.uniform(-1,1,self.p*self.N_batch).reshape((self.N_batch,self.p))
+                self.Y[s][key] = np.zeros(self.N_batch)
+                inner=self.X[s][key].dot(self.b[i,])
                 #print('innter=',inner)
                 samp=np.random.normal(loc=inner, scale=1.0)
                 #print("samp=",samp)
                 for j in range(self.N_batch):
                     if samp[j]>=0:
-                        self.Y[str(i)][j]=1
-                    
+                        self.Y[s][key][j]=1
+                
+                if i%self.shards == self.shards-1:
+                    data_index+=1
+                
             sig=np.max(np.var(self.b[0:(self.N-1),:]-self.b[1:,:], axis=0))
             print("sig=", sig)
             self.B=sig*params['B']*2
