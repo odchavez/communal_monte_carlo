@@ -28,17 +28,18 @@ class particle_filter:
                 
         elif self.model== "probit_sin_wave":
             print("working on model ", model)
-            self.X=dat.X
-            self.Y=dat.Y
-            self.p=dat.p
-            self.N=dat.N
+            self.X=dat['X']
+            self.Y=dat['Y']
+            self.p=dat['p']
+            self.N=dat['N']
+            self.batch_num=dat['batch_number']
             for pn in range(self.PART_NUM):
                 #print("particle number:",pn)
                 #print("dat.b=",dat.b)
                 #print("dat.b[0]=",dat.b[0])
-                temp_particle=pf.probit_sin_wave_particle( np.array(dat.b[0]), dat.B, pn)#dat.b[0].dot(np.ones((self.p,1)))
+                temp_particle=pf.probit_sin_wave_particle( np.array(dat['b'][0]), dat['B'], pn)#dat.b[0].dot(np.ones((self.p,1)))
                 temp_particle.set_N(self.N)
-                temp_particle.set_Zi(dat.X)
+                temp_particle.set_Zi(self.X)
                 temp_particle.set_bo_list()
                 self.particle_list.append(temp_particle)
                 #print("particle_list=",self.particle_list)
@@ -55,18 +56,20 @@ class particle_filter:
                 self.not_norm_wts[pn]=particle_list[pn].evaluate_likelihood(self.X, self.Y)
         if self.model=="probit_sin_wave":
             print("in run_particle_filter, ", self.model)
-            for n in range(self.N):
+            x_keys = list(self.X.keys())
+            y_keys = list(self.Y.keys())
+            for n in range(self.batch_num):
                 
-                if n%np.floor(self.N*0.10)==0:
+                if n%np.floor(self.batch_num*0.10)==0:
                     print("observation ", n)
                 
                 for pn in range(self.PART_NUM):
                     #print("particle ", pn)
                     if self.sample_method=='importance':
-                        self.particle_list[pn].update_particle_importance(self.X[str(n)], self.Y[str(n)], n)
+                        self.particle_list[pn].update_particle_importance(self.X[x_keys[n]], self.Y[y_keys[n]], n)
                     else:
-                        self.particle_list[pn].update_particle(self.X[str(n)], self.Y[str(n)], n)
-                    self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[str(n)], self.Y[str(n)])
+                        self.particle_list[pn].update_particle(self.X[x_keys[n]], self.Y[y_keys[n]], n)
+                    self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[x_keys[n]   ], self.Y[y_keys[n]])
                 
                 #print('self.not_norm_wts=',self.not_norm_wts)
                 #print("n before shuffle:",n)
