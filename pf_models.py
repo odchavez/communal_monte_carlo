@@ -153,7 +153,8 @@ class probit_sin_wave_particle:
         
     def plot_parameters(self):
         #plot parameters
-
+        print("self.N=",self.N)
+        print("np.arange(self.N)=",np.arange(self.N))
         x = np.arange(self.N) # the points on the x axis for plotting
         for os in range(self.p):
             #% matplotlib inline

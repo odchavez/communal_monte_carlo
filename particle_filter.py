@@ -60,16 +60,18 @@ class particle_filter:
             y_keys = list(self.Y.keys())
             for n in range(self.batch_num):
                 
+                #print("batch ", x_keys[n])
                 if n%np.floor(self.batch_num*0.10)==0:
-                    print("observation ", n)
+                    print("batch ", x_keys[n])
                 
                 for pn in range(self.PART_NUM):
                     #print("particle ", pn)
                     if self.sample_method=='importance':
-                        self.particle_list[pn].update_particle_importance(self.X[x_keys[n]], self.Y[y_keys[n]], n)
+                        #print("got fix this --->>> int(x_keys[n].split(':')[0]):", int(x_keys[n].split(":")[0]))
+                        self.particle_list[pn].update_particle_importance(self.X[x_keys[n]], self.Y[y_keys[n]], int(x_keys[n].split(":")[0]))
                     else:
                         self.particle_list[pn].update_particle(self.X[x_keys[n]], self.Y[y_keys[n]], n)
-                    self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[x_keys[n]   ], self.Y[y_keys[n]])
+                    self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[x_keys[n]], self.Y[y_keys[n]])
                 
                 #print('self.not_norm_wts=',self.not_norm_wts)
                 #print("n before shuffle:",n)

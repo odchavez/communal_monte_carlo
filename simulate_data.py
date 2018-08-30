@@ -96,7 +96,7 @@ class simulated_data:
                 L =list(output["shard_"+str(m)]['X'].keys())
                 L1=L[len(L)-1].split(":")
                 max_val=int(L1[len(L1)-1])
-                output["shard_"+str(m)]['batch_number']=max_val
+                output["shard_"+str(m)]['batch_number']=max_val+1
                 
             self.output=output#{'X':self.X, 'Y':self.Y, 'N': self.N, 'b': self.b, 'B':self.B, 'model':self.model}
             
