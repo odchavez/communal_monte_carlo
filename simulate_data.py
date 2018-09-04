@@ -32,8 +32,8 @@ class simulated_data:
             self.N=params['N']
             self.N_batch = params['N_batch']
             self.shards=params['shards']
-            #self.X={}
-            #self.Y={}
+            self.X={}
+            self.Y={}
             f=1.0
             x = np.arange(self.N) # the points on the x axis for plotting
             self.b=np.zeros((self.N,self.p))
@@ -63,33 +63,35 @@ class simulated_data:
             for i in range(self.N):
                 #key=str(i)+":"+str(i%self.shards)+":"+str(data_index)
                 key=str(i)+":"+str(data_index)
-                
+                all_key=str(i)+":"+str(i)
                 #print('key=',key)
                 s="shard_"+str(i%self.shards)
                 #print('s=',s)
                 #print('output[s]=', output[s])
-                output[s]['X'][key] = np.random.uniform(-1,1,self.p*self.N_batch).reshape((self.N_batch,self.p))
-                output[s]['Y'][key] = np.zeros(self.N_batch)
+                temp_X = np.random.uniform(-1,1,self.p*self.N_batch).reshape((self.N_batch,self.p))
+                output[s]['X'][key] = temp_X.copy()
+                self.X[all_key]     = temp_X
+                output[s]['Y'][key] = np.zeros(self.N_batch) 
+                self.Y[all_key]     = np.zeros(self.N_batch)
                 inner=output[s]['X'][key].dot(self.b[i,])
                 #print('innter=',inner)
                 samp=np.random.normal(loc=inner, scale=1.0)
                 #print("samp=",samp)
                 for j in range(self.N_batch):
                     if samp[j]>=0:
-                        output[s]['Y'][key][j]=1
+                        output[s]['Y'][key][j]=self.Y[all_key][j]=1
                 
                 if i%self.shards == self.shards-1:
                     data_index+=1
                 
             sig=np.max(np.var(self.b[0:(self.N-1),:]-self.b[1:,:], axis=0))
             print("sig=", sig)
-            self.B=sig*params['B']*2
+            self.B=sig*params['B']*10#self.shards
             
             for m in range(self.shards):
                 output["shard_"+str(m)]['N'] = self.N
                 output["shard_"+str(m)]['b'] = self.b
                 output["shard_"+str(m)]['B'] = self.B
-                output["shard_"+str(m)]['p'] = self.p
                 output["shard_"+str(m)]['p'] = self.p
                 output["shard_"+str(m)]['model'] = self.model
                 
@@ -98,8 +100,16 @@ class simulated_data:
                 max_val=int(L1[len(L1)-1])
                 output["shard_"+str(m)]['batch_number']=max_val+1
                 
-            self.output=output#{'X':self.X, 'Y':self.Y, 'N': self.N, 'b': self.b, 'B':self.B, 'model':self.model}
-            
+            self.output=output#{, , , , , }
+            self.output['X']=self.X
+            self.output['Y']=self.Y
+            self.output['N']=self.N
+            self.output['b']=self.b
+            self.output['B']=self.B
+            self.output['p']=self.p
+            self.output['batch_number']=self.N_batch
+            self.output['model']=self.model
+
     def get_data(self):
         return(self.output)
      

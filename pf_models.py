@@ -121,7 +121,7 @@ class probit_sin_wave_particle:
             
     def set_bo_list(self):
         self.bo_list=np.zeros((self.N, len(self.bo)))
-
+        self.bo_list[self.bo_list==0]=np.NaN
 
     def get_truncated_normal(self, mean, sd, low, upp):
         return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)    

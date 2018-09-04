@@ -5,9 +5,9 @@ import numpy as np
 #from scipy.stats import truncnorm
 #from scipy.special import logsumexp
 import numpy as np
-#import pandas as pd
+import pandas as pd
 #import csv
-#from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 
 class particle_filter:
 #particle filter class    
@@ -16,6 +16,7 @@ class particle_filter:
         self.particle_list=list()
         self.model=model
         self.sample_method=sample_method
+        self.dat=dat
         if self.model=="probit":
             #create particles
             #PART_NUM=20
@@ -55,19 +56,24 @@ class particle_filter:
                 self.particle_list[pn].update_particle(self.X, self.Y)
                 self.not_norm_wts[pn]=particle_list[pn].evaluate_likelihood(self.X, self.Y)
         if self.model=="probit_sin_wave":
-            print("in run_particle_filter, ", self.model)
+            #print("in run_particle_filter, ", self.model)
             x_keys = list(self.X.keys())
+            #print('x_keys=',x_keys)
             y_keys = list(self.Y.keys())
+            #print('y_keys=',y_keys)
             for n in range(self.batch_num):
                 
                 #print("batch ", x_keys[n])
-                if n%np.floor(self.batch_num*0.10)==0:
+                if n%np.floor(self.batch_num*0.20)==0:
                     print("batch ", x_keys[n])
                 
                 for pn in range(self.PART_NUM):
                     #print("particle ", pn)
                     if self.sample_method=='importance':
                         #print("got fix this --->>> int(x_keys[n].split(':')[0]):", int(x_keys[n].split(":")[0]))
+                        #print('n=',n)
+                        #print('x_keys[n]=',x_keys[n])
+                        #print('y_keys[n]=',y_keys[n])
                         self.particle_list[pn].update_particle_importance(self.X[x_keys[n]], self.Y[y_keys[n]], int(x_keys[n].split(":")[0]))
                     else:
                         self.particle_list[pn].update_particle(self.X[x_keys[n]], self.Y[y_keys[n]], n)
@@ -161,9 +167,43 @@ class particle_filter:
         else: 
             print("get_predictive_distribution(self, X_new) not implemented")
             
-        return(self.predictive_distribution)   
+        return(self.predictive_distribution)
+    
+    def plot_particle_path(self, particle_prop=0.1):
+        print("in plot_particle_path")
+        
+        param_num=self.p#particle_list[0].get_particle(0).bo_list.shape[1]
+        total_time_steps =self.N# len(self.particle_list[0].get_particle(0).bo_list[:,0])
+        params=list()
+        particle_indices = np.random.choice(self.PART_NUM, max(int(self.PART_NUM*particle_prop), 1))
+        
+        for os in range(param_num):
+            temp_all_parts = np.zeros((len(particle_indices), total_time_steps))
+            #for sn in range(M):
+            for pn in range(len(particle_indices)):
+                #particle=self.particle_list[pn].get_particle(particle_indices[pn])
+                #p_temp = particle.bo_list[:,os].copy()
+                p_temp = self.particle_list[pn].bo_list[:,os].copy()
+                p_temp[np.isnan(p_temp)]=0
+                temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
+            params.append(temp_all_parts)
+    
+        
+        for par_n in range(param_num):
+            avg_param_0=np.mean(params[par_n], axis=0)
+            std_parma_0=np.std(params[par_n], axis=0)
+            above=np.add(avg_param_0,std_parma_0*2)
+            below=np.add(avg_param_0,-std_parma_0*2)
             
+            truth=self.dat['b'][:,par_n]#test['shard_0']['b'][:,par_n]
             
+            x = np.arange(len(avg_param_0)) # the points on the x axis for plotting
             
-            
-            
+            fig, ax1 = plt.subplots()
+            plt.plot(x,truth,'black')
+            ax1.fill_between(x, below, above, facecolor='green',  alpha=0.3)
+            plt.plot(x,avg_param_0, 'g', alpha=.8)
+            min_tic=np.min([np.min(below),np.min(truth)])
+            max_tic=np.max([np.max(above),np.max(truth)])
+            plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
+            plt.grid(True)
