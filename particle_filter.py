@@ -61,10 +61,12 @@ class particle_filter:
             #print('x_keys=',x_keys)
             y_keys = list(self.Y.keys())
             #print('y_keys=',y_keys)
-            for n in range(self.batch_num):
+            #for n in range(self.batch_num):
+            for n in range(len(x_keys)):# self.batch_num):
                 
                 #print("batch ", x_keys[n])
-                if n%np.floor(self.batch_num*0.20)==0:
+                if n in list(range(0,len(x_keys), int(0.2*len(x_keys)))):#%np.floor(self.batch_num*0.20)==0:
+                #if n%np.floor(self.*0.20)==0:
                     print("batch ", x_keys[n])
                 
                 for pn in range(self.PART_NUM):
@@ -202,7 +204,7 @@ class particle_filter:
             fig, ax1 = plt.subplots()
             plt.plot(x,truth,'black')
             ax1.fill_between(x, below, above, facecolor='green',  alpha=0.3)
-            plt.plot(x,avg_param_0, 'g', alpha=.8)
+            plt.plot(x,avg_param_0, 'b', alpha=.8)
             min_tic=np.min([np.min(below),np.min(truth)])
             max_tic=np.max([np.max(above),np.max(truth)])
             plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))

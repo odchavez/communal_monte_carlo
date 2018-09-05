@@ -37,6 +37,7 @@ class simulated_data:
             f=1.0
             x = np.arange(self.N) # the points on the x axis for plotting
             self.b=np.zeros((self.N,self.p))
+            self.b_oos=np.zeros((1,self.p))
             
             output = {}
             for m in range(self.shards):
@@ -59,6 +60,9 @@ class simulated_data:
                 plt.grid(True)
                 plt.show()
             
+            for os in range(self.p):
+                self.b_oos[:,os] =  [ 1.0*np.sin(np.pi*f * (i/(self.N*1.0)) + omega_shift[os]) for i in [max(x)+1]]
+                
             data_index=0
             for i in range(self.N):
                 #key=str(i)+":"+str(i%self.shards)+":"+str(data_index)
@@ -83,15 +87,17 @@ class simulated_data:
                 
                 if i%self.shards == self.shards-1:
                     data_index+=1
-                
+            
+            self.X_oos=np.random.uniform(-1,1,self.p*self.N_batch).reshape((self.N_batch,self.p))
+            
             sig=np.max(np.var(self.b[0:(self.N-1),:]-self.b[1:,:], axis=0))
             print("sig=", sig)
-            self.B=sig*params['B']*10#self.shards
+            self.B=30*sig*params['B']#self.shards
             
             for m in range(self.shards):
                 output["shard_"+str(m)]['N'] = self.N
                 output["shard_"+str(m)]['b'] = self.b
-                output["shard_"+str(m)]['B'] = self.B
+                output["shard_"+str(m)]['B'] = self.B*self.shards
                 output["shard_"+str(m)]['p'] = self.p
                 output["shard_"+str(m)]['model'] = self.model
                 
@@ -107,6 +113,8 @@ class simulated_data:
             self.output['b']=self.b
             self.output['B']=self.B
             self.output['p']=self.p
+            self.output['b_oos']=self.b_oos
+            self.output['X_oos']=self.X_oos
             self.output['batch_number']=self.N_batch
             self.output['model']=self.model
 
