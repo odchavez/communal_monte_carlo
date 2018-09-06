@@ -17,6 +17,7 @@ class probit_sin_wave_particle:
         self.particle_id_history=idval
         self.log_lik=-99999999999.0
         self.p=len(bo)
+        self.shards=1
 
     def evaluate_likelihood(self, X, Y):
         #print("in evaluate likelihood ")
@@ -34,7 +35,7 @@ class probit_sin_wave_particle:
         #print("np.dot(Y,log_PHI)=",np.dot(Y,log_PHI))
         B=np.dot(one_minus_Y,log_1_minus_PHI)
         #print("np.dot(one_minus_Y,log_1_minus_PHI)=",np.dot(one_minus_Y,log_1_minus_PHI))
-        log_lik=A+B
+        log_lik=(A+B)*self.shards
         #print("log_lik=",log_lik)
         return(log_lik)
     
@@ -118,6 +119,9 @@ class probit_sin_wave_particle:
         self.Zi={}
         for key in keys:
             self.Zi[key]=np.zeros((full_data[key].shape[0],1))
+
+    def set_shard_number(self, shards):
+        self.shards=shards
             
     def set_bo_list(self):
         self.bo_list=np.zeros((self.N, len(self.bo)))

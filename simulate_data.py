@@ -100,6 +100,7 @@ class simulated_data:
                 output["shard_"+str(m)]['B'] = self.B*self.shards
                 output["shard_"+str(m)]['p'] = self.p
                 output["shard_"+str(m)]['model'] = self.model
+                output["shard_"+str(m)]['shards']=self.shards
                 
                 L =list(output["shard_"+str(m)]['X'].keys())
                 L1=L[len(L)-1].split(":")
@@ -117,6 +118,7 @@ class simulated_data:
             self.output['X_oos']=self.X_oos
             self.output['batch_number']=self.N_batch
             self.output['model']=self.model
+            self.output['shards']=1#self.shards
 
     def get_data(self):
         return(self.output)

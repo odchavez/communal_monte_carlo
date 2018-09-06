@@ -34,6 +34,7 @@ class particle_filter:
             self.p=dat['p']
             self.N=dat['N']
             self.batch_num=dat['batch_number']
+            self.shards=dat['shards']
             for pn in range(self.PART_NUM):
                 #print("particle number:",pn)
                 #print("dat.b=",dat.b)
@@ -42,6 +43,7 @@ class particle_filter:
                 temp_particle.set_N(self.N)
                 temp_particle.set_Zi(self.X)
                 temp_particle.set_bo_list()
+                temp_particle.set_shard_number(self.shards)
                 self.particle_list.append(temp_particle)
                 #print("particle_list=",self.particle_list)
         else:
