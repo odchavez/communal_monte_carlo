@@ -34,7 +34,7 @@ class simulated_data:
             self.shards=params['shards']
             self.X={}
             self.Y={}
-            f=1.0
+            f=1.5
             x = np.arange(self.N) # the points on the x axis for plotting
             self.b=np.zeros((self.N,self.p))
             self.b_oos=np.zeros((1,self.p))
@@ -119,6 +119,7 @@ class simulated_data:
             self.output['batch_number']=self.N_batch
             self.output['model']=self.model
             self.output['shards']=1#self.shards
+            self.output['parallel_shards']=self.shards
 
     def get_data(self):
         return(self.output)
