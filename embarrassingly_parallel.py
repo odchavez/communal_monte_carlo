@@ -57,7 +57,7 @@ class embarrassingly_parallel:
             plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
             plt.grid(True)
 
-    def shuffel_embarrassingly_parallel_particles(self, machine_list=None):
+    def shuffel_embarrassingly_parallel_particles(self, machine_list=None, method='uniform'):
         
         self.all_particles=list()
         for m in range(self.data['parallel_shards']):
