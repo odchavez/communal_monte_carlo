@@ -49,6 +49,26 @@ class particle_filter:
         else:
             print(model, " not implemented yet...")
             
+    def run_multi_batch_particle_filter(self, X, y):
+        if self.model=="probit_sin_wave":
+            x_keys = list(X.keys())
+            y_keys = list(Y.keys())
+            for n in range(len(x_keys)):
+                if n in list(range(0,len(x_keys), int(0.2*len(x_keys)))):
+                    print("batch ", x_keys[n])
+                for pn in range(self.PART_NUM):
+                    if self.sample_method=='importance':
+                        self.particle_list[pn].update_particle_importance(X[x_keys[n]], 
+                                                                          Y[y_keys[n]], 
+                                                                          int(x_keys[n].split(":")[0]))
+                    else:
+                        print("else in run_multi_batch_particle_filter not implemented")
+
+                self.shuffle_particles(n)
+        else:
+            print("did nothing...")
+        return
+                        
     def run_particle_filter(self):
         #single interation of P particles
         self.not_norm_wts=np.ones(self.PART_NUM)
@@ -85,10 +105,10 @@ class particle_filter:
                 
                 #print('self.not_norm_wts=',self.not_norm_wts)
                 #print("n before shuffle:",n)
-                self.shuffle_particles(n)
+                self.shuffle_particles()#n)
         return
     
-    def shuffle_particles(self,n):
+    def shuffle_particles(self):#,n):
         #print("enter shuffle_particle")
         #self.not_norm_wts=self.not_norm_wts*100000000
         #(np.exp(xxx- np.max(xxx))+np.exp(np.max(xxx)))/

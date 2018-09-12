@@ -32,6 +32,7 @@ class simulated_data:
             self.N=params['N']
             self.N_batch = params['N_batch']
             self.shards=params['shards']
+            self.epoch_number=params['epoch_number']
             self.X={}
             self.Y={}
             f=1.5
@@ -45,7 +46,16 @@ class simulated_data:
                 output["shard_"+str(m)]['X']={}
                 output["shard_"+str(m)]['Y']={}
             
-            print('output=',output)
+            epoch_output = {}
+            for ep in range(self.epoch_number):
+                epoch_output["epoch"+str(ep)]={}
+            
+            for ep in range(self.epoch_number):
+                for m in range(self.shards):
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]     ={}
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X']={}
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y']={}
+            #print('output=',output)
             #for m in range(self.shards):
             #    self.X["shard_"+str(m)]={}
             #    self.Y["shard_"+str(m)]={}
