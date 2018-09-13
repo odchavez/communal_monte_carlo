@@ -35,8 +35,13 @@ class embarrassingly_parallel:
               p_temp = particle.bo_list[:,os].copy()
               p_temp[np.isnan(p_temp)]=0
               temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
+                
+          for ts in range(len(self.params['epoch_at'])):
+            ts_values=self.params['epoch_at'][ts]
+            temp_all_parts[:,ts_values]=temp_all_parts[:,ts_values]/self.data['parallel_shards']      
           params.append(temp_all_parts)
-    
+        
+        
         
         for par_n in range(param_num):
             avg_param_0=np.mean(params[par_n], axis=0)
@@ -52,6 +57,8 @@ class embarrassingly_parallel:
             plt.plot(x,truth,'black')
             ax1.fill_between(x, below, above, facecolor='green',  alpha=0.3)
             plt.plot(x,avg_param_0, 'b', alpha=.8)
+            for line_tick in self.params['epoch_at']:
+                plt.axvline(x=line_tick, color='r', alpha=0.25)
             min_tic=np.min([np.min(below),np.min(truth)])
             max_tic=np.max([np.max(above),np.max(truth)])
             plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
