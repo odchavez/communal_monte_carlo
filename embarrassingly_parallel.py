@@ -36,9 +36,9 @@ class embarrassingly_parallel:
               p_temp[np.isnan(p_temp)]=0
               temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
                 
-          for ts in range(len(self.params['epoch_at'])):
-            ts_values=self.params['epoch_at'][ts]
-            temp_all_parts[:,ts_values]=temp_all_parts[:,ts_values]/self.data['parallel_shards']      
+          #for ts in range(len(self.params['epoch_at'])):
+          #  ts_values=self.params['epoch_at'][ts]
+          #  temp_all_parts[:,ts_values]=temp_all_parts[:,ts_values]/self.data['parallel_shards']      
           params.append(temp_all_parts)
         
         

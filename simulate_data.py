@@ -50,12 +50,15 @@ class simulated_data:
             epoch_output = {}
             for ep in range(self.epoch_number):
                 epoch_output["epoch"+str(ep)]={}
-            
-            for ep in range(self.epoch_number):
                 for m in range(self.shards):
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]     ={}
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X']={}
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y']={}
+            #for ep in range(self.epoch_number):
+            #    for m in range(self.shards):
+            #        epoch_output["epoch"+str(ep)]["shard_"+str(m)]     ={}
+            #        epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X']={}
+            #        epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y']={}
             #print('output=',output)
             #for m in range(self.shards):
             #    self.X["shard_"+str(m)]={}
@@ -75,6 +78,7 @@ class simulated_data:
                 self.b_oos[:,os] =  [ 1.0*np.sin(np.pi*f * (i/(self.N*1.0)) + omega_shift[os]) for i in [max(x)+1]]
                 
             data_index=0
+            epoch_counter=0
             for i in range(self.N):
                 #key=str(i)+":"+str(i%self.shards)+":"+str(data_index)
                 key=str(i)+":"+str(data_index)
@@ -87,9 +91,10 @@ class simulated_data:
                 self.X[all_key]     = temp_X
                 self.Y[all_key]     = np.zeros(self.N_batch)
                 
-                if i not in self.epoch_at:
-                    output[s]['X'][key] = temp_X.copy()
-                    output[s]['Y'][key] = np.zeros(self.N_batch)
+                output[s]['X'][key] = temp_X#.copy()
+                output[s]['Y'][key] = np.zeros(self.N_batch)
+                
+                
 
                 inner=temp_X.dot(self.b[i,])
                 #print('innter=',inner)
@@ -97,17 +102,30 @@ class simulated_data:
                 #print("samp=",samp)
                 for j in range(self.N_batch):
                     if samp[j]>=0:
-                        if i not in self.epoch_at:
-                            output[s]['Y'][key][j]=self.Y[all_key][j]=1
-                        else:
-                            self.Y[all_key][j]=1
-                if i in self.epoch_at:
+                        output[s]['Y'][key][j]=self.Y[all_key][j]=1
+                        #if i not in self.epoch_at:
+                        #    #epoch_output["epoch"+str(epoch_counter)]["shard_"+str(s)]['Y'][key][j]=1
+                        #    output[s]['Y'][key][j]=1
+                        #    self.Y[all_key][j]=1
+                        #else:
+                        #    output[s]['Y'][key][j]=1
+                        #    self.Y[all_key][j]=1
+                
+                if i not in self.epoch_at:
+                    #output[s]['X'][key] = temp_X.copy()
+                    #output[s]['Y'][key] = np.zeros(self.N_batch)
+                    #for m in range(self.shards):
+                    epoch_output["epoch"+str(epoch_counter)][s]['X'][key]=temp_X
+                    epoch_output["epoch"+str(epoch_counter)][s]['Y'][key]=self.Y[all_key] #np.zeros(self.N_batch)
+                else:# i in self.epoch_at:
+                    
                     #print("xkind=",xkind)
                     #print("current_n=", current_n)
                     for m in range(self.shards):
                         #print("x_keys[xkind]=",x_keys[xkind])
-                        output["shard_"+str(m)]['X'][all_key] = self.X[all_key]
-                        output["shard_"+str(m)]['Y'][all_key] = self.Y[all_key]
+                        epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['X'][all_key] = self.X[all_key]
+                        epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['Y'][all_key] = self.Y[all_key]
+                    epoch_counter+=1
                 
                 if i%self.shards == self.shards-1:
                     data_index+=1
@@ -146,6 +164,7 @@ class simulated_data:
             #            output["shard_"+str(m)]['Y'][x_keys[xkind]] = self.Y[x_keys[xkind]]
             
             self.output=output#{, , , , , }
+            self.output['epoch_data']=epoch_output
             self.output['X']=self.X
             self.output['Y']=self.Y
             self.output['N']=self.N
