@@ -10,15 +10,21 @@ class embarrassingly_parallel:
         self.PART_NUM=params['particles_per_shard']
         self.model=params['model']
         self.sample_method= params['sample_method']
+        self.number_of_shards=params['shards']
         self.pf_obj=list()
         self.params=params
         self.data=data
-        for m in range(self.data['parallel_shards']):
+        for m in range(self.number_of_shards):
             pfo = particle_filter.particle_filter(self.data['shard_'+str(m)], self.PART_NUM, self.model,self.sample_method)
             self.pf_obj.append(pfo)
             self.pf_obj[m].run_particle_filter()
-        
-        
+    
+    def run_batch(self, data):
+        for m in range(self.number_of_shards):
+            self.pf_obj[m].update_data(self.data['shard_'+str(m)])
+            self.pf_obj[m].run_particle_filter()
+    
+    
     def plot_parameter_path(self, particle_prop=0.01):
         print("plot_parameter_path...")
         

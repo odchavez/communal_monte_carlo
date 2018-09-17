@@ -33,7 +33,7 @@ class particle_filter:
             self.Y=dat['Y']
             self.p=dat['p']
             self.N=dat['N']
-            self.batch_num=dat['batch_number']
+            #self.batch_num=dat['batch_number']
             self.shards=dat['shards']
             for pn in range(self.PART_NUM):
                 #print("particle number:",pn)
@@ -182,6 +182,11 @@ class particle_filter:
     
     def get_particle(self, i):
         return(self.particle_list[i])
+    
+    def update_data(self, dat):
+            self.X=dat['X']
+            self.Y=dat['Y']
+            #self.pf_obj[m].update_data(self.data['shard_'+str(m)])
     
     def get_predictive_distribution(self, X_new):
         self.predictive_distribution = np.zeros(self.PART_NUM)

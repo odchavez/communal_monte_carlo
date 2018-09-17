@@ -54,6 +54,7 @@ class simulated_data:
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]     ={}
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X']={}
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y']={}
+
             #for ep in range(self.epoch_number):
             #    for m in range(self.shards):
             #        epoch_output["epoch"+str(ep)]["shard_"+str(m)]     ={}
@@ -149,19 +150,15 @@ class simulated_data:
                 max_val=int(L1[len(L1)-1])
                 output["shard_"+str(m)]['batch_number']=max_val+1
             
-            #print("self.X.keys():",self.X.keys())
-            #print('shard keys',output["shard_"+str(0)]['X'].keys())
+            for ep in range(self.epoch_number):
+                for m in range(self.shards):
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['N'] = self.N
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['b'] = self.b
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['B'] = self.B*self.shards
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['p'] = self.p
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['model'] = self.model
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['shards']=self.shards
 
-            #x_keys=list(self.X.keys())
-            #for xkind in range(len(x_keys)):
-            #    current_n=int(x_keys[xkind].split(":")[0])
-            #    if current_n in self.epoch_at:
-            #        print("xkind=",xkind)
-            #        print("current_n=", current_n)
-            #        for m in range(self.shards):
-            #            print("x_keys[xkind]=",x_keys[xkind])
-            #            output["shard_"+str(m)]['X'][x_keys[xkind]] = self.X[x_keys[xkind]]
-            #            output["shard_"+str(m)]['Y'][x_keys[xkind]] = self.Y[x_keys[xkind]]
             
             self.output=output#{, , , , , }
             self.output['epoch_data']=epoch_output
