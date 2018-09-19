@@ -151,6 +151,9 @@ class simulated_data:
                 output["shard_"+str(m)]['batch_number']=max_val+1
             
             for ep in range(self.epoch_number):
+                epoch_output["epoch"+str(ep)]['parallel_shards'] = self.shards
+                epoch_output["epoch"+str(ep)]['b']               = self.b
+
                 for m in range(self.shards):
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['N'] = self.N
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['b'] = self.b
@@ -178,3 +181,20 @@ class simulated_data:
     def get_data(self):
         return(self.output)
      
+def temp_make_data_function():
+    #import embarrassingly_parallel
+
+    M=4
+    PART_NUM=1000
+    epoch_at=[49,99,149,199,249,299,324,349,374,399]
+    params={'N': 100*M, 
+        'N_batch':25, 
+        'omega_shift' : [0,3], 
+        'shards': M,
+        'epoch_at':epoch_at,
+        'particles_per_shard':PART_NUM,
+        'model':'probit_sin_wave',
+        'sample_method':"importance"}
+    test = simulated_data(params, model="probit_sin_wave").get_data()
+    
+    return test, params

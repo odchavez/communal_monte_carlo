@@ -38,7 +38,7 @@ class embarrassingly_parallel:
         
         for os in range(param_num):
           temp_all_parts = np.zeros((len(particle_indices), total_time_steps))
-          print("data keys = ", self.data.keys())
+          #print("data keys = ", self.data.keys())
           for sn in range(self.data['parallel_shards']):
             for pn in range(len(particle_indices)):
               particle=self.pf_obj[sn].get_particle(particle_indices[pn])
@@ -91,9 +91,9 @@ class embarrassingly_parallel:
               temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
             
             #print("temp_all_parts=",temp_all_parts)
-          #for ts in range(len(self.params['epoch_at'])):
-          #  ts_values=self.params['epoch_at'][ts]
-          #  temp_all_parts[:,ts_values]=temp_all_parts[:,ts_values]/self.data['parallel_shards']      
+          for ts in range(len(self.params['epoch_at'])):
+            ts_values=self.params['epoch_at'][ts]
+            temp_all_parts[:,ts_values]=temp_all_parts[:,ts_values]/self.data['parallel_shards']      
           params.append(temp_all_parts)
         
         for par_n in range(param_num):
@@ -120,6 +120,7 @@ class embarrassingly_parallel:
     def shuffel_embarrassingly_parallel_particles(self, machine_list=None, method='uniform'):
         
         self.all_particles=list()
+        #print("self.data.keys():",self.data.keys())
         for m in range(self.data['parallel_shards']):
             for p in range(self.PART_NUM):
                 #all_particles.append()
@@ -132,3 +133,6 @@ class embarrassingly_parallel:
             for p in range(self.PART_NUM):
                 self.pf_obj[m].particle_list[p].copy_particle_values( self.all_particles[index] )
                 index+=1
+                
+    def update_data(self, data_from_outside):
+        self.data = data_from_outside
