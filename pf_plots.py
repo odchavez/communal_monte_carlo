@@ -109,13 +109,13 @@ class pf_plots:
         plt.show()
 
         plt.hist(x=self.flattened_list, bins='auto',  density=True, color='b', alpha=0.5)#, rwidth=0.85)
-        plt.axvline(x=np.mean(self.flattened_list))
+        plt.axvline(x=np.mean(self.flattened_list), color='b')
 
         plt.hist(x=self.flattened_list_par, bins='auto',  density=True, color='green', alpha=0.5)#, rwidth=0.85)
-        plt.axvline(x=np.mean(self.flattened_list_par))
+        plt.axvline(x=np.mean(self.flattened_list_par), color='g')
         
         plt.hist(x=self.flattened_list_cmc, bins='auto',  density=True, color='r', alpha=0.5)#, rwidth=0.85)
-        plt.axvline(x=np.mean(self.flattened_list_cmc))
+        plt.axvline(x=np.mean(self.flattened_list_cmc), color='r')
         
         #plt.xticks([0,0.5])
         plt.grid(axis='y', alpha=0.75)

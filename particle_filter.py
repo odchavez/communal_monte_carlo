@@ -87,9 +87,9 @@ class particle_filter:
             for n in range(len(x_keys)):# self.batch_num):
                 
                 #print("batch ", x_keys[n])
-                if n in list(range(0,len(x_keys), int(0.2*len(x_keys)))):#%np.floor(self.batch_num*0.20)==0:
+                #if n in list(range(0,len(x_keys), int(0.2*len(x_keys)))):#%np.floor(self.batch_num*0.20)==0:
                 #if n%np.floor(self.*0.20)==0:
-                    print("batch ", x_keys[n])
+                #    print("batch ", x_keys[n])
                 
                 for pn in range(self.PART_NUM):
                     #print("particle ", pn)

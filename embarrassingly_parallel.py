@@ -116,6 +116,12 @@ class embarrassingly_parallel:
             max_tic=np.max([np.max(above),np.max(truth)])
             plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
             plt.grid(True)
+    
+    #def plot_CMC_parameter_path_by_machine(self):
+        #   
+        #for sn in range(len(pf_obj)):
+        #    pf_obj[sn].plot_particle_path(1)
+        #plt.show()
             
     def shuffel_embarrassingly_parallel_particles(self, machine_list=None, method='uniform'):
         

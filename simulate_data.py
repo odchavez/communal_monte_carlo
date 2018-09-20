@@ -130,8 +130,8 @@ class simulated_data:
                 
                 if i%self.shards == self.shards-1:
                     data_index+=1
-            
-            self.X_oos=np.random.uniform(-1,1,self.p*self.N_batch).reshape((self.N_batch,self.p))
+            tttemp=np.max([1000,self.N_batch])
+            self.X_oos=np.random.uniform(-1,1,self.p*tttemp).reshape((tttemp,self.p))
             
             sig=np.max(np.var(self.b[0:(self.N-1),:]-self.b[1:,:], axis=0))
             print("sig=", sig)
@@ -186,9 +186,9 @@ def temp_make_data_function():
 
     M=4
     PART_NUM=1000
-    epoch_at=[49,99,149,199,249,299,324,349,374,399]
+    epoch_at=[49,75,99,124,149,174,199,224,249,275,299,324,349,374,389,399]
     params={'N': 100*M, 
-        'N_batch':25, 
+        'N_batch':1, 
         'omega_shift' : [0,3], 
         'shards': M,
         'epoch_at':epoch_at,
