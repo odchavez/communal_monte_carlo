@@ -137,7 +137,7 @@ class probit_sin_wave_particle:
         self.particle_id_history=not_this_particle.particle_id[0]
         #self.XtX=not_this_particle.XtX
         #self.Bo_inv_bo=not_this_particle.Bo_inv_bo
-        #self.B_cov=not_this_particle.B_cov.copy()
+        self.B_cov=not_this_particle.B_cov.copy()
         self.N=not_this_particle.N
         self.Zi=not_this_particle.Zi.copy()
     

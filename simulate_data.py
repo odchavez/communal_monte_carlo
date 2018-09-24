@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 class simulated_data:
-    def __init__(self, params, model):
+    def __init__(self, params, model, show=True):
         self.model=model
         if model=="probit":
             params={'N': 10000, 'b': [-2,-1,0,1,2], 'B':np.identity(5)}
@@ -33,7 +33,7 @@ class simulated_data:
             self.N_batch = params['N_batch']
             self.shards=params['shards']
             self.epoch_at=params['epoch_at']
-            self.epoch_number=len(self.epoch_at)
+            self.epoch_number=len(self.epoch_at)+1
             self.X={}
             self.Y={}
             f=1.5
@@ -69,11 +69,12 @@ class simulated_data:
                 self.b[:,os] = [ 1.0*np.sin(np.pi*f * (i/(self.N*1.0)) + omega_shift[os]) for i in x]
                 #% matplotlib inline
                 # showing the exact location of the smaples
-                plt.stem(x,self.b[:,os], 'r', )
-                plt.plot(x,self.b[:,os])
-                plt.yticks(np.linspace(start=-2, stop=2, num=9))
-                plt.grid(True)
-                plt.show()
+                if show:
+                    plt.stem(x,self.b[:,os], 'r', )
+                    plt.plot(x,self.b[:,os])
+                    plt.yticks(np.linspace(start=-2, stop=2, num=9))
+                    plt.grid(True)
+                    plt.show()
             
             for os in range(self.p):
                 self.b_oos[:,os] =  [ 1.0*np.sin(np.pi*f * (i/(self.N*1.0)) + omega_shift[os]) for i in [max(x)+1]]
@@ -130,7 +131,7 @@ class simulated_data:
                 
                 if i%self.shards == self.shards-1:
                     data_index+=1
-            tttemp=np.max([1000,self.N_batch])
+            tttemp=np.max([100,self.N_batch])
             self.X_oos=np.random.uniform(-1,1,self.p*tttemp).reshape((tttemp,self.p))
             
             sig=np.max(np.var(self.b[0:(self.N-1),:]-self.b[1:,:], axis=0))
@@ -153,6 +154,7 @@ class simulated_data:
             for ep in range(self.epoch_number):
                 epoch_output["epoch"+str(ep)]['parallel_shards'] = self.shards
                 epoch_output["epoch"+str(ep)]['b']               = self.b
+                epoch_output["epoch"+str(ep)]['B'] = self.B*self.shards
 
                 for m in range(self.shards):
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['N'] = self.N
@@ -181,20 +183,6 @@ class simulated_data:
     def get_data(self):
         return(self.output)
      
-def temp_make_data_function():
-    #import embarrassingly_parallel
-
-    M=4
-    PART_NUM=1000
-    epoch_at=[49,75,99,124,149,174,199,224,249,275,299,324,349,374,389,399]
-    params={'N': 100*M, 
-        'N_batch':1, 
-        'omega_shift' : [0,3], 
-        'shards': M,
-        'epoch_at':epoch_at,
-        'particles_per_shard':PART_NUM,
-        'model':'probit_sin_wave',
-        'sample_method':"importance"}
-    test = simulated_data(params, model="probit_sin_wave").get_data()
-    
+def temp_make_data_function(params, model, show):
+    test = simulated_data(params, model, show).get_data()
     return test, params

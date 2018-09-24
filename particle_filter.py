@@ -236,3 +236,4 @@ class particle_filter:
             max_tic=np.max([np.max(above),np.max(truth)])
             plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
             plt.grid(True)
+            plt.show()
