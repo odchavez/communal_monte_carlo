@@ -36,6 +36,7 @@ class simulated_data:
             self.epoch_number=len(self.epoch_at)+1
             self.X={}
             self.Y={}
+            self.data_keys=list()
             f=1.5
             x = np.arange(self.N) # the points on the x axis for plotting
             self.b=np.zeros((self.N,self.p))
@@ -46,6 +47,7 @@ class simulated_data:
                 output["shard_"+str(m)]     ={}
                 output["shard_"+str(m)]['X']={}
                 output["shard_"+str(m)]['Y']={}
+                output["shard_"+str(m)]['data_keys']=list()
             
             epoch_output = {}
             for ep in range(self.epoch_number):
@@ -54,6 +56,7 @@ class simulated_data:
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]     ={}
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X']={}
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y']={}
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['data_keys']=list()
 
             #for ep in range(self.epoch_number):
             #    for m in range(self.shards):
@@ -86,6 +89,7 @@ class simulated_data:
                 key=str(i)+":"+str(data_index)
                 all_key=str(i)+":"+str(i)
                 #print('key=',key)
+                self.data_keys.append(key)
                 s="shard_"+str(i%self.shards)
                 #print('s=',s)
                 #print('output[s]=', output[s])
@@ -95,7 +99,7 @@ class simulated_data:
                 
                 output[s]['X'][key] = temp_X#.copy()
                 output[s]['Y'][key] = np.zeros(self.N_batch)
-                
+                output[s]['data_keys'].append(key)
                 
 
                 inner=temp_X.dot(self.b[i,])
@@ -119,6 +123,7 @@ class simulated_data:
                     #for m in range(self.shards):
                     epoch_output["epoch"+str(epoch_counter)][s]['X'][key]=temp_X
                     epoch_output["epoch"+str(epoch_counter)][s]['Y'][key]=self.Y[all_key] #np.zeros(self.N_batch)
+                    epoch_output["epoch"+str(epoch_counter)][s]['data_keys'].append(key)
                 else:# i in self.epoch_at:
                     
                     #print("xkind=",xkind)
@@ -127,6 +132,7 @@ class simulated_data:
                         #print("x_keys[xkind]=",x_keys[xkind])
                         epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['X'][all_key] = self.X[all_key]
                         epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['Y'][all_key] = self.Y[all_key]
+                        epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['data_keys'].append(all_key)
                     epoch_counter+=1
                 
                 if i%self.shards == self.shards-1:
@@ -179,7 +185,7 @@ class simulated_data:
             self.output['model']=self.model
             self.output['shards']=1#self.shards
             self.output['parallel_shards']=self.shards
-
+            self.output['data_keys']=self.data_keys
     def get_data(self):
         return(self.output)
      

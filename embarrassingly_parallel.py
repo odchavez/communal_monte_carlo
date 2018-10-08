@@ -85,7 +85,7 @@ class embarrassingly_parallel:
         
         for os in range(param_num):
             temp_all_parts = np.zeros((len(particle_indices), total_time_steps))
-            print("data keys = ", self.data.keys())
+            print("data keys = ", self.data['data_keys'])
             for sn in range(self.data['parallel_shards']):
                 for pn in range(len(particle_indices)):
                     particle=self.pf_obj[sn].get_particle(particle_indices[pn])
@@ -94,10 +94,10 @@ class embarrassingly_parallel:
                     temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
             
             #print("temp_all_parts=",temp_all_parts)
-            for ts in range(len(self.params['epoch_at'])):
-                ts_values=self.params['epoch_at'][ts]
-                temp_all_parts[:,ts_values] = temp_all_parts[:,ts_values]/self.data['parallel_shards']      
-            params.append(temp_all_parts)
+            #for ts in range(len(self.params['epoch_at'])):
+            #    ts_values=self.params['epoch_at'][ts]
+            #    temp_all_parts[:,ts_values] = temp_all_parts[:,ts_values]/self.data['parallel_shards']      
+            #params.append(temp_all_parts)
         
         for par_n in range(param_num):
             avg_param_0=np.mean(params[par_n], axis=0)
@@ -127,27 +127,39 @@ class embarrassingly_parallel:
         #    pf_obj[sn].plot_particle_path(1)
         #plt.show()
             
-    def shuffel_embarrassingly_parallel_particles(self, machine_list=None, method='uniform'):
+    def shuffel_embarrassingly_parallel_particles(self, machine_list=None, method=None):
         
-        self.all_particles=list()
-        #print("self.data.keys():",self.data.keys())
-        for m in range(self.data['parallel_shards']):
-            for p in range(self.PART_NUM):
-                #all_particles.append()
-                #print(self.data.keys())
-                temp_particle = pfm.probit_sin_wave_particle( np.array(self.data['b'][0]), self.data['B'], -1)
-            #pfo = particle_filter.particle_filter(self.data['shard_'+str(m)], self.PART_NUM, self.model,self.sample_method)
-            #self.pf_obj.append(pfo)
-                temp_particle.copy_particle_values(self.pf_obj[m].particle_list[p])
-                self.all_particles.append(temp_particle)
-                #self.all_particles.append(self.pf_obj[m].particle_list[p]) #run_particle_filter()
+        if method == "wasserstein":
+            print("computing waserstein barrycenter...")
+            print("collecting parameter info from shards...")
+            for m in range(self.data['parallel_shards']):
+                for p in range(self.PART_NUM):
+                    #all_particles.append()
+                    #print(self.data.keys())
+                    #temp_particle = pfm.probit_sin_wave_particle( np.array(self.data['b'][0]), self.data['B'], -1)
+                    print(self.pf_obj[m].particle_list[p].bo)
+                #print("shard ", m)
                 
-        
-        for m in range(self.data['parallel_shards']):
-            for p in range(self.PART_NUM):
-                index=randint(0, len(self.all_particles)-1)
-                #print(self.all_particles[index].print_vals())
-                self.pf_obj[m].particle_list[p].copy_particle_values( self.all_particles[index] )
-                
+            
+        else:
+            self.all_particles=list()
+            #print("self.data.keys():",self.data.keys())
+            for m in range(self.data['parallel_shards']):
+                for p in range(self.PART_NUM):
+                    #all_particles.append()
+                    #print(self.data.keys())
+                    temp_particle = pfm.probit_sin_wave_particle( np.array(self.data['b'][0]), self.data['B'], -1)
+                #pfo = particle_filter.particle_filter(self.data['shard_'+str(m)], self.PART_NUM, self.model,self.sample_method)
+                #self.pf_obj.append(pfo)
+                    temp_particle.copy_particle_values(self.pf_obj[m].particle_list[p])
+                    self.all_particles.append(temp_particle)
+                    #self.all_particles.append(self.pf_obj[m].particle_list[p]) #run_particle_filter()
+                    
+            for m in range(self.data['parallel_shards']):
+                for p in range(self.PART_NUM):
+                    index=randint(0, len(self.all_particles)-1)
+                    #print(self.all_particles[index].print_vals())
+                    self.pf_obj[m].particle_list[p].copy_particle_values( self.all_particles[index] )
+                                    
     def update_data(self, data_from_outside):
         self.data = data_from_outside
