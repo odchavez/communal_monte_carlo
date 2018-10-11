@@ -17,6 +17,8 @@ class particle_filter:
         self.model=model
         self.sample_method=sample_method
         self.dat=dat
+        self.data_keys=dat['data_keys']
+        
         if self.model=="probit":
             #create particles
             #PART_NUM=20
@@ -33,7 +35,7 @@ class particle_filter:
             self.Y=dat['Y']
             self.p=dat['p']
             self.N=dat['N']
-            self.data_keys=dat['data_keys']
+            
             #self.batch_num=dat['batch_number']
             self.shards=dat['shards']
             for pn in range(self.PART_NUM):
@@ -187,6 +189,7 @@ class particle_filter:
     def update_data(self, dat):
             self.X=dat['X']
             self.Y=dat['Y']
+            self.data_keys=dat['data_keys']
             #self.pf_obj[m].update_data(self.data['shard_'+str(m)])
     
     def get_predictive_distribution(self, X_new):

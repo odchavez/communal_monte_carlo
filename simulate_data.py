@@ -89,7 +89,7 @@ class simulated_data:
                 key=str(i)+":"+str(data_index)
                 all_key=str(i)+":"+str(i)
                 #print('key=',key)
-                self.data_keys.append(key)
+                self.data_keys.append(all_key)
                 s="shard_"+str(i%self.shards)
                 #print('s=',s)
                 #print('output[s]=', output[s])

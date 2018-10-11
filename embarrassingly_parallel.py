@@ -17,6 +17,7 @@ class embarrassingly_parallel:
         self.params=params
         self.data=data
         for m in range(self.number_of_shards):
+            print("fitting shard ", m)
             pfo = particle_filter.particle_filter(self.data['shard_'+str(m)], self.PART_NUM, self.model,self.sample_method)
             self.pf_obj.append(pfo)
             self.pf_obj[m].run_particle_filter()
@@ -34,9 +35,12 @@ class embarrassingly_parallel:
         print("plot_parameter_path...")
         
         param_num=self.pf_obj[0].get_particle(0).bo_list.shape[1]
+        print("param_num=",param_num)
         total_time_steps = len(self.pf_obj[0].get_particle(0).bo_list[:,0])
+        print("total_time_steps=",total_time_steps)
         params=list()
         particle_indices = np.random.choice(self.PART_NUM, max(int(self.PART_NUM*particle_prop), 1))
+        print("particle_indices=",particle_indices)
         
         for os in range(param_num):
           temp_all_parts = np.zeros((len(particle_indices), total_time_steps))
@@ -83,25 +87,41 @@ class embarrassingly_parallel:
         params=list()
         particle_indices = np.random.choice(self.PART_NUM, max(int(self.PART_NUM*particle_prop), 1))
         
-        for os in range(param_num):
-            temp_all_parts = np.zeros((len(particle_indices), total_time_steps))
-            print("data keys = ", self.data['data_keys'])
-            for sn in range(self.data['parallel_shards']):
-                for pn in range(len(particle_indices)):
-                    particle=self.pf_obj[sn].get_particle(particle_indices[pn])
-                    p_temp = particle.bo_list[:,os].copy()
-                    p_temp[np.isnan(p_temp)]=0
-                    temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
-            
-            #print("temp_all_parts=",temp_all_parts)
-            #for ts in range(len(self.params['epoch_at'])):
-            #    ts_values=self.params['epoch_at'][ts]
-            #    temp_all_parts[:,ts_values] = temp_all_parts[:,ts_values]/self.data['parallel_shards']      
-            #params.append(temp_all_parts)
-        
+        #for os in range(param_num):
+        #    temp_all_parts = np.zeros((len(particle_indices), total_time_steps))
+        #    #print("data keys = ", self.data['data_keys'])
+        #    for sn in range(self.data['parallel_shards']):
+        #        for pn in range(len(particle_indices)):
+        #            particle=self.pf_obj[sn].get_particle(particle_indices[pn])
+        #            p_temp = particle.bo_list[:,os].copy()
+        #            p_temp[np.isnan(p_temp)]=0
+        #            temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
+        #    
+        #    #print("temp_all_parts=",temp_all_parts)
+        #    for ts in range(len(self.params['epoch_at'])):
+        #        ts_values=self.params['epoch_at'][ts]
+        #        temp_all_parts[:,ts_values] = temp_all_parts[:,ts_values]/self.data['parallel_shards']      
+        #    params.append(temp_all_parts)
+        Z_dim=self.number_of_shards*self.PART_NUM
+        temp_all_parts = np.zeros((total_time_steps, param_num, Z_dim))
+        counter=0
+        for sn in range(self.data['parallel_shards']):
+            for pn in range(len(particle_indices)):
+                particle=self.pf_obj[sn].get_particle(particle_indices[pn])
+                #print("particle.bo_list.copy().shape=", particle.bo_list.copy().shape)
+                temp_all_parts[:,:,counter] = particle.bo_list.copy()
+                counter+=1
+                #p_temp[np.isnan(p_temp)]=0
+                #temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
+        #print("temp_all_parts.shape=",temp_all_parts.shape)
+        #print("temp_all_parts.head()=",temp_all_parts.head())
+        params=np.nanmean(temp_all_parts, axis=2)
+        params_std=np.nanstd(temp_all_parts, axis=2)
+        #print("params.shape=",params.shape)
+        #print('parmas=', params)
         for par_n in range(param_num):
-            avg_param_0=np.mean(params[par_n], axis=0)
-            std_parma_0=np.std(params[par_n], axis=0)
+            avg_param_0=params[:,par_n]#np.mean(params[par_n], axis=0)
+            std_parma_0=params_std[:,par_n]#np.std(params[par_n], axis=0)
             above=np.add(avg_param_0,std_parma_0*2)
             below=np.add(avg_param_0,-std_parma_0*2)
             
