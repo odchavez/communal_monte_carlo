@@ -45,7 +45,8 @@ class probit_sin_wave_particle:
         B_mu_proposed=np.random.multivariate_normal(np.transpose(self.bo), self.B_cov,1).reshape(self.p,1).flatten()
         self.bo=B_mu_proposed
         self.bo_list[j,:]=np.transpose(B_mu_proposed).copy()
-    
+        self.bo_machine_list[j,:]=np.transpose(B_mu_proposed).copy()
+        
     def update_particle(self,X,Y, j):
         self.useful_calcs(X)
         #for j in range(self.N):
@@ -90,6 +91,7 @@ class probit_sin_wave_particle:
         #print("the new self.bo", B)
         self.bo=B.copy()
         self.bo_list[j,:]=np.transpose(B).copy()#[0]
+        self.bo_machine_list[j,:]=np.transpose(B).copy()
         #self.bo_list[j,1]=B[1]
         #self.bo_list[j,2]=B[2]
 
@@ -126,6 +128,9 @@ class probit_sin_wave_particle:
     def set_bo_list(self):
         self.bo_list=np.zeros((self.N, len(self.bo)))
         self.bo_list[self.bo_list==0]=np.NaN
+        
+        self.bo_machine_list=np.zeros((self.N, len(self.bo)))
+        self.bo_machine_list[self.bo_machine_list==0]=np.NaN
 
     def get_truncated_normal(self, mean, sd, low, upp):
         return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)    
