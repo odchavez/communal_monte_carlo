@@ -211,7 +211,7 @@ class embarrassingly_parallel:
         if method == "wasserstein":
             print("computing waserstein barrycenter...")
             print("collecting parameter info from shards...")
-            f_wts = self.get_approx_shard_wasserstein_barycenter(wass_n)[0]
+            f_wts = 0.01+self.get_approx_shard_wasserstein_barycenter(wass_n)[0]
             print("data successfully prepared...")  
             print('machine weights: ', f_wts)
             temp_all_wts=np.repeat(f_wts,self.PART_NUM)
