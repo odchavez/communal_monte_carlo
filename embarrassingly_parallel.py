@@ -105,6 +105,8 @@ class embarrassingly_parallel:
         #    params.append(temp_all_parts)
         Z_dim=self.number_of_shards*self.PART_NUM
         temp_all_parts = np.zeros((total_time_steps, param_num, Z_dim))
+        temp_all_parts[temp_all_parts==0]=np.NaN
+
         counter=0
         for sn in range(self.data['parallel_shards']):
             for pn in range(len(particle_indices)):
@@ -152,6 +154,7 @@ class embarrassingly_parallel:
             truth=self.data['b'][:,par_n]#data['shard_0']['b'][:,par_n]
             x = np.arange(len(self.data['b'][:,par_n])) # the points on the x axis for plotting
             plt.plot(x,truth,'black')
+            fig, ax = plt.subplots(1,2,3,4)
 
             for sn in range(self.data['parallel_shards']):
                 params=list()
@@ -174,22 +177,22 @@ class embarrassingly_parallel:
                 avg_param_0=pd.Series(avg_param_0).fillna(method='ffill')
                 avg_param_0=pd.Series(avg_param_0).fillna(method='bfill')
 
-                #std_parma_0=params_std[:,par_n]#np.std(params[par_n], axis=0)
-                #above=np.add(avg_param_0,std_parma_0*2)
-                #below=np.add(avg_param_0,-std_parma_0*2)
+                std_parma_0=params_std[:,par_n]#np.std(params[par_n], axis=0)
+                above=np.add(avg_param_0,std_parma_0*2)
+                below=np.add(avg_param_0,-std_parma_0*2)
                 #
                 #
                 x = np.arange(len(avg_param_0)) # the points on the x axis for plotting
                 #
                 #fig, ax1 = plt.subplots()
-                #ax1.fill_between(x, below, above, facecolor='green',  alpha=0.3)
+                ax[sn].fill_between(x, below, above, facecolor=color_list[sn],  alpha=0.3)
                 plt.plot(x,avg_param_0, color_list[sn], '.', alpha=.8)
-                #for line_tick in self.params['epoch_at']:
-                #    plt.axvline(x=line_tick, color='r', alpha=0.25)
-                #min_tic=np.min([np.min(below),np.min(truth)])
-                #max_tic=np.max([np.max(above),np.max(truth)])
-                #plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
-                #plt.grid(True)
+            #for line_tick in self.params['epoch_at']:
+            #    plt.axvline(x=line_tick, color='r', alpha=0.25)
+            #min_tic=np.min([np.min(below),np.min(truth)])
+            #max_tic=np.max([np.max(above),np.max(truth)])
+            #plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
+            #plt.grid(True)
                     
             plt.show()
                 

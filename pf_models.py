@@ -7,17 +7,21 @@ import numpy as np
 #import pandas as pd
 #import csv
 from matplotlib import pyplot as plt
+from scipy.stats import invwishart#, invgamma
 
 class probit_sin_wave_particle:
     def __init__(self, bo, Bo, idval):#
         #print("bo=",bo)
         self.bo=bo
         self.Bo=Bo
+        self.Bo_suf_stat=Bo.copy()
+        self.df=2
         self.particle_id=[idval]
         self.particle_id_history=idval
         self.log_lik=-99999999999.0
         self.p=len(bo)
         self.shards=1
+        
 
     def evaluate_likelihood(self, X, Y):
         #print("in evaluate likelihood ")
@@ -94,7 +98,11 @@ class probit_sin_wave_particle:
         self.bo_machine_list[j,:]=np.transpose(B).copy()
         #self.bo_list[j,1]=B[1]
         #self.bo_list[j,2]=B[2]
-
+        self.Bo_suf_stat+=self.Bo_suf_stat+(B_mu-self.bo).dot(np.transpose(B_mu-self.bo))
+        temp_cov = invwishart.rvs(df=self.df, scale=self.Bo_suf_stat)
+        self.Bo= np.linalg.inv(temp_cov)
+        self.df+=1
+        
     def get_particle_id(self):
         return(self.particle_id)
 
