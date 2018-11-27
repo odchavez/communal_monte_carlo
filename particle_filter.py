@@ -74,6 +74,7 @@ class particle_filter:
                         
     def run_particle_filter(self):
         #single interation of P particles
+        #print("just entered run_particle_filter in particle_filter.py")
         self.not_norm_wts=np.ones(self.PART_NUM)
         if self.model=="probit":
             for pn in range(self.PART_NUM):

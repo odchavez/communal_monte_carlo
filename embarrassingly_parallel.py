@@ -5,28 +5,100 @@ import particle_filter
 import pf_models as pfm
 from random import randint
 from scipy.optimize import linprog
+import seaborn as sns
+#from mpi4py import MPI
+from joblib import Parallel, delayed
+#import multiprocessing as mp
+
+def run_particle_filter_wrapper(pfo):
+    print("in wrapper function run_particle_filter_wrapper")
+    pfo.run_particle_filter()
+    return(pfo)
+
+def update_data_wrapper(pfo, f_data):
+    pfo.update_data(f_data)
+    return(pfo)
 
 class embarrassingly_parallel:
+    
     def __init__(self, data, params):
         print("parallel class...")
         
-        self.PART_NUM=params['particles_per_shard']
-        self.model=params['model']
-        self.sample_method= params['sample_method']
-        self.number_of_shards=params['shards']
+        self.data=data
         self.pf_obj=list()
         self.params=params
-        self.data=data
-        for m in range(self.number_of_shards):
-            print("fitting shard ", m)
-            pfo = particle_filter.particle_filter(self.data['shard_'+str(m)], self.PART_NUM, self.model,self.sample_method)
-            self.pf_obj.append(pfo)
-            self.pf_obj[m].run_particle_filter()
+        self.model=params['model']        
+        self.number_of_shards=params['shards']
+        self.sample_method= params['sample_method']
+        self.PART_NUM=params['particles_per_shard']
+        #self.comm = MPI.COMM_WORLD
+        #self.rank = self.comm.Get_rank()
+        #self.size = self.comm.Get_size()
+        self.pf_obj = Parallel(n_jobs=self.number_of_shards#, 
+                               #backend = 'multiprocessing', 
+                               #verbose=1
+                              )(delayed(particle_filter.particle_filter)(
+                                                                 self.data['shard_'+str(m)], 
+                                                                  self.PART_NUM, 
+                                                                 self.model,
+                                                                  self.sample_method
+                                                                 ) for m in range(self.number_of_shards))
+        
+        #print("len(self.pf_obj)=", len(self.pf_obj))
+        #print("(self.pf_obj)=", (self.pf_obj))
+        #print("First Parallel Done ********************************************************************")
+        self.pf_obj = Parallel(n_jobs=self.number_of_shards 
+                              )(delayed(run_particle_filter_wrapper)(pfo = self.pf_obj[m]) 
+                                        for m in range(self.number_of_shards))
+        #print("Second Parallel Done ********************************************************************")
+        #print("bo_list=",self.pf_obj[0].particle_list[0].bo_list)
+        #if m = rank
+        #print("printing_rank: ", rank)
+        #pfo_on_shard = particle_filter.particle_filter(self.data['shard_'+str(rank)], 
+        #                                               self.PART_NUM, 
+        #                                               self.model,
+        #                                               self.sample_method
+        #                                              )
+        
+        #pfo_on_shard.run_particle_filter()
+        
+        
+        
+        #if self.rank==0:
+        #    self.pf_obj = comm.gather((pfo_on_shard), root=0)
+        #    print ("got results: ",self.pf_obj)
+        #job_args = [args_for_job_1, args_for_job_2, args_for_job_3...]
+
+        #pool = mp.Pool(self.number_of_shards)
+        #
+        #for m in range(self.number_of_shards):
+        #    print("not fitting shard ", m)
+        #    pfo = particle_filter.particle_filter(self.data['shard_'+str(m)], 
+        #                                          self.PART_NUM, 
+        #                                          self.model,
+        #                                          self.sample_method
+        #                                         )
+        #    self.pf_obj.append(pfo)
+        #    #self.pf_obj[m].run_particle_filter()
+        #    
+        #self.pf_obj = pool.map(run_particle_filter_wrapper, self.pf_obj)
+    
     
     def run_batch(self, data):
-        for m in range(self.number_of_shards):
-            self.pf_obj[m].update_data(data['shard_'+str(m)])
-            self.pf_obj[m].run_particle_filter()
+        print("just entered run_batch.......")
+        self.pf_obj = Parallel(n_jobs=self.number_of_shards 
+                              )(delayed(update_data_wrapper)(pfo = self.pf_obj[m], 
+                                                           f_data = data['shard_'+str(m)]) 
+                                        for m in range(self.number_of_shards))
+        self.pf_obj = Parallel(n_jobs=self.number_of_shards 
+                              )(delayed(run_particle_filter_wrapper)(pfo = self.pf_obj[m]) 
+                                        for m in range(self.number_of_shards))
+        
+        #for m in range(self.number_of_shards):
+        #    #self.pf_obj[m].update_data(data['shard_'+str(m)])
+        #    self.pf_obj[m].run_particle_filter()
+            
+        
     
     #def update_parallel_pf_data(self, data):
     #    for m in range(self.number_of_shards):
@@ -88,49 +160,38 @@ class embarrassingly_parallel:
         params=list()
         particle_indices = np.random.choice(self.PART_NUM, max(int(self.PART_NUM*particle_prop), 1))
         
-        #for os in range(param_num):
-        #    temp_all_parts = np.zeros((len(particle_indices), total_time_steps))
-        #    #print("data keys = ", self.data['data_keys'])
-        #    for sn in range(self.data['parallel_shards']):
-        #        for pn in range(len(particle_indices)):
-        #            particle=self.pf_obj[sn].get_particle(particle_indices[pn])
-        #            p_temp = particle.bo_list[:,os].copy()
-        #            p_temp[np.isnan(p_temp)]=0
-        #            temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
-        #    
-        #    #print("temp_all_parts=",temp_all_parts)
-        #    for ts in range(len(self.params['epoch_at'])):
-        #        ts_values=self.params['epoch_at'][ts]
-        #        temp_all_parts[:,ts_values] = temp_all_parts[:,ts_values]/self.data['parallel_shards']      
-        #    params.append(temp_all_parts)
         Z_dim=self.number_of_shards*self.PART_NUM
         temp_all_parts = np.zeros((total_time_steps, param_num, Z_dim))
         temp_all_parts[temp_all_parts==0]=np.NaN
 
         counter=0
+        #print('enter sn loop')
         for sn in range(self.data['parallel_shards']):
             for pn in range(len(particle_indices)):
                 particle=self.pf_obj[sn].get_particle(particle_indices[pn])
-                #print("particle.bo_list.copy().shape=", particle.bo_list.copy().shape)
                 temp_all_parts[:,:,counter] = particle.bo_list.copy()
                 counter+=1
-                #p_temp[np.isnan(p_temp)]=0
-                #temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
-        #print("temp_all_parts.shape=",temp_all_parts.shape)
-        #print("temp_all_parts.head()=",temp_all_parts.head())
+
         params=np.nanmean(temp_all_parts, axis=2)
         params_std=np.nanstd(temp_all_parts, axis=2)
         #print("params.shape=",params.shape)
         #print('parmas=', params)
+        #print('enter par_n loop')
         for par_n in range(param_num):
-            avg_param_0=params[:,par_n]#np.mean(params[par_n], axis=0)
-            std_parma_0=params_std[:,par_n]#np.std(params[par_n], axis=0)
+            avg_param_0=params[:,par_n]
+            avg_param_0=pd.Series(avg_param_0).fillna(method='ffill')
+            avg_param_0=pd.Series(avg_param_0).fillna(method='bfill')
+                
+            std_parma_0=params_std[:,par_n]
+            std_parma_0=pd.Series(std_parma_0).fillna(method='ffill')
+            std_parma_0=pd.Series(std_parma_0).fillna(method='bfill')                
+            
             above=np.add(avg_param_0,std_parma_0*2)
             below=np.add(avg_param_0,-std_parma_0*2)
             
-            truth=self.data['b'][:,par_n]#data['shard_0']['b'][:,par_n]
+            truth=self.data['b'][:,par_n]
             
-            x = np.arange(len(avg_param_0)) # the points on the x axis for plotting
+            x = np.arange(len(avg_param_0)) 
             
             fig, ax1 = plt.subplots()
             plt.plot(x,truth,'black')
@@ -138,25 +199,30 @@ class embarrassingly_parallel:
             plt.plot(x,avg_param_0, 'b', alpha=.8)
             for line_tick in self.params['epoch_at']:
                 plt.axvline(x=line_tick, color='r', alpha=0.25)
-            min_tic=np.min([np.min(below),np.min(truth)])
-            max_tic=np.max([np.max(above),np.max(truth)])
-            plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
-            plt.grid(True)
+                min_tic=np.min([np.min(below),np.min(truth)])
+                max_tic=np.max([np.max(above),np.max(truth)])
+                plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
+                plt.grid(True)
+                    
             plt.show()
 
     def plot_CMC_parameter_path_by_shard(self, particle_prop=0.01):
         print("plot_parameter_path...")
-        color_list=['r','g','b','k']
+        color_list = sns.color_palette(None, self.data['parallel_shards'])
+#['r','g','b','k']
         param_num=self.pf_obj[0].get_particle(0).bo_machine_list.shape[1]
         total_time_steps = len(self.pf_obj[0].get_particle(0).bo_machine_list[:,0])
-        particle_indices = np.random.choice(self.PART_NUM, max(int(self.PART_NUM*particle_prop), 1))
+        max_val=max(int(self.PART_NUM*particle_prop), 1)
+        particle_indices = np.random.choice(self.PART_NUM, max_val)
         for par_n in range(param_num):
-            truth=self.data['b'][:,par_n]#data['shard_0']['b'][:,par_n]
-            x = np.arange(len(self.data['b'][:,par_n])) # the points on the x axis for plotting
-            plt.plot(x,truth,'black')
-            fig, ax = plt.subplots(1,2,3,4)
+            
 
             for sn in range(self.data['parallel_shards']):
+                plt.title('parameter {}, shard {}'.format(par_n+1,sn+1))
+                truth=self.data['b'][:,par_n]#data['shard_0']['b'][:,par_n]
+                # the points on the x axis for plotting
+                x = np.arange(len(self.data['b'][:,par_n])) 
+                plt.plot(x,truth,'black')
                 params=list()
                 Z_dim=self.number_of_shards*self.PART_NUM
                 temp_all_parts = np.zeros((total_time_steps, param_num, Z_dim))
@@ -164,53 +230,55 @@ class embarrassingly_parallel:
                 counter=0
                 for pn in range(len(particle_indices)):
                     particle=self.pf_obj[sn].get_particle(particle_indices[pn])
-                    #print("particle.bo_list.copy().shape=", particle.bo_list.copy().shape)
                     temp_all_parts[:,:,counter] = particle.bo_machine_list.copy()
                     counter+=1
 
                 params=np.nanmean(temp_all_parts, axis=2)
                 params_std=np.nanstd(temp_all_parts, axis=2)
-                #print("particle.bo_list.copy()=",pd.DataFrame(particle.bo_list.copy()).head(20))
-                #print(pd.DataFrame(params))
-                #for par_n in range(param_num):
-                avg_param_0=avg_param_0=params[:,par_n]#np.mean(params[par_n], axis=0)
+
+                avg_param_0=avg_param_0=params[:,par_n]
                 avg_param_0=pd.Series(avg_param_0).fillna(method='ffill')
                 avg_param_0=pd.Series(avg_param_0).fillna(method='bfill')
 
-                std_parma_0=params_std[:,par_n]#np.std(params[par_n], axis=0)
+                std_parma_0=params_std[:,par_n]
+                std_parma_0=pd.Series(std_parma_0).fillna(method='ffill')
+                std_parma_0=pd.Series(std_parma_0).fillna(method='bfill')                
                 above=np.add(avg_param_0,std_parma_0*2)
                 below=np.add(avg_param_0,-std_parma_0*2)
-                #
-                #
-                x = np.arange(len(avg_param_0)) # the points on the x axis for plotting
-                #
-                #fig, ax1 = plt.subplots()
-                ax[sn].fill_between(x, below, above, facecolor=color_list[sn],  alpha=0.3)
-                plt.plot(x,avg_param_0, color_list[sn], '.', alpha=.8)
-            #for line_tick in self.params['epoch_at']:
-            #    plt.axvline(x=line_tick, color='r', alpha=0.25)
-            #min_tic=np.min([np.min(below),np.min(truth)])
-            #max_tic=np.max([np.max(above),np.max(truth)])
-            #plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
-            #plt.grid(True)
+                x = np.arange(len(avg_param_0)) 
+
+                plt.fill_between(x, below, above, facecolor=color_list[sn],  alpha=0.3)
+                plt.plot(x,avg_param_0, c=color_list[sn], marker='.', alpha=.8)
+                for line_tick in self.params['epoch_at']:
+                    plt.axvline(x=line_tick, color='r', alpha=0.25)
+                min_tic=np.min([np.min(below),np.min(truth)])
+                max_tic=np.max([np.max(above),np.max(truth)])
+                plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
+                plt.grid(True)
                     
-            plt.show()
+                plt.show()
                 
             
-    def shuffel_embarrassingly_parallel_particles(self, machine_list=None, method=None, wass_n=None):
+    def shuffel_embarrassingly_parallel_particles(self, 
+                                                  machine_list=None, 
+                                                  method=None, 
+                                                  wass_n=None):
+        
+        #if rank == 0:
+        #    print("in shuffel_embarrassingly_parallel_particles, we can see rank 0")
                 
         self.all_particles=list()
         #print("self.data.keys():",self.data.keys())
         for m in range(self.data['parallel_shards']):
             for p in range(self.PART_NUM):
-                #all_particles.append()
-                #print(self.data.keys())
-                temp_particle = pfm.probit_sin_wave_particle( np.array(self.data['b'][0]), self.data['B'], -1)
-            #pfo = particle_filter.particle_filter(self.data['shard_'+str(m)], self.PART_NUM, self.model,self.sample_method)
-            #self.pf_obj.append(pfo)
+
+                first  = np.array(self.data['b'][0]), 
+                second = self.data['B']
+                temp_particle = pfm.probit_sin_wave_particle(first, second , -1)
+
                 temp_particle.copy_particle_values(self.pf_obj[m].particle_list[p])
                 self.all_particles.append(temp_particle)
-                #self.all_particles.append(self.pf_obj[m].particle_list[p]) #run_particle_filter()
+
         if method == "wasserstein":
             print("computing waserstein barrycenter...")
             print("collecting parameter info from shards...")
@@ -223,14 +291,15 @@ class embarrassingly_parallel:
             count=0
             for m in range(self.data['parallel_shards']):
                 for p in range(self.PART_NUM):
-                    self.pf_obj[m].particle_list[p].copy_particle_values( self.all_particles[index_vals[count]] )
+                    first=self.all_particles[index_vals[count]] 
+                    self.pf_obj[m].particle_list[p].copy_particle_values(first)
                     count+=1
         else:        
             for m in range(self.data['parallel_shards']):
                 for p in range(self.PART_NUM):
                     index=randint(0, len(self.all_particles)-1)
-                    #print(self.all_particles[index].print_vals())
-                    self.pf_obj[m].particle_list[p].copy_particle_values( self.all_particles[index] )
+                    first=self.all_particles[index] 
+                    self.pf_obj[m].particle_list[p].copy_particle_values(first)
                                     
     def update_data(self, data_from_outside):
         self.data = data_from_outside

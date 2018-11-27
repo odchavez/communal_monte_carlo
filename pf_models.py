@@ -44,7 +44,7 @@ class probit_sin_wave_particle:
         return(log_lik)
     
     def update_particle_importance(self, X, Y, j):
-        #print("check this:", np.array(self.bo))
+        #print("just entered update_particle_importance in pf_models.py")
         self.useful_calcs(X)
         B_mu_proposed=np.random.multivariate_normal(np.transpose(self.bo), self.B_cov,1).reshape(self.p,1).flatten()
         self.bo=B_mu_proposed
@@ -110,6 +110,7 @@ class probit_sin_wave_particle:
         return(self.particle_id_history)
     
     def useful_calcs(self, X):
+        #print("useful_calcs in pf_models.py enter")
         self.XtX       =X.transpose().dot(X)
         #self.Bo_inv_bo =np.linalg.inv(self.Bo).dot(self.bo)
         #self.B_cov     =np.linalg.inv(np.linalg.inv(self.Bo) + self.XtX)
@@ -117,6 +118,8 @@ class probit_sin_wave_particle:
         self.Bo_inv    =np.linalg.inv(self.Bo)
         self.B_cov     =np.linalg.inv(self.Bo_inv + self.XtX)#self.N_batch*self.Bo)
         #print('self.B_cov=', self.B_cov)
+        #print("self.particle_id=",self.particle_id)
+        #print("useful_calcs in pf.models exit")
         return
     
     def set_N(self, N):
@@ -134,6 +137,7 @@ class probit_sin_wave_particle:
         self.shards=shards
             
     def set_bo_list(self):
+        #print("setting bo_list")
         self.bo_list=np.zeros((self.N, len(self.bo)))
         self.bo_list[self.bo_list==0]=np.NaN
         
@@ -150,7 +154,7 @@ class probit_sin_wave_particle:
         self.particle_id_history=not_this_particle.particle_id[0]
         #self.XtX=not_this_particle.XtX
         #self.Bo_inv_bo=not_this_particle.Bo_inv_bo
-        self.B_cov=not_this_particle.B_cov.copy()
+        self.B_cov=np.identity(2)#not_this_particle.B_cov.copy()
         self.N=not_this_particle.N
         self.Zi=not_this_particle.Zi.copy()
     
