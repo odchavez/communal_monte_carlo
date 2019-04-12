@@ -24,10 +24,8 @@ class simulated_data:
             
             omega_shift=params['omega_shift']
             temp_params={'p':len(omega_shift), 'b': omega_shift, 'B':np.identity(len(omega_shift))}
-            #print("params=", params)
-            #print("temp_params=", temp_params)
-            params.update(temp_params)#dict(params.items() + temp_params.items())
-            #print("params=", params)
+
+            params.update(temp_params)
             self.p=params['p']
             self.N=params['N']
             self.N_batch = params['N_batch']
@@ -57,16 +55,6 @@ class simulated_data:
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X']={}
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y']={}
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['data_keys']=list()
-
-            #for ep in range(self.epoch_number):
-            #    for m in range(self.shards):
-            #        epoch_output["epoch"+str(ep)]["shard_"+str(m)]     ={}
-            #        epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X']={}
-            #        epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y']={}
-            #print('output=',output)
-            #for m in range(self.shards):
-            #    self.X["shard_"+str(m)]={}
-            #    self.Y["shard_"+str(m)]={}
             
             for os in range(self.p):
                 self.b[:,os] = [ 1.0*np.sin(np.pi*f * (i/(self.N*1.0)) + omega_shift[os]) for i in x]
@@ -85,51 +73,31 @@ class simulated_data:
             data_index=0
             epoch_counter=0
             for i in range(self.N):
-                #key=str(i)+":"+str(i%self.shards)+":"+str(data_index)
                 key=str(i)+":"+str(data_index)
                 all_key=str(i)+":"+str(i)
-                #print('key=',key)
                 self.data_keys.append(all_key)
                 s="shard_"+str(i%self.shards)
-                #print('s=',s)
-                #print('output[s]=', output[s])
+
                 temp_X = np.random.uniform(-1,1,self.p*self.N_batch).reshape((self.N_batch,self.p))
                 self.X[all_key]     = temp_X
                 self.Y[all_key]     = np.zeros(self.N_batch)
                 
-                output[s]['X'][key] = temp_X#.copy()
+                output[s]['X'][key] = temp_X
                 output[s]['Y'][key] = np.zeros(self.N_batch)
                 output[s]['data_keys'].append(key)
                 
-
                 inner=temp_X.dot(self.b[i,])
-                #print('innter=',inner)
                 samp=np.random.normal(loc=inner, scale=1.0)
-                #print("samp=",samp)
                 for j in range(self.N_batch):
                     if samp[j]>=0:
                         output[s]['Y'][key][j]=self.Y[all_key][j]=1
-                        #if i not in self.epoch_at:
-                        #    #epoch_output["epoch"+str(epoch_counter)]["shard_"+str(s)]['Y'][key][j]=1
-                        #    output[s]['Y'][key][j]=1
-                        #    self.Y[all_key][j]=1
-                        #else:
-                        #    output[s]['Y'][key][j]=1
-                        #    self.Y[all_key][j]=1
                 
                 if i not in self.epoch_at:
-                    #output[s]['X'][key] = temp_X.copy()
-                    #output[s]['Y'][key] = np.zeros(self.N_batch)
-                    #for m in range(self.shards):
                     epoch_output["epoch"+str(epoch_counter)][s]['X'][key]=temp_X
                     epoch_output["epoch"+str(epoch_counter)][s]['Y'][key]=self.Y[all_key] #np.zeros(self.N_batch)
                     epoch_output["epoch"+str(epoch_counter)][s]['data_keys'].append(key)
-                else:# i in self.epoch_at:
-                    
-                    #print("xkind=",xkind)
-                    #print("current_n=", current_n)
+                else:
                     for m in range(self.shards):
-                        #print("x_keys[xkind]=",x_keys[xkind])
                         epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['X'][all_key] = self.X[all_key]
                         epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['Y'][all_key] = self.Y[all_key]
                         epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['data_keys'].append(all_key)
@@ -137,12 +105,12 @@ class simulated_data:
                 
                 if i%self.shards == self.shards-1:
                     data_index+=1
+                    
             tttemp=np.max([100,self.N_batch])
             self.X_oos=np.random.uniform(-1,1,self.p*tttemp).reshape((tttemp,self.p))
             
             sig=np.max(np.var(self.b[0:(self.N-1),:]-self.b[1:,:], axis=0))
-            print("sig=", sig)
-            self.B=30*sig*params['B']#self.shards
+            self.B=30*sig*params['B']
             
             for m in range(self.shards):
                 output["shard_"+str(m)]['N'] = self.N
@@ -171,7 +139,7 @@ class simulated_data:
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['shards']=self.shards
 
             
-            self.output=output#{, , , , , }
+            self.output=output
             self.output['epoch_data']=epoch_output
             self.output['X']=self.X
             self.output['Y']=self.Y
@@ -183,9 +151,10 @@ class simulated_data:
             self.output['X_oos']=self.X_oos
             self.output['batch_number']=self.N_batch
             self.output['model']=self.model
-            self.output['shards']=1#self.shards
+            self.output['shards']=1
             self.output['parallel_shards']=self.shards
             self.output['data_keys']=self.data_keys
+            
     def get_data(self):
         return(self.output)
      

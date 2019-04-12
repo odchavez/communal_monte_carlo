@@ -4,6 +4,7 @@ import numpy as np
 #from scipy.stats import norm
 #from scipy.stats import truncnorm
 #from scipy.special import logsumexp
+#from tqdm import tqdm
 import numpy as np
 import pandas as pd
 #import csv
@@ -31,7 +32,7 @@ class particle_filter:
                 
         elif self.model== "probit_sin_wave":
             print("working on model ", model)
-            self.X=dat['X']
+            self.X=dat['X_matrix']#dat['X']
             self.Y=dat['Y']
             self.p=dat['p']
             self.N=dat['N']
@@ -39,6 +40,7 @@ class particle_filter:
             #self.batch_num=dat['batch_number']
             self.shards=dat['shards']
             for pn in range(self.PART_NUM):
+            
                 #print("particle number:",pn)
                 #print("dat.b=",dat.b)
                 #print("dat.b[0]=",dat.b[0])
@@ -88,13 +90,19 @@ class particle_filter:
             y_keys = self.data_keys#list(self.Y.keys())
             #print('y_keys=',y_keys)
             #for n in range(self.batch_num):
-            for n in range(len(x_keys)):# self.batch_num):
-                
+            #pbar = tqdm(total=len(x_keys))
+            #pbar.set_description("progressin shard")
+            
+            for n in range(self.X.shape[0]):#range(len(x_keys)):# self.batch_num):
+                #pbar.update(1)
+
                 #print("batch ", x_keys[n])
                 #if n in list(range(0,len(x_keys), int(0.2*len(x_keys)))):#%np.floor(self.batch_num*0.20)==0:
-                #if n%np.floor(self.*0.20)==0:
-                #    print("batch ", x_keys[n])
-                
+                n_check_point = np.floor(self.N*0.10)
+                if n % n_check_point ==0:
+                    print(str(100*n/self.N)+"% of total file complete...")
+                    print(str(100*n/self.X.shape[0])+"% of shard complete...")
+                    
                 for pn in range(self.PART_NUM):
                     #print("particle ", pn)
                     if self.sample_method=='importance':
@@ -102,10 +110,14 @@ class particle_filter:
                         #print('n=',n)
                         #print('x_keys[n]=',x_keys[n])
                         #print('y_keys[n]=',y_keys[n])
-                        self.particle_list[pn].update_particle_importance(self.X[x_keys[n]], self.Y[y_keys[n]], int(x_keys[n].split(":")[0]))
+                        #self.particle_list[pn].update_particle_importance(self.X[x_keys[n]], self.Y[y_keys[n]], int(x_keys[n].split(":")[0]))
+                        self.particle_list[pn].update_particle_importance(self.X[n,:], self.Y[n], int(x_keys[n].split(":")[0]))
+                        
                     else:
-                        self.particle_list[pn].update_particle(self.X[x_keys[n]], self.Y[y_keys[n]], n)
-                    self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[x_keys[n]], self.Y[y_keys[n]])
+                        #self.particle_list[pn].update_particle(self.X[x_keys[n]], self.Y[y_keys[n]], n)
+                        self.particle_list[pn].update_particle(self.X[n,:], self.Y[n], n)
+                    #self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[x_keys[n]], self.Y[y_keys[n]])
+                    self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[n,:], self.Y[n])
                 
                 #print('self.not_norm_wts=',self.not_norm_wts)
                 #print("n before shuffle:",n)
@@ -187,10 +199,10 @@ class particle_filter:
     def get_particle(self, i):
         return(self.particle_list[i])
     
-    def update_data(self, dat):
-            self.X=dat['X']
-            self.Y=dat['Y']
-            self.data_keys=dat['data_keys']
+    def update_data(self, dat_X_matrix, dat_Y):
+            self.X=dat_X_matrix#dat['X_matrix']
+            self.Y=dat_Y#dat['Y']
+            #self.data_keys=dat['data_keys']
             #self.pf_obj[m].update_data(self.data['shard_'+str(m)])
     
     def get_predictive_distribution(self, X_new):

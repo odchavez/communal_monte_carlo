@@ -6,23 +6,174 @@ import pf_models as pfm
 from random import randint
 from scipy.optimize import linprog
 import seaborn as sns
-#from mpi4py import MPI
 from joblib import Parallel, delayed
-#import multiprocessing as mp
+from joblib import parallel_backend
 
+
+def particle_filter_init_wrapper(f_shards_data, f_part_num, f_model, f_sample_method):
+    pfo = particle_filter.particle_filter(f_shards_data, f_part_num, f_model, f_sample_method)
+    return(pfo)
+    
 def run_particle_filter_wrapper(pfo):
-    print("in wrapper function run_particle_filter_wrapper")
     pfo.run_particle_filter()
     return(pfo)
 
-def update_data_wrapper(pfo, f_data):
-    pfo.update_data(f_data)
+def update_data_wrapper(pfo, f_data_X_matrix, f_data_Y):
+    pfo.update_data(f_data_X_matrix, f_data_Y)
     return(pfo)
+
+def plot_CMC_parameter_path_(pf_obj, PART_NUM, number_of_shards, data, params, particle_prop=0.01):
+    print("plot_parameter_path...")
+    
+    param_num=pf_obj[0].get_particle(0).bo_list.shape[1]
+    total_time_steps = len(pf_obj[0].get_particle(0).bo_list[:,0])
+    params=list()
+    particle_indices = np.random.choice(PART_NUM, max(int(PART_NUM*particle_prop), 1))
+    
+    Z_dim=number_of_shards*PART_NUM
+    temp_all_parts = np.zeros((total_time_steps, param_num, Z_dim))
+    temp_all_parts[temp_all_parts==0]=np.NaN
+
+    counter=0
+    for sn in range(data['parallel_shards']):
+        for pn in range(len(particle_indices)):
+            particle=pf_obj[sn].get_particle(particle_indices[pn])
+            temp_all_parts[:,:,counter] = particle.bo_list.copy()
+            counter+=1
+
+    params=np.nanmean(temp_all_parts, axis=2)
+    params_std=np.nanstd(temp_all_parts, axis=2)
+
+    for par_n in range(len(data['predictors'])):#range(param_num):
+        print("plotting "+ str(par_n))
+        avg_param_0=params[:,par_n]
+        avg_param_0=pd.Series(avg_param_0).fillna(method='ffill')
+        avg_param_0=pd.Series(avg_param_0).fillna(method='bfill')
+            
+        std_parma_0=params_std[:,par_n]
+        std_parma_0=pd.Series(std_parma_0).fillna(method='ffill')
+        std_parma_0=pd.Series(std_parma_0).fillna(method='bfill')                
+        
+        above=np.add(avg_param_0,std_parma_0*2)
+        below=np.add(avg_param_0,-std_parma_0*2)
+        
+        truth=data['b'][:,par_n]
+        
+        x = np.arange(len(avg_param_0)) 
+        
+        fig, ax1 = plt.subplots()
+        plt.plot(x,truth,'black')
+        ax1.fill_between(x, below, above, facecolor='green',  alpha=0.3)
+        plt.plot(x,avg_param_0, 'b', alpha=.8)
+        plt.title(data['predictors'][par_n])
+        #for line_tick in params['epoch_at']:
+        #    plt.axvline(x=line_tick, color='r', alpha=0.25)
+        #    min_tic=np.min([np.min(below),np.min(truth)])
+        #    max_tic=np.max([np.max(above),np.max(truth)])
+        #    plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
+        #    plt.grid(True)
+                
+        plt.show()
+
+        
+def plot_CMC_parameter_path_by_shard(data, pf_obj, PART_NUM, number_of_shards, particle_prop=0.01):
+    print("plot_parameter_path...")
+    color_list = sns.color_palette(None, data['parallel_shards'])
+    param_num = pf_obj[0].get_particle(0).bo_machine_list.shape[1]
+    total_time_steps = len( pf_obj[0].get_particle(0).bo_machine_list[:,0] )
+    max_val=max(int(PART_NUM*particle_prop), 1)
+    particle_indices = np.random.choice(PART_NUM, max_val)
+    for par_n in range(param_num):
+        
+
+        for sn in range(data['parallel_shards']):
+            plt.title('parameter {}, shard {}'.format(par_n+1,sn+1))
+            truth = data['b'][:,par_n]
+            # the points on the x axis for plotting
+            x = np.arange(len(data['b'][:,par_n])) 
+            plt.plot(x,truth,'black')
+            params=list()
+            Z_dim = number_of_shards * PART_NUM
+            temp_all_parts = np.zeros((total_time_steps, param_num, Z_dim))
+            temp_all_parts[temp_all_parts==0]=np.NaN
+            counter=0
+            for pn in range(len(particle_indices)):
+                particle = pf_obj[sn].get_particle(particle_indices[pn])
+                temp_all_parts[:,:,counter] = particle.bo_machine_list.copy()
+                counter+=1
+
+            params=np.nanmean(temp_all_parts, axis=2)
+            params_std=np.nanstd(temp_all_parts, axis=2)
+
+            avg_param_0=avg_param_0=params[:,par_n]
+            avg_param_0=pd.Series(avg_param_0).fillna(method='ffill')
+            avg_param_0=pd.Series(avg_param_0).fillna(method='bfill')
+
+            std_parma_0=params_std[:,par_n]
+            std_parma_0=pd.Series(std_parma_0).fillna(method='ffill')
+            std_parma_0=pd.Series(std_parma_0).fillna(method='bfill')                
+            above=np.add(avg_param_0,std_parma_0*2)
+            below=np.add(avg_param_0,-std_parma_0*2)
+            x = np.arange(len(avg_param_0)) 
+
+            plt.fill_between(x, below, above, facecolor=color_list[sn],  alpha=0.3)
+            plt.plot(x,avg_param_0, c=color_list[sn], marker='.', alpha=.8)
+            #for line_tick in self.params['epoch_at']:
+            #    plt.axvline(x=line_tick, color='r', alpha=0.25)
+            min_tic=np.min([np.min(below),np.min(truth)])
+            max_tic=np.max([np.max(above),np.max(truth)])
+            plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
+            plt.grid(True)
+                
+        plt.show()
+
+def shuffel_embarrassingly_parallel_particles(data,
+                                              PART_NUM,
+                                              pf_obj,
+                                              machine_list=None, 
+                                              method=None, 
+                                              wass_n=None):
+            
+    all_particles=list()
+    for m in range(data['parallel_shards']):
+        for p in range(PART_NUM):
+
+            first  = np.array(data['b'][0]), 
+            second = data['B']
+            temp_particle = pfm.probit_sin_wave_particle(first, second , -1)
+
+            temp_particle.copy_particle_values(pf_obj[m].particle_list[p])
+            all_particles.append(temp_particle)
+
+    #if method == "wasserstein":
+    #    print("computing waserstein barrycenter...")
+    #    print("collecting parameter info from shards...")
+    #    f_wts = 0.01+self.get_approx_shard_wasserstein_barycenter(wass_n)[0]
+    #    print("data successfully prepared...")  
+    #    print('machine weights: ', f_wts)
+    #    temp_all_wts=np.repeat(f_wts,self.PART_NUM)
+    #    all_wts = temp_all_wts/np.sum(temp_all_wts)
+    #    index_vals = np.random.choice(range(len(all_wts)), len(all_wts), p=all_wts)
+    #    count=0
+    #    for m in range(self.data['parallel_shards']):
+    #        for p in range(self.PART_NUM):
+    #            first=self.all_particles[index_vals[count]] 
+    #            self.pf_obj[m].particle_list[p].copy_particle_values(first)
+    #            count+=1
+    #            
+    if method == "uniform":        
+        for m in range(data['parallel_shards']):
+            for p in range(PART_NUM):
+                index = randint(0, len(all_particles)-1)
+                first = all_particles[index] 
+                pf_obj[m].particle_list[p].copy_particle_values(first)
+
+    return pf_obj
+
 
 class embarrassingly_parallel:
     
     def __init__(self, data, params):
-        print("parallel class...")
         
         self.data=data
         self.pf_obj=list()
@@ -31,78 +182,57 @@ class embarrassingly_parallel:
         self.number_of_shards=params['shards']
         self.sample_method= params['sample_method']
         self.PART_NUM=params['particles_per_shard']
-        #self.comm = MPI.COMM_WORLD
-        #self.rank = self.comm.Get_rank()
-        #self.size = self.comm.Get_size()
-        self.pf_obj = Parallel(n_jobs=self.number_of_shards#, 
-                               #backend = 'multiprocessing', 
-                               #verbose=1
-                              )(delayed(particle_filter.particle_filter)(
-                                                                 self.data['shard_'+str(m)], 
-                                                                  self.PART_NUM, 
-                                                                 self.model,
-                                                                  self.sample_method
-                                                                 ) for m in range(self.number_of_shards))
-        
-        #print("len(self.pf_obj)=", len(self.pf_obj))
-        #print("(self.pf_obj)=", (self.pf_obj))
-        #print("First Parallel Done ********************************************************************")
-        self.pf_obj = Parallel(n_jobs=self.number_of_shards 
-                              )(delayed(run_particle_filter_wrapper)(pfo = self.pf_obj[m]) 
-                                        for m in range(self.number_of_shards))
-        #print("Second Parallel Done ********************************************************************")
-        #print("bo_list=",self.pf_obj[0].particle_list[0].bo_list)
-        #if m = rank
-        #print("printing_rank: ", rank)
-        #pfo_on_shard = particle_filter.particle_filter(self.data['shard_'+str(rank)], 
-        #                                               self.PART_NUM, 
-        #                                               self.model,
-        #                                               self.sample_method
-        #                                              )
-        
-        #pfo_on_shard.run_particle_filter()
+        print('initializing workers')
+        self.parallel_workers = Parallel(n_jobs=self.number_of_shards)
+        print('done\ninitializing particle filters')
+        #self.parallel_workers(delayed(np.sqrt)(m) for m in range(self.number_of_shards))
         
         
-        
-        #if self.rank==0:
-        #    self.pf_obj = comm.gather((pfo_on_shard), root=0)
-        #    print ("got results: ",self.pf_obj)
-        #job_args = [args_for_job_1, args_for_job_2, args_for_job_3...]
-
-        #pool = mp.Pool(self.number_of_shards)
-        #
-        #for m in range(self.number_of_shards):
-        #    print("not fitting shard ", m)
-        #    pfo = particle_filter.particle_filter(self.data['shard_'+str(m)], 
-        #                                          self.PART_NUM, 
-        #                                          self.model,
-        #                                          self.sample_method
-        #                                         )
-        #    self.pf_obj.append(pfo)
-        #    #self.pf_obj[m].run_particle_filter()
-        #    
-        #self.pf_obj = pool.map(run_particle_filter_wrapper, self.pf_obj)
+        #self.pf_obj = self.parallel_workers(delayed(particle_filter.particle_filter
+        #                               )(self.data['shard_'+str(m)], 
+        #                                 self.PART_NUM, 
+        #                                 self.model,
+        #                                 self.sample_method
+        #                                ) for m in range(self.number_of_shards)
+        #                       )
+        self.pf_obj = self.parallel_workers(
+            delayed(
+                particle_filter_init_wrapper
+            )(
+                f_shards_data = self.data['shard_'+str(m)], 
+                f_part_num = self.PART_NUM, 
+                f_model = self.model,
+                f_sample_method = self.sample_method
+            ) for m in range(self.number_of_shards)
+        )
+        print('initialized')
+        #self.pf_obj = self.parallel_workers(delayed(run_particle_filter_wrapper
+        #                               )(pfo = self.pf_obj[m]
+        #                                ) for m in range(self.number_of_shards)
+        #                       )
     
     
     def run_batch(self, data):
-        print("just entered run_batch.......")
-        self.pf_obj = Parallel(n_jobs=self.number_of_shards 
-                              )(delayed(update_data_wrapper)(pfo = self.pf_obj[m], 
-                                                           f_data = data['shard_'+str(m)]) 
-                                        for m in range(self.number_of_shards))
-        self.pf_obj = Parallel(n_jobs=self.number_of_shards 
-                              )(delayed(run_particle_filter_wrapper)(pfo = self.pf_obj[m]) 
-                                        for m in range(self.number_of_shards))
         
-        #for m in range(self.number_of_shards):
-        #    #self.pf_obj[m].update_data(data['shard_'+str(m)])
-        #    self.pf_obj[m].run_particle_filter()
-            
+        self.parallel_workers = Parallel(n_jobs=self.number_of_shards)
+
+        self.pf_obj = self.parallel_workers(
+            delayed(
+                update_data_wrapper
+            )(
+                pfo = self.pf_obj[m], 
+                f_data_X_matrix = data['shard_'+str(m)]['X_matrix'],
+                f_data_Y = data['shard_'+str(m)]['Y']
+            ) for m in range(self.number_of_shards)
+        )
         
-    
-    #def update_parallel_pf_data(self, data):
-    #    for m in range(self.number_of_shards):
-    #        self.pf_obj[m].update_data(self.data['shard_'+str(m)])
+        #self.pf_obj = self.parallel_workers(
+        #    delayed(
+        #        run_particle_filter_wrapper
+        #    )(
+        #        pfo = self.pf_obj[m]
+        #    ) for m in range(self.number_of_shards)
+        #)
             
     def plot_parameter_path(self, particle_prop=0.01):
         print("plot_parameter_path...")
@@ -124,10 +254,7 @@ class embarrassingly_parallel:
               p_temp = particle.bo_list[:,os].copy()
               p_temp[np.isnan(p_temp)]=0
               temp_all_parts[pn,:]=np.add(temp_all_parts[pn,:],p_temp)
-                
-          #for ts in range(len(self.params['epoch_at'])):
-          #  ts_values=self.params['epoch_at'][ts]
-          #  temp_all_parts[:,ts_values]=temp_all_parts[:,ts_values]/self.data['parallel_shards']      
+                     
           params.append(temp_all_parts)
         
         for par_n in range(param_num):
@@ -136,7 +263,7 @@ class embarrassingly_parallel:
             above=np.add(avg_param_0,std_parma_0*2)
             below=np.add(avg_param_0,-std_parma_0*2)
             
-            truth=self.data['b'][:,par_n]#data['shard_0']['b'][:,par_n]
+            truth=self.data['b'][:,par_n]
             
             x = np.arange(len(avg_param_0)) # the points on the x axis for plotting
             
@@ -165,7 +292,6 @@ class embarrassingly_parallel:
         temp_all_parts[temp_all_parts==0]=np.NaN
 
         counter=0
-        #print('enter sn loop')
         for sn in range(self.data['parallel_shards']):
             for pn in range(len(particle_indices)):
                 particle=self.pf_obj[sn].get_particle(particle_indices[pn])
@@ -174,9 +300,7 @@ class embarrassingly_parallel:
 
         params=np.nanmean(temp_all_parts, axis=2)
         params_std=np.nanstd(temp_all_parts, axis=2)
-        #print("params.shape=",params.shape)
-        #print('parmas=', params)
-        #print('enter par_n loop')
+
         for par_n in range(param_num):
             avg_param_0=params[:,par_n]
             avg_param_0=pd.Series(avg_param_0).fillna(method='ffill')
@@ -205,11 +329,11 @@ class embarrassingly_parallel:
                 plt.grid(True)
                     
             plt.show()
+            
 
     def plot_CMC_parameter_path_by_shard(self, particle_prop=0.01):
         print("plot_parameter_path...")
         color_list = sns.color_palette(None, self.data['parallel_shards'])
-#['r','g','b','k']
         param_num=self.pf_obj[0].get_particle(0).bo_machine_list.shape[1]
         total_time_steps = len(self.pf_obj[0].get_particle(0).bo_machine_list[:,0])
         max_val=max(int(self.PART_NUM*particle_prop), 1)
@@ -219,7 +343,7 @@ class embarrassingly_parallel:
 
             for sn in range(self.data['parallel_shards']):
                 plt.title('parameter {}, shard {}'.format(par_n+1,sn+1))
-                truth=self.data['b'][:,par_n]#data['shard_0']['b'][:,par_n]
+                truth=self.data['b'][:,par_n]
                 # the points on the x axis for plotting
                 x = np.arange(len(self.data['b'][:,par_n])) 
                 plt.plot(x,truth,'black')
@@ -256,19 +380,15 @@ class embarrassingly_parallel:
                 plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
                 plt.grid(True)
                     
-                plt.show()
+            plt.show()
                 
             
     def shuffel_embarrassingly_parallel_particles(self, 
                                                   machine_list=None, 
                                                   method=None, 
                                                   wass_n=None):
-        
-        #if rank == 0:
-        #    print("in shuffel_embarrassingly_parallel_particles, we can see rank 0")
                 
         self.all_particles=list()
-        #print("self.data.keys():",self.data.keys())
         for m in range(self.data['parallel_shards']):
             for p in range(self.PART_NUM):
 
@@ -294,7 +414,8 @@ class embarrassingly_parallel:
                     first=self.all_particles[index_vals[count]] 
                     self.pf_obj[m].particle_list[p].copy_particle_values(first)
                     count+=1
-        else:        
+                    
+        if method == "uniform":        
             for m in range(self.data['parallel_shards']):
                 for p in range(self.PART_NUM):
                     index=randint(0, len(self.all_particles)-1)
@@ -305,16 +426,13 @@ class embarrassingly_parallel:
         self.data = data_from_outside
         
     def prep_particles_for_wassber(self, n):
-    #if True:
-        #print("running the code to make theta")
-        #n=PART_NUM
+
         K=self.number_of_shards
-        
         myTheta=list()
-        theta = np.zeros((n*K,len(self.params['omega_shift'])))
+        theta = np.zeros((n*K,self.params['p']))#['omega_shift'])))
         row=0
         for m in range(self.number_of_shards):
-            myTheta.append(np.zeros((n,len(self.params['omega_shift']))))
+            myTheta.append(np.zeros((n,self.params['p'])))#['omega_shift']))))
             for p in range(n):
                 particle_index = randint(0, self.PART_NUM-1)
                 theta[row,:] = myTheta[m][p,:] = self.pf_obj[m].particle_list[particle_index].bo
@@ -394,7 +512,7 @@ class embarrassingly_parallel:
         myTheta_list   = list()
         apx_bc_mac_wts = list()
         f_K = self.number_of_shards
-        f_d = len(self.params['omega_shift'])
+        f_d = len(self.params['p'])#['omega_shift'])
         for i in range(wsbc_num):
             theta, myTheta = self.prep_particles_for_wassber(f_n)
             wssber_wts[i] = self.get_wasserstein_barycenter(f_n, f_K, f_d, theta, myTheta)

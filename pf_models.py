@@ -48,8 +48,8 @@ class probit_sin_wave_particle:
         self.useful_calcs(X)
         B_mu_proposed=np.random.multivariate_normal(np.transpose(self.bo), self.B_cov,1).reshape(self.p,1).flatten()
         self.bo=B_mu_proposed
-        self.bo_list[j,:]=np.transpose(B_mu_proposed).copy()
-        self.bo_machine_list[j,:]=np.transpose(B_mu_proposed).copy()
+        self.bo_list[j,:]=np.transpose(B_mu_proposed)#.copy()
+        self.bo_machine_list[j,:]=np.transpose(B_mu_proposed)#.copy()
         
     def update_particle(self,X,Y, j):
         self.useful_calcs(X)
@@ -63,12 +63,20 @@ class probit_sin_wave_particle:
         #print("matmul=", np.matmul(X, self.bo))
         x_j_tB=X.dot(self.bo)#(np.matrix(X.iloc[j])).dot(self.bo)
         #print("x_j_tB=",x_j_tB)
+        #for n_batch in range(X.shape[0]):
+        #    if Y[n_batch]==1:
+        #        self.Zi[str(j)][n_batch]=self.get_truncated_normal(mean=x_j_tB[n_batch], sd=1, low=0, upp=100).rvs(1)
+        #    else:
+        #        self.Zi[str(j)][n_batch]=self.get_truncated_normal(mean=-x_j_tB[n_batch], sd=1, low=-100, upp=0).rvs(1)
+        print("in update_particle")
+        print("X.shape=",X.shape)
         for n_batch in range(X.shape[0]):
+            print( Y[n_batch],'==',1)
             if Y[n_batch]==1:
-                self.Zi[str(j)][n_batch]=self.get_truncated_normal(mean=x_j_tB[n_batch], sd=1, low=0, upp=100).rvs(1)
+                self.Zi=self.get_truncated_normal(mean=x_j_tB[n_batch], sd=1, low=0, upp=100).rvs(1)
             else:
-                self.Zi[str(j)][n_batch]=self.get_truncated_normal(mean=-x_j_tB[n_batch], sd=1, low=-100, upp=0).rvs(1)
-            
+                self.Zi=self.get_truncated_normal(mean=-x_j_tB[n_batch], sd=1, low=-100, upp=0).rvs(1)
+                
         ########################################################################
         #
         #model values need to accommodate knowing the coavariance matrix 
@@ -85,7 +93,9 @@ class probit_sin_wave_particle:
         #print("Zi=", self.Zi)
         
         
-        B_mu = self.B_cov.dot(Bo_inv_bo + np.transpose(X).dot(self.Zi[str(j)]))
+        #B_mu = self.B_cov.dot(Bo_inv_bo + np.transpose(X).dot(self.Zi[str(j)]))
+        B_mu = self.B_cov.dot(Bo_inv_bo + np.transpose(X).dot(self.Zi))
+
         #print("B_mu=", B_mu)
         #print("np.transpose(B_mu)[0]=",np.transpose(B_mu)[0])
         m=np.transpose(B_mu)[0]
@@ -93,13 +103,14 @@ class probit_sin_wave_particle:
         #print("self.B_cov=",self.B_cov)
         B = np.random.multivariate_normal(m, self.B_cov,1).reshape(len(m),1)
         #print("the new self.bo", B)
-        self.bo=B.copy()
-        self.bo_list[j,:]=np.transpose(B).copy()#[0]
-        self.bo_machine_list[j,:]=np.transpose(B).copy()
+        self.bo=B#.copy()
+        self.bo_list[j,:]=np.transpose(B)#.copy()#[0]
+        self.bo_machine_list[j,:]=np.transpose(B)#.copy()
         #self.bo_list[j,1]=B[1]
         #self.bo_list[j,2]=B[2]
         self.Bo_suf_stat+=self.Bo_suf_stat+(B_mu-self.bo).dot(np.transpose(B_mu-self.bo))
         temp_cov = invwishart.rvs(df=self.df, scale=self.Bo_suf_stat)
+        print("temp_cov=", temp_cov)
         self.Bo= np.linalg.inv(temp_cov)
         self.df+=1
         
@@ -115,6 +126,7 @@ class probit_sin_wave_particle:
         #self.Bo_inv_bo =np.linalg.inv(self.Bo).dot(self.bo)
         #self.B_cov     =np.linalg.inv(np.linalg.inv(self.Bo) + self.XtX)
         #print("just called useful_calcs shape of X=", X.shape)
+        #print("self.Bo=",self.Bo)
         self.Bo_inv    =np.linalg.inv(self.Bo)
         self.B_cov     =np.linalg.inv(self.Bo_inv + self.XtX)#self.N_batch*self.Bo)
         #print('self.B_cov=', self.B_cov)
@@ -127,12 +139,16 @@ class probit_sin_wave_particle:
         return
     
     def set_Zi(self, full_data):
-        keys=full_data.keys()
-        N=len(keys)
-        self.Zi={}
-        for key in keys:
-            self.Zi[key]=np.zeros((full_data[key].shape[0],1))
-
+        #keys=full_data.keys()
+        #N=full_data.shape[0]#len(keys)
+        #self.Zi={}
+        #for key in keys:
+        #    self.Zi[key]=np.zeros((full_data[key].shape[0],1))
+        #print("in set_Zi")
+        #print("full_data.shape", full_data.shape)
+        self.Zi=np.zeros((1,1))#np.zeros((full_data.shape[0],1))
+        return
+    
     def set_shard_number(self, shards):
         self.shards=shards
             
