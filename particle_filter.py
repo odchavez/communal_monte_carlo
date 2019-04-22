@@ -22,7 +22,6 @@ class particle_filter:
         
         if self.model=="probit":
             #create particles
-            #PART_NUM=20
             self.X=dat.X
             self.Y=dat.Y
             self.p=dat.p
@@ -32,51 +31,24 @@ class particle_filter:
                 
         elif self.model== "probit_sin_wave":
             print("working on model ", model)
-            self.X=dat['X_matrix']#dat['X']
+            self.X=dat['X_matrix']
             self.Y=dat['Y']
             self.p=dat['p']
             self.N=dat['N']
             
-            #self.batch_num=dat['batch_number']
             self.shards=dat['shards']
             for pn in range(self.PART_NUM):
-            
-                #print("particle number:",pn)
-                #print("dat.b=",dat.b)
-                #print("dat.b[0]=",dat.b[0])
-                temp_particle=pf.probit_sin_wave_particle( np.array(dat['b'][0]), dat['B'], pn)#dat.b[0].dot(np.ones((self.p,1)))
+                temp_particle=pf.probit_sin_wave_particle( np.array(dat['b'][0]), dat['B'], pn)#( np.array(dat['b'][0]), dat['B'], pn)
                 temp_particle.set_N(self.N)
                 temp_particle.set_Zi(self.X)
                 temp_particle.set_bo_list()
                 temp_particle.set_shard_number(self.shards)
                 self.particle_list.append(temp_particle)
-                #print("particle_list=",self.particle_list)
         else:
             print(model, " not implemented yet...")
-            
-    #def run_multi_batch_particle_filter(self, X, y):
-    #    if self.model=="probit_sin_wave":
-    #        x_keys = list(X.keys())
-    #        y_keys = list(Y.keys())
-    #        for n in range(len(x_keys)):
-    #            if n in list(range(0,len(x_keys), int(0.2*len(x_keys)))):
-    #                print("batch ", x_keys[n])
-    #            for pn in range(self.PART_NUM):
-    #                if self.sample_method=='importance':
-    #                    self.particle_list[pn].update_particle_importance(X[x_keys[n]], 
-    #                                                                      Y[y_keys[n]], 
-    #                                                                      int(x_keys[n].split(":")[0]))
-    #                else:
-    #                    print("else in run_multi_batch_particle_filter not implemented")
-    #
-    #            self.shuffle_particles(n)
-    #    else:
-    #        print("did nothing...")
-    #    return
                         
     def run_particle_filter(self):
         #single interation of P particles
-        #print("just entered run_particle_filter in particle_filter.py")
         self.not_norm_wts=np.ones(self.PART_NUM)
         if self.model=="probit":
             for pn in range(self.PART_NUM):
@@ -84,44 +56,23 @@ class particle_filter:
                 self.particle_list[pn].update_particle(self.X, self.Y)
                 self.not_norm_wts[pn]=particle_list[pn].evaluate_likelihood(self.X, self.Y)
         if self.model=="probit_sin_wave":
-            #print("in run_particle_filter, ", self.model)
-            x_keys = self.data_keys#list(self.X.keys())
-            #print('x_keys=',x_keys)
-            y_keys = self.data_keys#list(self.Y.keys())
-            #print('y_keys=',y_keys)
-            #for n in range(self.batch_num):
-            #pbar = tqdm(total=len(x_keys))
-            #pbar.set_description("progressin shard")
+            x_keys = self.data_keys
+            y_keys = self.data_keys
             
-            for n in range(self.X.shape[0]):#range(len(x_keys)):# self.batch_num):
-                #pbar.update(1)
-
-                #print("batch ", x_keys[n])
-                #if n in list(range(0,len(x_keys), int(0.2*len(x_keys)))):#%np.floor(self.batch_num*0.20)==0:
+            for n in range(self.X.shape[0]):
                 n_check_point = np.floor(self.N*0.10)
                 if n % n_check_point ==0:
                     print(str(100*n/self.N)+"% of total file complete...")
                     print(str(100*n/self.X.shape[0])+"% of shard complete...")
                     
                 for pn in range(self.PART_NUM):
-                    #print("particle ", pn)
                     if self.sample_method=='importance':
-                        #print("got fix this --->>> int(x_keys[n].split(':')[0]):", int(x_keys[n].split(":")[0]))
-                        #print('n=',n)
-                        #print('x_keys[n]=',x_keys[n])
-                        #print('y_keys[n]=',y_keys[n])
-                        #self.particle_list[pn].update_particle_importance(self.X[x_keys[n]], self.Y[y_keys[n]], int(x_keys[n].split(":")[0]))
                         self.particle_list[pn].update_particle_importance(self.X[n,:], self.Y[n], int(x_keys[n].split(":")[0]))
-                        
                     else:
-                        #self.particle_list[pn].update_particle(self.X[x_keys[n]], self.Y[y_keys[n]], n)
                         self.particle_list[pn].update_particle(self.X[n,:], self.Y[n], n)
-                    #self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[x_keys[n]], self.Y[y_keys[n]])
                     self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[n,:], self.Y[n])
-                
-                #print('self.not_norm_wts=',self.not_norm_wts)
-                #print("n before shuffle:",n)
-                self.shuffle_particles()#n)
+                self.shuffle_particles()
+            print("max(self.not_norm_wts)=", max(self.not_norm_wts))
         return
     
     def shuffle_particles(self):#,n):
@@ -175,7 +126,7 @@ class particle_filter:
                     break
                 if break_ti_for: break
         #print("exit shuffle_particle")
-
+        #print("max(norm_wts)=", max(norm_wts))
 
         
     def print_stuff(self):

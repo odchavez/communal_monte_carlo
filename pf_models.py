@@ -8,6 +8,7 @@ import numpy as np
 #import csv
 from matplotlib import pyplot as plt
 from scipy.stats import invwishart#, invgamma
+import operator
 
 class probit_sin_wave_particle:
     def __init__(self, bo, Bo, idval):#
@@ -21,12 +22,13 @@ class probit_sin_wave_particle:
         self.log_lik=-99999999999.0
         self.p=len(bo)
         self.shards=1
+        self.this_time=0
         
 
     def evaluate_likelihood(self, X, Y):
         #print("in evaluate likelihood ")
-        #print("X=",X)
-        #print('self.bo=',self.bo)
+        print("X.shape=",X.shape)
+        print('self.bo.shape=',self.bo.shape)
         x_j_tB=X.dot(self.bo)#(np.transpose(self.bo))
         #print('x_j_tB=',x_j_tB)
         log_PHI=np.log(norm.cdf(x_j_tB))#[0]
@@ -43,32 +45,29 @@ class probit_sin_wave_particle:
         #print("log_lik=",log_lik)
         return(log_lik)
     
-    def update_particle_importance(self, X, Y, j):
+    def update_particle_importance(self, X, Y, j, predictors = None):
+        if predictors != None:
+            time_location = predictors == 'CRSDepTime'
+            self.last_time = self.this_time
+            self.this_time = X[time_location]
         #print("just entered update_particle_importance in pf_models.py")
+        #print(X)
         self.useful_calcs(X)
+        print("np.transpose(self.bo).shape: ", np.transpose(self.bo).shape)
+        print("self.B_cov.shape: ", self.B_cov.shape)
         B_mu_proposed=np.random.multivariate_normal(np.transpose(self.bo), self.B_cov,1).reshape(self.p,1).flatten()
+        B_mu_proposed = B_mu_proposed / np.sqrt(np.diag(self.B_cov))
+        #print("np.transpose(self.bo)=", np.transpose(self.bo))
+        #B_mu_proposed=np.random.multivariate_normal(np.zeros(self.p), self.B_cov,1).reshape(self.p,1).flatten()
+
         self.bo=B_mu_proposed
         self.bo_list[j,:]=np.transpose(B_mu_proposed)#.copy()
         self.bo_machine_list[j,:]=np.transpose(B_mu_proposed)#.copy()
         
     def update_particle(self,X,Y, j):
         self.useful_calcs(X)
-        #for j in range(self.N):
-        #print("X=",X)
-        #print("np.matrix(X)=",np.matrix(X))
-        
-        #print("np.matrix(X[j])=",np.matrix(X[j]))
-        #print("self.bo=", self.bo)
-        #print("*******************")
-        #print("matmul=", np.matmul(X, self.bo))
         x_j_tB=X.dot(self.bo)#(np.matrix(X.iloc[j])).dot(self.bo)
-        #print("x_j_tB=",x_j_tB)
-        #for n_batch in range(X.shape[0]):
-        #    if Y[n_batch]==1:
-        #        self.Zi[str(j)][n_batch]=self.get_truncated_normal(mean=x_j_tB[n_batch], sd=1, low=0, upp=100).rvs(1)
-        #    else:
-        #        self.Zi[str(j)][n_batch]=self.get_truncated_normal(mean=-x_j_tB[n_batch], sd=1, low=-100, upp=0).rvs(1)
-        print("in update_particle")
+        print("***********************in update_particle***********************")
         print("X.shape=",X.shape)
         for n_batch in range(X.shape[0]):
             print( Y[n_batch],'==',1)
@@ -84,30 +83,12 @@ class probit_sin_wave_particle:
         ########################################################################
                     
         Bo_inv_bo=self.Bo_inv.dot(self.bo)
-        #print("Bo_inv_bo=",Bo_inv_bo)
-        #print("self.B_cov=",self.B_cov)
-        #print("X.reshape(len(X,1)=",X.reshape(len(X),1))
-        #print("np.transpose(X)=",np.transpose(X))
-        #print("Zi[str(j)])=", self.Zi[str(j)])
-        #print(self.Zi.keys())
-        #print("Zi=", self.Zi)
-        
-        
-        #B_mu = self.B_cov.dot(Bo_inv_bo + np.transpose(X).dot(self.Zi[str(j)]))
         B_mu = self.B_cov.dot(Bo_inv_bo + np.transpose(X).dot(self.Zi))
-
-        #print("B_mu=", B_mu)
-        #print("np.transpose(B_mu)[0]=",np.transpose(B_mu)[0])
         m=np.transpose(B_mu)[0]
-        #print("m=",m)
-        #print("self.B_cov=",self.B_cov)
         B = np.random.multivariate_normal(m, self.B_cov,1).reshape(len(m),1)
-        #print("the new self.bo", B)
-        self.bo=B#.copy()
-        self.bo_list[j,:]=np.transpose(B)#.copy()#[0]
-        self.bo_machine_list[j,:]=np.transpose(B)#.copy()
-        #self.bo_list[j,1]=B[1]
-        #self.bo_list[j,2]=B[2]
+        self.bo=B
+        self.bo_list[j,:]=np.transpose(B)
+        self.bo_machine_list[j,:]=np.transpose(B)
         self.Bo_suf_stat+=self.Bo_suf_stat+(B_mu-self.bo).dot(np.transpose(B_mu-self.bo))
         temp_cov = invwishart.rvs(df=self.df, scale=self.Bo_suf_stat)
         print("temp_cov=", temp_cov)
@@ -121,33 +102,19 @@ class probit_sin_wave_particle:
         return(self.particle_id_history)
     
     def useful_calcs(self, X):
-        #print("useful_calcs in pf_models.py enter")
         self.XtX       =X.transpose().dot(X)
-        #self.Bo_inv_bo =np.linalg.inv(self.Bo).dot(self.bo)
-        #self.B_cov     =np.linalg.inv(np.linalg.inv(self.Bo) + self.XtX)
-        #print("just called useful_calcs shape of X=", X.shape)
-        #print("self.Bo=",self.Bo)
+        print("self.XtX.shape= " , self.XtX.shape )
         self.Bo_inv    =np.linalg.inv(self.Bo)
-        self.B_cov     =np.linalg.inv(self.Bo_inv + self.XtX)#self.N_batch*self.Bo)
-        #print('self.B_cov=', self.B_cov)
-        #print("self.particle_id=",self.particle_id)
-        #print("useful_calcs in pf.models exit")
-        return
+        print("self.Bo_inv.shape=", self.Bo_inv.shape)
+        self.B_cov     =np.linalg.inv(self.Bo_inv + self.XtX)
+        print("self.B_cov.shape=", self.B_cov.shape)
     
     def set_N(self, N):
         self.N=N
         return
     
     def set_Zi(self, full_data):
-        #keys=full_data.keys()
-        #N=full_data.shape[0]#len(keys)
-        #self.Zi={}
-        #for key in keys:
-        #    self.Zi[key]=np.zeros((full_data[key].shape[0],1))
-        #print("in set_Zi")
-        #print("full_data.shape", full_data.shape)
-        self.Zi=np.zeros((1,1))#np.zeros((full_data.shape[0],1))
-        return
+        self.Zi=np.zeros((1,1))
     
     def set_shard_number(self, shards):
         self.shards=shards
@@ -182,12 +149,31 @@ class probit_sin_wave_particle:
         print("particle_id=",self.particle_id)
         print("particle_id_history=",self.particle_id_history)
         #print(self.XtX)
-        #print(self.Bo_inv_bo)
+        print(self.Bo_inv)
         print(self.B_cov)
         print(self.N)
         print(self.Zi)
         print("self.bo_list=",self.bo_list)
         
+    def print_max(self):
+         
+        L = [
+                (np.amax( self.bo ))
+                ,(np.amax( self.Bo ))
+                ,(np.amax( self.particle_id ))
+                ,(np.amax( self.particle_id_history ))
+                ,(np.amax( self.XtX ))
+                ,(np.amax( self.B_cov ))
+                ,(np.amax( self.Bo_inv))
+                ,(np.amax( self.N ))
+                ,(np.amax( self.Zi ))
+                ,(np.amax( self.bo_list ))
+                ,(np.amax( self.Bo_suf_stat ))
+                ,(np.amax( self.log_lik ))
+                ,(np.amax( self.bo_machine_list))
+            ]
+        print(max(L))
+    
     def plot_parameters(self):
         #plot parameters
         print("self.N=",self.N)
@@ -246,7 +232,20 @@ class probit_particle:
         print(self.N)
         print(self.Zi)
         
-        
+    def print_max(self):
+        L = [ 
+            self.bo
+            ,self.Bo
+            ,self.particle_id
+            ,self.particle_id_history
+            ,self.XtX
+            ,self.Bo_inv_bo
+            ,self.B_cov
+            ,self.N
+            ,self.Zi
+        ]   
+        output = reduce(operator.concat, L)
+        return(output)
     
     def get_truncated_normal(self, mean, sd=1, low=0, upp=10):
         return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)

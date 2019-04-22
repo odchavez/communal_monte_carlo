@@ -3,11 +3,13 @@ import pandas as pd
 import numpy as np
 import particle_filter
 import pf_models as pfm
+import math as m
 from random import randint
 from scipy.optimize import linprog
 import seaborn as sns
 from joblib import Parallel, delayed
 from joblib import parallel_backend
+
 
 
 def particle_filter_init_wrapper(f_shards_data, f_part_num, f_model, f_sample_method):
@@ -78,16 +80,21 @@ def plot_CMC_parameter_path_(pf_obj, PART_NUM, number_of_shards, data, params, p
         
 def plot_CMC_parameter_path_by_shard(data, pf_obj, PART_NUM, number_of_shards, particle_prop=0.01):
     print("plot_parameter_path...")
+    print(data['predictors'])
     color_list = sns.color_palette(None, data['parallel_shards'])
-    param_num = pf_obj[0].get_particle(0).bo_machine_list.shape[1]
+    param_num = len(data['predictors'])#pf_obj[0].get_particle(0).bo_machine_list.shape[1]
     total_time_steps = len( pf_obj[0].get_particle(0).bo_machine_list[:,0] )
     max_val=max(int(PART_NUM*particle_prop), 1)
     particle_indices = np.random.choice(PART_NUM, max_val)
+    print("entering first loop")
     for par_n in range(param_num):
         
-
+        min_tic = 9999999999999
+        max_tic = -9999999999999
+        print("entering second loop")
         for sn in range(data['parallel_shards']):
-            plt.title('parameter {}, shard {}'.format(par_n+1,sn+1))
+            print("working on shard " + str(sn))
+            #plt.title('parameter {}, shard {}'.format(par_n+1,sn+1))
             truth = data['b'][:,par_n]
             # the points on the x axis for plotting
             x = np.arange(len(data['b'][:,par_n])) 
@@ -95,8 +102,10 @@ def plot_CMC_parameter_path_by_shard(data, pf_obj, PART_NUM, number_of_shards, p
             params=list()
             Z_dim = number_of_shards * PART_NUM
             temp_all_parts = np.zeros((total_time_steps, param_num, Z_dim))
+            print("temp_all_parts.shape=", temp_all_parts.shape)
             temp_all_parts[temp_all_parts==0]=np.NaN
             counter=0
+            print("entering third loop")
             for pn in range(len(particle_indices)):
                 particle = pf_obj[sn].get_particle(particle_indices[pn])
                 temp_all_parts[:,:,counter] = particle.bo_machine_list.copy()
@@ -120,13 +129,31 @@ def plot_CMC_parameter_path_by_shard(data, pf_obj, PART_NUM, number_of_shards, p
             plt.plot(x,avg_param_0, c=color_list[sn], marker='.', alpha=.8)
             #for line_tick in self.params['epoch_at']:
             #    plt.axvline(x=line_tick, color='r', alpha=0.25)
-            min_tic=np.min([np.min(below),np.min(truth)])
-            max_tic=np.max([np.max(above),np.max(truth)])
-            plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
-            plt.grid(True)
+            
+            min_max_scale=1.0
+            min_tic = min( min_tic, m.floor(np.min(below)/min_max_scale)*min_max_scale)
+            max_tic = max( max_tic, m.ceil(np.max(above)/min_max_scale)*min_max_scale)
+            #if np.min(below) < 0:
+            #    min_tic = m.ceil(np.min(below)/10.0)*10.0
+            #else:
+            #    min_tic= m.floor(np.min(below)/10.0)*10.0 #  floor(np.min(below))#np.min([np.min(below),np.min(truth)])
+            #
+            #if np.max(above) < 0:
+            #    max_tic = m.floor(np.min(above)/10.0)*10.0
+            #else:
                 
+            #max_tic=np.max([np.max(above),np.max(truth)])
+        print("end of second loop")
+        print("check point")    
+        #plt.yticks(np.linspace(start=min_tic, stop=max_tic, num= 1 + round(max_tic-min_tic)/min_max_scale ))
+        print(1)
+        plt.grid(True)
+        print(2)
+        plt.title(data['predictors'][par_n])      
+        print(3)
         plt.show()
-
+        print("end point")
+        
 def shuffel_embarrassingly_parallel_particles(data,
                                               PART_NUM,
                                               pf_obj,
