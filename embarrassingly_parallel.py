@@ -4,11 +4,12 @@ import numpy as np
 import particle_filter
 import pf_models as pfm
 import math as m
-from random import randint
+import random
 from scipy.optimize import linprog
 import seaborn as sns
-from joblib import Parallel, delayed
-from joblib import parallel_backend
+
+#from joblib import Parallel, delayed
+#from joblib import parallel_backend
 
 
 
@@ -24,31 +25,36 @@ def update_data_wrapper(pfo, f_data_X_matrix, f_data_Y):
     pfo.update_data(f_data_X_matrix, f_data_Y)
     return(pfo)
 
-def plot_CMC_parameter_path_(pf_obj, PART_NUM, number_of_shards, data, params, particle_prop=0.01):
+def plot_CMC_parameter_path_(ObsN_ParamN_Part_N, predictor_names):
     print("plot_parameter_path...")
-    
-    param_num=pf_obj[0].get_particle(0).bo_list.shape[1]
-    total_time_steps = len(pf_obj[0].get_particle(0).bo_list[:,0])
+    print("ObsN_ParamN_Part_N.shape = ", ObsN_ParamN_Part_N.shape)
+    #pf_obj, PART_NUM, number_of_shards, data, params, particle_prop=0.01
+    total_time_steps, param_num, Z_dim = ObsN_ParamN_Part_N.shape#pf_obj[0].get_particle(0).bo_list.shape[1]
+    #total_time_steps = len(pf_obj[0].get_particle(0).bo_list[:,0])
     params=list()
-    particle_indices = np.random.choice(PART_NUM, max(int(PART_NUM*particle_prop), 1))
+    #particle_indices = np.random.choice(PART_NUM, max(int(PART_NUM*particle_prop), 1))
     
-    Z_dim=number_of_shards*PART_NUM
-    temp_all_parts = np.zeros((total_time_steps, param_num, Z_dim))
-    temp_all_parts[temp_all_parts==0]=np.NaN
+    #Z_dim=number_of_shards*PART_NUM
+    #temp_all_parts = np.zeros((total_time_steps, param_num, Z_dim))
+    #temp_all_parts[temp_all_parts==0]=np.NaN
+    
+    #counter=0
+    #for sn in range(data['parallel_shards']):
+    #    for pn in range(len(particle_indices)):
+    #        particle=pf_obj[sn].get_particle(particle_indices[pn])
+    #        temp_all_parts[:,:,counter] = particle.bo_list.copy()
+    #        print("particle.bo_list.copy() = ", particle.bo_list.copy())
+    #        counter+=1
+    print( "averaging accross ObsN_ParamN_Part_N.shape", ObsN_ParamN_Part_N.shape)
+    params     = np.nanmean(ObsN_ParamN_Part_N, axis=2)#np.nanmean(temp_all_parts, axis=2)
+    print( "results are ", params.shape)
 
-    counter=0
-    for sn in range(data['parallel_shards']):
-        for pn in range(len(particle_indices)):
-            particle=pf_obj[sn].get_particle(particle_indices[pn])
-            temp_all_parts[:,:,counter] = particle.bo_list.copy()
-            counter+=1
+    params_std = np.nanstd(ObsN_ParamN_Part_N, axis=2)#np.nanstd(temp_all_parts, axis=2)
 
-    params=np.nanmean(temp_all_parts, axis=2)
-    params_std=np.nanstd(temp_all_parts, axis=2)
-
-    for par_n in range(len(data['predictors'])):#range(param_num):
+    for par_n in range(param_num):#range(len(data['predictors'])):#range(param_num):
         print("plotting "+ str(par_n))
         avg_param_0=params[:,par_n]
+        #print("avg_param_0 = ", avg_param_0)
         avg_param_0=pd.Series(avg_param_0).fillna(method='ffill')
         avg_param_0=pd.Series(avg_param_0).fillna(method='bfill')
             
@@ -59,15 +65,15 @@ def plot_CMC_parameter_path_(pf_obj, PART_NUM, number_of_shards, data, params, p
         above=np.add(avg_param_0,std_parma_0*2)
         below=np.add(avg_param_0,-std_parma_0*2)
         
-        truth=data['b'][:,par_n]
-        
+        #truth=data['b'][:,par_n]
+        #print("truth = ", truth.shape)
         x = np.arange(len(avg_param_0)) 
-        
+        #print("x = ", x.shape)
         fig, ax1 = plt.subplots()
-        plt.plot(x,truth,'black')
+        #plt.plot(x,truth,'black')
         ax1.fill_between(x, below, above, facecolor='green',  alpha=0.3)
         plt.plot(x,avg_param_0, 'b', alpha=.8)
-        plt.title(data['predictors'][par_n])
+        plt.title("parameter " + predictor_names[par_n] + " name here")#data['predictors'][par_n])
         #for line_tick in params['epoch_at']:
         #    plt.axvline(x=line_tick, color='r', alpha=0.25)
         #    min_tic=np.min([np.min(below),np.min(truth)])
@@ -148,7 +154,7 @@ def plot_CMC_parameter_path_by_shard(data, pf_obj, PART_NUM, number_of_shards, p
         #plt.yticks(np.linspace(start=min_tic, stop=max_tic, num= 1 + round(max_tic-min_tic)/min_max_scale ))
         print(1)
         plt.grid(True)
-        print(2)
+        #print(2)
         plt.title(data['predictors'][par_n])      
         print(3)
         plt.show()
@@ -158,7 +164,7 @@ def shuffel_embarrassingly_parallel_particles(data,
                                               PART_NUM,
                                               pf_obj,
                                               machine_list=None, 
-                                              method=None, 
+                                              method='uniform', 
                                               wass_n=None):
             
     all_particles=list()
@@ -191,13 +197,38 @@ def shuffel_embarrassingly_parallel_particles(data,
     if method == "uniform":        
         for m in range(data['parallel_shards']):
             for p in range(PART_NUM):
-                index = randint(0, len(all_particles)-1)
+                index = random.randint(0, len(all_particles)-1)
                 first = all_particles[index] 
                 pf_obj[m].particle_list[p].copy_particle_values(first)
 
     return pf_obj
 
-
+def shuffel_embarrassingly_parallel_params(all_shard_params):
+    unlisted = list()
+    for m in range(len(all_shard_params)):
+        for p in range(len(all_shard_params[0])):
+            unlisted.append(all_shard_params[m][p])
+    #random.shuffle(unlisted) 
+    print("len(unlisted) = " + str(len(unlisted)))
+    print("unlisted[:5] = " + str(unlisted[:5]))
+    unlisted = np.array(unlisted)
+    
+    
+    #a = np.array([[1,2],[2,3]])
+    rows = np.random.randint(len(unlisted), size = len(unlisted))
+    sampled_unlisted = unlisted[rows,:]
+    
+    
+    output = list()
+    index = 0
+    for m in range(len(all_shard_params)):
+        shard_part = list()
+        for p in range(len(all_shard_params[0])):
+            shard_part.append(sampled_unlisted[index,:].copy())
+            index+=1
+        output.append(shard_part)
+    return(output)
+    
 class embarrassingly_parallel:
     
     def __init__(self, data, params):

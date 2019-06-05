@@ -19,17 +19,20 @@ class probit_sin_wave_particle:
         self.df=2
         self.particle_id=[idval]
         self.particle_id_history=idval
-        self.log_lik=-99999999999.0
+        self.log_lik=-100.0
         self.p=len(bo)
         self.shards=1
         self.this_time=0
+        self.sudo_epoch_time = 0
         
 
     def evaluate_likelihood(self, X, Y):
         #print("in evaluate likelihood ")
-        print("X.shape=",X.shape)
-        print('self.bo.shape=',self.bo.shape)
+        #print("X.shape=",X.shape)
+        #print('self.bo.shape=',self.bo.shape)
         x_j_tB=X.dot(self.bo)#(np.transpose(self.bo))
+        #print("X=", X)
+        #print("self.bo=",self.bo)
         #print('x_j_tB=',x_j_tB)
         log_PHI=np.log(norm.cdf(x_j_tB))#[0]
         #print("log_PHI=",log_PHI)
@@ -37,38 +40,76 @@ class probit_sin_wave_particle:
         #print("log_1_minus_PHI=",log_1_minus_PHI)
         one_minus_Y=1.0-Y 
         #print("one_minus_Y=",one_minus_Y)
-        A=np.dot(Y,log_PHI)
+        if Y == 0:
+            A = 0.0
+        else:
+            A=np.dot(Y,log_PHI)
         #print("np.dot(Y,log_PHI)=",np.dot(Y,log_PHI))
-        B=np.dot(one_minus_Y,log_1_minus_PHI)
+        if one_minus_Y == 0:
+            B=0
+        else:
+            B=np.dot(one_minus_Y,log_1_minus_PHI)
         #print("np.dot(one_minus_Y,log_1_minus_PHI)=",np.dot(one_minus_Y,log_1_minus_PHI))
+        #print("A=", A)
+        #print("B=", B)
         log_lik=(A+B)*self.shards
         #print("log_lik=",log_lik)
-        return(log_lik)
+        return_value = np.max([log_lik, self.log_lik])
+        return(return_value)
     
-    def update_particle_importance(self, X, Y, j, predictors = None):
-        if predictors != None:
-            time_location = predictors == 'CRSDepTime'
-            self.last_time = self.this_time
-            self.this_time = X[time_location]
+    def update_particle_importance(self, X, Y, j, time_value = None):
+        if time_value != None:
+            self.time_delta = time_value - self.this_time
+            self.this_time  += self.time_delta
+            self.sudo_epoch_time += self.time_delta
+        else:
+            self.this_time=1.0
+            self.sudo_epoch_time = 1.0
+        #print("this time = ", self.this_time)
         #print("just entered update_particle_importance in pf_models.py")
+        #print("X looks like:")
         #print(X)
+        #print("select index looks like:")
+        #print(~(X==0))
         self.useful_calcs(X)
-        print("np.transpose(self.bo).shape: ", np.transpose(self.bo).shape)
-        print("self.B_cov.shape: ", self.B_cov.shape)
-        B_mu_proposed=np.random.multivariate_normal(np.transpose(self.bo), self.B_cov,1).reshape(self.p,1).flatten()
-        B_mu_proposed = B_mu_proposed / np.sqrt(np.diag(self.B_cov))
+        #print("np.transpose(self.bo).shape: ", np.transpose(self.bo).shape)
+        #print("self.B_cov.shape: ", self.B_cov.shape)
+        
+        mu = np.transpose(self.bo) #np.zeros(self.p)
+        B_mu_proposed = np.random.multivariate_normal(
+            mu, 
+            self.B_cov,
+            1
+        ).reshape(self.p,1).flatten()
+        
+        #B_mu_proposed=np.random.multivariate_normal(np.transpose(self.bo), self.B_cov,1).reshape(self.p,1).flatten()
+        #B_mu_proposed = B_mu_proposed / np.sqrt(np.diag(self.B_cov))
         #print("np.transpose(self.bo)=", np.transpose(self.bo))
         #B_mu_proposed=np.random.multivariate_normal(np.zeros(self.p), self.B_cov,1).reshape(self.p,1).flatten()
-
-        self.bo=B_mu_proposed
-        self.bo_list[j,:]=np.transpose(B_mu_proposed)#.copy()
-        self.bo_machine_list[j,:]=np.transpose(B_mu_proposed)#.copy()
+        #print("B_mu_proposed:", B_mu_proposed)
+        #select_index = ~(X==0)
+        #print("select_index=", select_index)
+        #if len(select_index) == 0:
+        #    self.bo = B_mu_proposed
+        #else:
+        #    print("type(B_mu_proposed)=", type(B_mu_proposed))
+        #    print("B_mu_proposed[select_index]=", B_mu_proposed[:,select_index])
+        #    print("self.bo[select_index]=", self.bo[select_index])
+        #    self.bo[select_index]=B_mu_proposed[select_index]
+        self.bo = B_mu_proposed
+        if time_value != None:
+            idx = int(self.this_time)
+        else:
+            idx = j
+        #print("idx = ", idx)
+        self.bo_list[idx,:]=np.transpose(self.bo)#np.transpose(B_mu_proposed)#.copy()
+        #self.bo_machine_list[j,:]=np.transpose(self.bo)#np.transpose(B_mu_proposed)#.copy()
         
     def update_particle(self,X,Y, j):
         self.useful_calcs(X)
         x_j_tB=X.dot(self.bo)#(np.matrix(X.iloc[j])).dot(self.bo)
-        print("***********************in update_particle***********************")
-        print("X.shape=",X.shape)
+        #print("***********************in update_particle***********************")
+        #print("X.shape=",X.shape)
         for n_batch in range(X.shape[0]):
             print( Y[n_batch],'==',1)
             if Y[n_batch]==1:
@@ -91,7 +132,7 @@ class probit_sin_wave_particle:
         self.bo_machine_list[j,:]=np.transpose(B)
         self.Bo_suf_stat+=self.Bo_suf_stat+(B_mu-self.bo).dot(np.transpose(B_mu-self.bo))
         temp_cov = invwishart.rvs(df=self.df, scale=self.Bo_suf_stat)
-        print("temp_cov=", temp_cov)
+        #print("temp_cov=", temp_cov)
         self.Bo= np.linalg.inv(temp_cov)
         self.df+=1
         
@@ -103,11 +144,19 @@ class probit_sin_wave_particle:
     
     def useful_calcs(self, X):
         self.XtX       =X.transpose().dot(X)
-        print("self.XtX.shape= " , self.XtX.shape )
+        #print("self.XtX.shape= " , self.XtX.shape )
         self.Bo_inv    =np.linalg.inv(self.Bo)
-        print("self.Bo_inv.shape=", self.Bo_inv.shape)
-        self.B_cov     =np.linalg.inv(self.Bo_inv + self.XtX)
-        print("self.B_cov.shape=", self.B_cov.shape)
+        #print("self.Bo_inv.shape=", self.Bo_inv.shape)
+        self.B_cov     = np.linalg.inv(
+            self.Bo_inv + ( 
+                (1.0/.0000007)/self.sudo_epoch_time 
+            ) * 
+            np.identity(self.p)*.000000025
+        )# np.linalg.inv(self.Bo_inv + self.XtX)
+        #print("self.sudo_epoch_time = ", self.sudo_epoch_time)
+        #print(self.B_cov)
+        #self.B_cov     = Sigma_prior + t * Epsilon_Cov
+        #print("self.B_cov.shape=", self.B_cov.shape)
     
     def set_N(self, N):
         self.N=N
@@ -119,9 +168,9 @@ class probit_sin_wave_particle:
     def set_shard_number(self, shards):
         self.shards=shards
             
-    def set_bo_list(self):
+    def set_bo_list(self, row_num):
         #print("setting bo_list")
-        self.bo_list=np.zeros((self.N, len(self.bo)))
+        self.bo_list=np.zeros((row_num, len(self.bo)))
         self.bo_list[self.bo_list==0]=np.NaN
         
         self.bo_machine_list=np.zeros((self.N, len(self.bo)))
@@ -137,7 +186,7 @@ class probit_sin_wave_particle:
         self.particle_id_history=not_this_particle.particle_id[0]
         #self.XtX=not_this_particle.XtX
         #self.Bo_inv_bo=not_this_particle.Bo_inv_bo
-        self.B_cov=np.identity(2)#not_this_particle.B_cov.copy()
+        self.B_cov=np.identity(2)*0.00005#not_this_particle.B_cov.copy()
         self.N=not_this_particle.N
         self.Zi=not_this_particle.Zi.copy()
     
@@ -171,13 +220,34 @@ class probit_sin_wave_particle:
                 ,(np.amax( self.Bo_suf_stat ))
                 ,(np.amax( self.log_lik ))
                 ,(np.amax( self.bo_machine_list))
+                ,(np.amin(self.log_lik))
             ]
         print(max(L))
     
+    def print_min(self):
+         
+        L = [
+                 (np.amin( self.bo ))
+                ,(np.amin( self.Bo ))
+                ,(np.amin( self.particle_id ))
+                ,(np.amin( self.particle_id_history ))
+                ,(np.amin( self.XtX ))
+                ,(np.amin( self.B_cov ))
+                ,(np.amin( self.Bo_inv))
+                ,(np.amin( self.N ))
+                ,(np.amin( self.Zi ))
+                ,(np.amin( self.bo_list ))
+                ,(np.amin( self.Bo_suf_stat ))
+                ,(np.amin( self.log_lik ))
+                ,(np.amin( self.bo_machine_list))
+                ,(np.amin(self.log_lik))
+            ]
+        print(min(L))
+        
     def plot_parameters(self):
         #plot parameters
-        print("self.N=",self.N)
-        print("np.arange(self.N)=",np.arange(self.N))
+        #print("self.N=",self.N)
+        #print("np.arange(self.N)=",np.arange(self.N))
         x = np.arange(self.N) # the points on the x axis for plotting
         for os in range(self.p):
             #% matplotlib inline
@@ -196,7 +266,7 @@ class probit_particle:
         self.Bo=Bo
         self.particle_id=[idval]
         self.particle_id_history=idval
-        self.log_lik=-99999999999.0
+        self.log_lik=-100.0
 
     def update_particle(self,X,Y):
         self.useful_calcs(X)
