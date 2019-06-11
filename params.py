@@ -25,7 +25,7 @@ class pf_params():
 
     def __init__(self, shards_number):
         M=shards_number
-        PART_NUM = 1000#312
+        PART_NUM = 10#312
         #len_mult = 200
         #epoch_num=3
         #step = (len_mult*M)/epoch_num

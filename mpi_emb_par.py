@@ -40,7 +40,7 @@ if __name__ == '__main__':
     
     for yr in [1987]:#range(1988, 2009):
         for mo in [10]:#range(1,13):
-            for dom in [25, 26, 27]:#,28,29,30]:#range(1,32):
+            for dom in [25, 26,]:# 27,28,29,30]:#range(1,32):
                 print("attempting file: "+'Xdata_dom/X'+str(yr)+'mo'+str(mo)+'dom'+str(dom)+'.csv.bz2')
                 # LOAD DATA
                 path = 'Xdata_dom/X'+str(yr)+'mo'+str(mo)+'dom'+str(dom)+'.csv.bz2'

@@ -50,7 +50,13 @@ def plot_CMC_parameter_path_(ObsN_ParamN_Part_N, predictor_names):
     print( "results are ", params.shape)
 
     params_std = np.nanstd(ObsN_ParamN_Part_N, axis=2)#np.nanstd(temp_all_parts, axis=2)
+    
+    plot_column_count = 4
+    plot_row_count = int(m.ceil(param_num/plot_column_count))+1
+    print("plot_row_count = ", plot_row_count)
+    fig_outer, axes_outer = plt.subplots(nrows=plot_row_count, ncols=plot_column_count)#, figsize=(20,10))
 
+    
     for par_n in range(param_num):#range(len(data['predictors'])):#range(param_num):
         print("plotting "+ str(par_n))
         avg_param_0=params[:,par_n]
@@ -69,19 +75,24 @@ def plot_CMC_parameter_path_(ObsN_ParamN_Part_N, predictor_names):
         #print("truth = ", truth.shape)
         x = np.arange(len(avg_param_0)) 
         #print("x = ", x.shape)
-        fig, ax1 = plt.subplots()
+        #fig, ax1 = plt.subplots()
         #plt.plot(x,truth,'black')
-        ax1.fill_between(x, below, above, facecolor='green',  alpha=0.3)
-        plt.plot(x,avg_param_0, 'b', alpha=.8)
-        plt.title("parameter " + predictor_names[par_n] + " name here")#data['predictors'][par_n])
-        #for line_tick in params['epoch_at']:
-        #    plt.axvline(x=line_tick, color='r', alpha=0.25)
-        #    min_tic=np.min([np.min(below),np.min(truth)])
-        #    max_tic=np.max([np.max(above),np.max(truth)])
-        #    plt.yticks(np.linspace(start=min_tic, stop=max_tic, num=12))
-        #    plt.grid(True)
+        ax_row = int(m.floor(par_n/plot_column_count))
+        ax_col = par_n % plot_column_count
+        
+        #ax1.fill_between(x, below, above, facecolor='green',  alpha=0.3)
+        print("ax_row " + str(ax_row))
+        print("ax_col " + str(ax_col))
+
+        #print("ax_row, ax_col " + str(ax_row) + ' - ' + str(ax_col))
+        axes_outer[ax_row][ax_col].fill_between(x, below, above, facecolor='green',  alpha=0.3)
+        #plt.plot(x,avg_param_0, 'b', alpha=.8)
+        axes_outer[ax_row][ax_col].plot(x,avg_param_0, 'b', alpha=.8)
+        axes_outer[ax_row][ax_col].axhline(y=0.0, color='r', linestyle='-')
+        #plt.title("parameter " + predictor_names[par_n] + " name here")
+        axes_outer[ax_row][ax_col].title.set_text(predictor_names[par_n])
                 
-        plt.show()
+    plt.show()
 
         
 def plot_CMC_parameter_path_by_shard(data, pf_obj, PART_NUM, number_of_shards, particle_prop=0.01):
