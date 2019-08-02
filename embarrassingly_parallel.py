@@ -25,42 +25,20 @@ def update_data_wrapper(pfo, f_data_X_matrix, f_data_Y):
     pfo.update_data(f_data_X_matrix, f_data_Y)
     return(pfo)
 
-def plot_CMC_parameter_path_(ObsN_ParamN_Part_N, predictor_names):
+def plot_CMC_parameter_path_(ObsN_ParamN_Part_N, predictor_names, ground_truth = None):
     print("plot_parameter_path...")
-    print("ObsN_ParamN_Part_N.shape = ", ObsN_ParamN_Part_N.shape)
-    #pf_obj, PART_NUM, number_of_shards, data, params, particle_prop=0.01
-    total_time_steps, param_num, Z_dim = ObsN_ParamN_Part_N.shape#pf_obj[0].get_particle(0).bo_list.shape[1]
-    #total_time_steps = len(pf_obj[0].get_particle(0).bo_list[:,0])
-    params=list()
-    #particle_indices = np.random.choice(PART_NUM, max(int(PART_NUM*particle_prop), 1))
-    
-    #Z_dim=number_of_shards*PART_NUM
-    #temp_all_parts = np.zeros((total_time_steps, param_num, Z_dim))
-    #temp_all_parts[temp_all_parts==0]=np.NaN
-    
-    #counter=0
-    #for sn in range(data['parallel_shards']):
-    #    for pn in range(len(particle_indices)):
-    #        particle=pf_obj[sn].get_particle(particle_indices[pn])
-    #        temp_all_parts[:,:,counter] = particle.bo_list.copy()
-    #        print("particle.bo_list.copy() = ", particle.bo_list.copy())
-    #        counter+=1
-    print( "averaging accross ObsN_ParamN_Part_N.shape", ObsN_ParamN_Part_N.shape)
-    params     = np.nanmean(ObsN_ParamN_Part_N, axis=2)#np.nanmean(temp_all_parts, axis=2)
-    print( "results are ", params.shape)
-
-    params_std = np.nanstd(ObsN_ParamN_Part_N, axis=2)#np.nanstd(temp_all_parts, axis=2)
+    total_time_steps, param_num, Z_dim = ObsN_ParamN_Part_N.shape
+    #params=list()
+    params     = np.nanmean(ObsN_ParamN_Part_N, axis=2)
+    params_std = np.nanstd(ObsN_ParamN_Part_N, axis=2)
     
     plot_column_count = 4
     plot_row_count = int(m.ceil(param_num/plot_column_count))+1
-    print("plot_row_count = ", plot_row_count)
-    fig_outer, axes_outer = plt.subplots(nrows=plot_row_count, ncols=plot_column_count)#, figsize=(20,10))
+    fig_outer, axes_outer = plt.subplots(nrows=plot_row_count, ncols=plot_column_count)
 
     
-    for par_n in range(param_num):#range(len(data['predictors'])):#range(param_num):
-        print("plotting "+ str(par_n))
+    for par_n in range(param_num):
         avg_param_0=params[:,par_n]
-        #print("avg_param_0 = ", avg_param_0)
         avg_param_0=pd.Series(avg_param_0).fillna(method='ffill')
         avg_param_0=pd.Series(avg_param_0).fillna(method='bfill')
             
@@ -70,27 +48,19 @@ def plot_CMC_parameter_path_(ObsN_ParamN_Part_N, predictor_names):
         
         above=np.add(avg_param_0,std_parma_0*2)
         below=np.add(avg_param_0,-std_parma_0*2)
-        
-        #truth=data['b'][:,par_n]
-        #print("truth = ", truth.shape)
+
         x = np.arange(len(avg_param_0)) 
-        #print("x = ", x.shape)
-        #fig, ax1 = plt.subplots()
-        #plt.plot(x,truth,'black')
+        
         ax_row = int(m.floor(par_n/plot_column_count))
         ax_col = par_n % plot_column_count
         
-        #ax1.fill_between(x, below, above, facecolor='green',  alpha=0.3)
-        print("ax_row " + str(ax_row))
-        print("ax_col " + str(ax_col))
-
-        #print("ax_row, ax_col " + str(ax_row) + ' - ' + str(ax_col))
         axes_outer[ax_row][ax_col].fill_between(x, below, above, facecolor='green',  alpha=0.3)
-        #plt.plot(x,avg_param_0, 'b', alpha=.8)
         axes_outer[ax_row][ax_col].plot(x,avg_param_0, 'b', alpha=.8)
         axes_outer[ax_row][ax_col].axhline(y=0.0, color='r', linestyle='-')
-        #plt.title("parameter " + predictor_names[par_n] + " name here")
         axes_outer[ax_row][ax_col].title.set_text(predictor_names[par_n])
+        
+        if ground_truth is not None:
+             axes_outer[ax_row][ax_col].plot(x, ground_truth.iloc[:,par_n], '--')
                 
     plt.show()
 
@@ -188,23 +158,7 @@ def shuffel_embarrassingly_parallel_particles(data,
 
             temp_particle.copy_particle_values(pf_obj[m].particle_list[p])
             all_particles.append(temp_particle)
-
-    #if method == "wasserstein":
-    #    print("computing waserstein barrycenter...")
-    #    print("collecting parameter info from shards...")
-    #    f_wts = 0.01+self.get_approx_shard_wasserstein_barycenter(wass_n)[0]
-    #    print("data successfully prepared...")  
-    #    print('machine weights: ', f_wts)
-    #    temp_all_wts=np.repeat(f_wts,self.PART_NUM)
-    #    all_wts = temp_all_wts/np.sum(temp_all_wts)
-    #    index_vals = np.random.choice(range(len(all_wts)), len(all_wts), p=all_wts)
-    #    count=0
-    #    for m in range(self.data['parallel_shards']):
-    #        for p in range(self.PART_NUM):
-    #            first=self.all_particles[index_vals[count]] 
-    #            self.pf_obj[m].particle_list[p].copy_particle_values(first)
-    #            count+=1
-    #            
+         
     if method == "uniform":        
         for m in range(data['parallel_shards']):
             for p in range(PART_NUM):
@@ -219,17 +173,9 @@ def shuffel_embarrassingly_parallel_params(all_shard_params):
     for m in range(len(all_shard_params)):
         for p in range(len(all_shard_params[0])):
             unlisted.append(all_shard_params[m][p])
-    #random.shuffle(unlisted) 
-    print("len(unlisted) = " + str(len(unlisted)))
-    print("unlisted[:5] = " + str(unlisted[:5]))
     unlisted = np.array(unlisted)
-    
-    
-    #a = np.array([[1,2],[2,3]])
     rows = np.random.randint(len(unlisted), size = len(unlisted))
     sampled_unlisted = unlisted[rows,:]
-    
-    
     output = list()
     index = 0
     for m in range(len(all_shard_params)):

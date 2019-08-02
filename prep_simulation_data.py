@@ -2,48 +2,15 @@ import pandas as pd
 import numpy as np
 
 test_cols = [
-    'DayOfWeek_1',
-    'DayOfWeek_2',
-    'DayOfWeek_3',
-    'DayOfWeek_4',
-    'DayOfWeek_5',
-    'DayOfWeek_6',
-    'DayOfWeek_7',
-    #'UniqueCarrier_9E',
-    #'UniqueCarrier_AA',
-    #'UniqueCarrier_AQ',
-    #'UniqueCarrier_AS',
-    #'UniqueCarrier_B6',
-    #'UniqueCarrier_CO',
-    #'UniqueCarrier_DH',
-    #'UniqueCarrier_DL',
-    #'UniqueCarrier_EA',
-    #'UniqueCarrier_EV',
-    #'UniqueCarrier_F9',
-    #'UniqueCarrier_FL',
-    #'UniqueCarrier_HA',
-    #'UniqueCarrier_HP',
-    #'UniqueCarrier_ML (1)',
-    #'UniqueCarrier_MQ',
-    #'UniqueCarrier_NW',
-    #'UniqueCarrier_OH',
-    #'UniqueCarrier_OO',
-    #'UniqueCarrier_PA (1)',
-    #'UniqueCarrier_PI',
-    #'UniqueCarrier_PS',
-    #'UniqueCarrier_TW',
-    #'UniqueCarrier_TZ',
-    #'UniqueCarrier_UA',
-    #'UniqueCarrier_US',
-    #'UniqueCarrier_WN',
-    #'UniqueCarrier_XE',
-    #'UniqueCarrier_YV',
-    'ArrDelay_00',
-
-    'DepTime',
-    'CRSArrTime',
-    'Distance',
-    'CRSDepTime',
+    'v_0',
+    'v_1',
+    'v_2',
+    'v_3',
+    'v_4',
+    'v_5',
+    'v_6',
+    'y', 
+    'time'
 ]
 class prep_data:
     def __init__(self, params, path):
@@ -52,12 +19,13 @@ class prep_data:
         
         if self.model== "probit_sin_wave":
             
-            full_de_mat = pd.read_csv(path, low_memory=False, index_col=0).loc[test_cols].iloc[:,:].T
-            full_de_mat['intercept'] = 1
-            full_de_mat['DepartureDelay'] = (
-                full_de_mat['CRSDepTime'].astype(float) - full_de_mat['DepTime'].astype(float)
-            )
-            all_shard_unique_time_values = list(range(1,2400))#full_de_mat['CRSDepTime'].unique()
+            full_de_mat = pd.read_csv(path, low_memory=False, index_col=0).loc[:,test_cols]#.iloc[:,:].T
+            full_de_mat.time = full_de_mat.time+1
+            all_shard_unique_time_values = full_de_mat.time.unique()
+            #full_de_mat['intercept'] = 1
+            #full_de_mat['DepartureDelay'] = (
+            #    full_de_mat['CRSDepTime'].astype(float) - full_de_mat['DepTime'].astype(float)
+            #)
             #full_de_mat['ExpectedFlightTime'] = (
             #    full_de_mat['CRSArrTime'].astype(float) - full_de_mat['CRSDepTime'].astype(float)
             #)
@@ -78,18 +46,7 @@ class prep_data:
             
             full_de_mat_X = full_de_mat.copy()#full_de_mat.copy()
             drop_these=[
-                #'Month_1', 
-                'DayOfWeek_1', 
-                'UniqueCarrier_9E', 
-                #'Origin_ABE', 
-                #'Dest_ABE', 
-                #'CRSDepTime',
-                #'CRSArrTime',
-                #'FormatTime',
-                'ArrDelay_00',
-                #'ArrDelay_30',
-                #'ArrDelay_60'
-                'DepTime'
+                "y", 'time'
             ]
             self.predictor_names = list(set(full_de_mat.columns) - set(drop_these))
             print(self.predictor_names.sort())
@@ -171,7 +128,6 @@ class prep_data:
                             len(self.predictor_names)#+1#full_de_mat_X.shape[0]+1
                         )
                     )
-                    
            
             data_index=0
             epoch_counter=0
@@ -192,11 +148,11 @@ class prep_data:
                 #output[s]['X'][key] = temp_X
                 output[s]['Y'][i] = np.zeros(self.N_batch)
                 output[s]['data_keys'].append(key)
-                output[s]['time_value'].append(float(full_de_mat['CRSDepTime'].iloc[i]))
+                output[s]['time_value'].append(float(full_de_mat['time'].iloc[i]))
                 #output[s]['X_matrix'][i,0] = i
                 #output[s]['X_matrix'][i,1:] = temp_X
                 
-                output[s]['Y'][i] = self.Y[i] = np.float(full_de_mat['ArrDelay_00'].iloc[i])#1
+                output[s]['Y'][i] = self.Y[i] = np.float(full_de_mat['y'].iloc[i])#1
 
                 if i not in self.epoch_at:
                     #epoch_output["epoch"+str(epoch_counter)][s]['X'][key] = temp_X
@@ -205,13 +161,13 @@ class prep_data:
                     #epoch_output["epoch"+str(epoch_counter)][s]['X_matrix'][i,0] = i
                     epoch_output["epoch"+str(epoch_counter)][s]['Y'][i]=self.Y[i] 
                     epoch_output["epoch"+str(epoch_counter)][s]['data_keys'].append(key)
-                    epoch_output["epoch"+str(epoch_counter)][s]['time_value'].append(float(full_de_mat['CRSDepTime'].iloc[i]))
+                    epoch_output["epoch"+str(epoch_counter)][s]['time_value'].append(float(full_de_mat['time'].iloc[i]))
                 else:
                     for m in range(self.shards):
                         #epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['X'][all_key] = self.X[all_key]
                         epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['Y'][i] = self.Y[i]
                         epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['data_keys'].append(all_key)
-                        epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['time_value'].append(float(full_de_mat['CRSDepTime'].iloc[i]))
+                        epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['time_value'].append(float(full_de_mat['time'].iloc[i]))
 
                     epoch_counter+=1
                 
@@ -241,28 +197,28 @@ class prep_data:
                 #output["shard_"+str(m)]['batch_number']=max_val+1
             
             for ep in range(self.epoch_number):
-                epoch_output["epoch"+str(ep)]['parallel_shards'] = self.shards
-                epoch_output["epoch"+str(ep)]['b']               = self.b
-                epoch_output["epoch"+str(ep)]['B'] = self.B#*self.shards
+                epoch_output["epoch"+str(ep)]['parallel_shards']    = self.shards
+                epoch_output["epoch"+str(ep)]['b']                  = self.b
+                epoch_output["epoch"+str(ep)]['B']                  = self.B#*self.shards
                 epoch_output["epoch"+str(ep)]['all_shard_unique_time_values'] = all_shard_unique_time_values
 
                 for m in range(self.shards):
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['N'] = self.N
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['b'] = self.b
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['B'] = self.B#*self.shards
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['model'] = self.model
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['shards']=self.shards
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['N']      = self.N
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['b']      = self.b
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['B']      = self.B#*self.shards
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['model']  = self.model
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['shards'] =self.shards
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['all_shard_unique_time_values'] = all_shard_unique_time_values
                     #keep_rows_index = np.sum(test['epoch_data']['epoch0']['shard_0']['X_matrix'], axis=1)!=0
                     #test['epoch_data']['epoch0']['shard_0']['X_matrix'][keep_rows_index,:].shape
                     keep_rows_index = np.sum(epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X_matrix'], axis=1)!=0
                     
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['predictors'] = self.predictor_names
-                    #print("'CRSDepTime' in self.predictor_names = ", 'CRSDepTime' in self.predictor_names)
-                    if 'CRSDepTime' in self.predictor_names:
+                    #print("'time' in self.predictor_names = ", 'time' in self.predictor_names)
+                    if 'time' in self.predictor_names:
                         
                         #print("cols_to_keep: ", cols_to_keep)
-                        epoch_output["epoch"+str(ep)]["shard_"+str(m)]['CRSDepTime'] = (
+                        epoch_output["epoch"+str(ep)]["shard_"+str(m)]['time'] = (
                             epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X_matrix'][keep_rows_index,-1]
                         )
                         
@@ -302,6 +258,7 @@ class prep_data:
             self.output['data_keys']=self.data_keys
             self.output['predictors']=self.predictor_names
             self.output['all_shard_unique_time_values'] = all_shard_unique_time_values
+            
             #has if 'CRSDepTime' in self.predictor_names:
             #has     #print("self.predictor_names=", self.predictor_names)
             #has     self.predictor_names.remove('CRSDepTime')

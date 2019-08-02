@@ -1,5 +1,10 @@
+import pandas as pd
 import numpy as np
+from tqdm import tqdm
+from scipy.stats import norm
+import math
 from matplotlib import pyplot as plt
+import random
 
 class simulated_data:
     def __init__(self, params, model, show=True):
@@ -161,3 +166,118 @@ class simulated_data:
 def temp_make_data_function(params, model, show):
     test = simulated_data(params, model, show).get_data()
     return test, params
+
+
+class  simulated_data2:
+    
+    def __init__(self, N_total = 10000000, n_per_tic = 10, pred_number = 100):
+        
+        random.seed(30)
+        self.time_tics = np.array(range(int(N_total/n_per_tic)))
+        self.row = len(self.time_tics) * n_per_tic
+        self.n_per_file = 10000/n_per_tic
+        self.pred_number =pred_number
+        self.N_total = N_total
+        self.n_per_tic = n_per_tic
+        print("simulated_data2 object created...")
+        
+    def make_linear_trajectory(self, f_time_tic, y_2 = 1.0, y_1 = -1.0,):
+        
+        T_max = max(f_time_tic)
+        T_min = min(f_time_tic)
+        m = (y_2 - y_1)/(T_max - T_min)
+        T = np.array(range(int(T_min), int(T_max+1.0)))
+        output = m*(T-y_1) + y_1
+        return output
+
+    def make_logrithmic_trajectory(self, f_time_tic,):
+        
+        T_max = max(f_time_tic)
+        T_min = min(f_time_tic)
+        T = np.array(range(int(T_min), int(T_max+1.0)))
+        output = np.log(T+1)
+        return output
+    
+    def make_sin_wave_trajectory(self, f_time_tic, y_2 = 1.0, y_1 = -1.0,):
+        
+        T_max = max(f_time_tic)
+        T_min = min(f_time_tic)
+        T = np.array(range(int(T_min), int(T_max+1.0)))
+        output = np.sin((T-T_min)*2*math.pi/T_max)
+        return output
+        
+    def generate_Betas(self, path="synth_data/"):
+        print("generating regression coefficients...")
+        self.Beta_vals_base = {
+            'B_0': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = 1.0, y_1 = -1.0),
+            'B_1': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = -2.0, y_1 = 2.0),
+            'B_2': self.make_logrithmic_trajectory(f_time_tic = self.time_tics),
+            'B_3': self.make_sin_wave_trajectory(f_time_tic = self.time_tics)
+        }
+        beta_cnames = list(range(self.pred_number))
+        Beta_vals={}
+        for pn in range(self.pred_number):
+            Beta_vals['B_'+str(pn)] = self.Beta_vals_base['B_'+str(pn%len(self.Beta_vals_base))]
+            beta_cnames[pn] = 'B_'+str(pn)
+        #Beta_vals.head()
+        self.Beta_vals_df = pd.DataFrame(Beta_vals)[beta_cnames]
+        
+        if path == '':
+            self.Beta_vals_df.to_csv("synth_data/Beta_t.csv" )
+        else:
+            self.Beta_vals_df.to_csv(path + "Beta_t.csv" )
+        print("regression coefficients generation complete...")
+            
+    def generate_data(self, path = "synth_data/"): #need to convert notebook code to 
+        print("generating data...")
+        print("writing data to " + path)
+        X_i_all = pd.DataFrame()
+        vcnames=list(range(self.pred_number))
+        #pnames={}
+        for i in range(self.pred_number):
+            vn="v_"+str(i)
+            #pnames["v_"+str(i)] = vn
+            vcnames[i]=vn
+        file_num = 0
+        for tt in tqdm(range(len(self.time_tics))):
+            
+            X_i =  pd.DataFrame(
+                np.random.multivariate_normal(
+                    np.zeros(self.pred_number),
+                    np.identity(self.pred_number)*.01,
+                    self.n_per_tic
+                )
+            )
+            X_i.columns=vcnames
+        
+            
+            #X_i.columns=pnames
+            
+            Beta_t = self.Beta_vals_df.iloc[tt].T#Beta_vals[tt,:]
+                
+            X_B_t = X_i.dot(np.array(Beta_t))
+            event_prob = norm.cdf(X_B_t)
+            #print(event_prob)
+            X_i['y'] = np.random.binomial(1,event_prob)
+            X_i['time'] = tt
+            
+            if X_i_all.shape[0]==0:
+                X_i_all = X_i
+            else:
+                X_i_all = pd.concat([X_i_all, X_i], axis=0)
+                
+            if tt % self.n_per_file == self.n_per_file-1:
+                file_name = (
+                    "Xy_N=" + str(self.N_total) + 
+                    "_Nt=" + str(self.n_per_tic) + 
+                    "_p=" + str(self.pred_number) +
+                    "_fn=" +str(file_num) +
+                    ".csv"
+                )
+                
+                X_i_all.to_csv("synth_data/"+ file_name )
+                
+                file_num+=1
+                X_i_all = pd.DataFrame()
+            
+        print("data generation complete...")
