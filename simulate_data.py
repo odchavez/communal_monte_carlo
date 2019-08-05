@@ -5,6 +5,7 @@ from scipy.stats import norm
 import math
 from matplotlib import pyplot as plt
 import random
+import os
 
 class simulated_data:
     def __init__(self, params, model, show=True):
@@ -170,16 +171,28 @@ def temp_make_data_function(params, model, show):
 
 class  simulated_data2:
     
-    def __init__(self, N_total = 10000000, n_per_tic = 10, pred_number = 100):
+    def __init__(self, n_per_file, N_total = 10000000, n_per_tic = 10, pred_number = 100):
         
         random.seed(30)
         self.time_tics = np.array(range(int(N_total/n_per_tic)))
         self.row = len(self.time_tics) * n_per_tic
-        self.n_per_file = 10000/n_per_tic
+        self.n_per_file = n_per_file/n_per_tic
         self.pred_number =pred_number
         self.N_total = N_total
         self.n_per_tic = n_per_tic
-        print("simulated_data2 object created...")
+        self.n_per_epoch = n_per_file
+        
+        self.output_folder_name = (
+                    "synth_data/"
+                    "Xy_N=" + str(self.N_total) + 
+                    "_Epoch_N=" + str(self.n_per_epoch) + 
+                    "_Nt=" + str(self.n_per_tic) + 
+                    "_p=" + str(self.pred_number) +
+                    "/"
+                )
+
+        if not os.path.exists(self.output_folder_name):
+            os.makedirs(self.output_folder_name)
         
     def make_linear_trajectory(self, f_time_tic, y_2 = 1.0, y_1 = -1.0,):
         
@@ -205,7 +218,7 @@ class  simulated_data2:
         T = np.array(range(int(T_min), int(T_max+1.0)))
         output = np.sin((T-T_min)*2*math.pi/T_max)
         return output
-        
+
     def generate_Betas(self, path="synth_data/"):
         print("generating regression coefficients...")
         self.Beta_vals_base = {
@@ -223,12 +236,16 @@ class  simulated_data2:
         self.Beta_vals_df = pd.DataFrame(Beta_vals)[beta_cnames]
         
         if path == '':
-            self.Beta_vals_df.to_csv("synth_data/Beta_t.csv" )
+            self.Beta_vals_df.to_csv(self.output_folder_name + "Beta_t.csv" )
         else:
-            self.Beta_vals_df.to_csv(path + "Beta_t.csv" )
+            self.Beta_vals_df.to_csv(self.output_folder_name + "Beta_t.csv" )
         print("regression coefficients generation complete...")
-            
-    def generate_data(self, path = "synth_data/"): #need to convert notebook code to 
+
+    def generate_data(self, path=None):
+        
+        if ~(path == None):
+            path = self.output_folder_name
+        
         print("generating data...")
         print("writing data to " + path)
         X_i_all = pd.DataFrame()
@@ -268,14 +285,11 @@ class  simulated_data2:
                 
             if tt % self.n_per_file == self.n_per_file-1:
                 file_name = (
-                    "Xy_N=" + str(self.N_total) + 
-                    "_Nt=" + str(self.n_per_tic) + 
-                    "_p=" + str(self.pred_number) +
-                    "_fn=" +str(file_num) +
+                    "fn=" +str(file_num) +
                     ".csv"
                 )
                 
-                X_i_all.to_csv("synth_data/"+ file_name )
+                X_i_all.to_csv(path + file_name )
                 
                 file_num+=1
                 X_i_all = pd.DataFrame()
