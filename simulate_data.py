@@ -4,7 +4,6 @@ from tqdm import tqdm
 from scipy.stats import norm
 import math
 from matplotlib import pyplot as plt
-import random
 import os
 
 class simulated_data:
@@ -173,7 +172,6 @@ class  simulated_data2:
     
     def __init__(self, n_per_file, N_total = 10000000, n_per_tic = 10, pred_number = 100):
         
-        random.seed(30)
         self.time_tics = np.array(range(int(N_total/n_per_tic)))
         self.row = len(self.time_tics) * n_per_tic
         self.n_per_file = n_per_file/n_per_tic
@@ -197,7 +195,7 @@ class  simulated_data2:
     def make_linear_trajectory(self, f_time_tic, y_2 = 1.0, y_1 = -1.0,):
         
         T_max = max(f_time_tic)
-        T_min = min(f_time_tic)
+        T_min = min(f_time_tic) 
         m = (y_2 - y_1)/(T_max - T_min)
         T = np.array(range(int(T_min), int(T_max+1.0)))
         output = m*(T-y_1) + y_1
@@ -208,7 +206,7 @@ class  simulated_data2:
         T_max = max(f_time_tic)
         T_min = min(f_time_tic)
         T = np.array(range(int(T_min), int(T_max+1.0)))
-        output = np.log(T+1)
+        output = np.log((T+300000)/300000)
         return output
     
     def make_sin_wave_trajectory(self, f_time_tic, y_2 = 1.0, y_1 = -1.0,):
@@ -222,8 +220,8 @@ class  simulated_data2:
     def generate_Betas(self, path="synth_data/"):
         print("generating regression coefficients...")
         self.Beta_vals_base = {
-            'B_0': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = 1.0, y_1 = -1.0),
-            'B_1': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = -2.0, y_1 = 2.0),
+            'B_0': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = 1.0, y_1 = 0.0),
+            'B_1': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = -2.0, y_1 = 0.0),
             'B_2': self.make_logrithmic_trajectory(f_time_tic = self.time_tics),
             'B_3': self.make_sin_wave_trajectory(f_time_tic = self.time_tics)
         }
@@ -245,7 +243,7 @@ class  simulated_data2:
         
         if ~(path == None):
             path = self.output_folder_name
-        
+
         print("generating data...")
         print("writing data to " + path)
         X_i_all = pd.DataFrame()
@@ -257,7 +255,8 @@ class  simulated_data2:
             vcnames[i]=vn
         file_num = 0
         for tt in tqdm(range(len(self.time_tics))):
-            
+            np.random.seed(tt)
+
             X_i =  pd.DataFrame(
                 np.random.multivariate_normal(
                     np.zeros(self.pred_number),
@@ -275,6 +274,7 @@ class  simulated_data2:
             X_B_t = X_i.dot(np.array(Beta_t))
             event_prob = norm.cdf(X_B_t)
             #print(event_prob)
+            
             X_i['y'] = np.random.binomial(1,event_prob)
             X_i['time'] = tt
             

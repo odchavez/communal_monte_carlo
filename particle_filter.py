@@ -1,13 +1,7 @@
 import pf_models as pf
 import numpy as np
-#from scipy.stats import truncnorm
-#from scipy.stats import norm
-#from scipy.stats import truncnorm
-#from scipy.special import logsumexp
-#from tqdm import tqdm
 import numpy as np
 import pandas as pd
-#import csv
 from matplotlib import pyplot as plt
 
 class particle_filter:
@@ -39,7 +33,7 @@ class particle_filter:
                 self.particle_list.append(temp_particle)
                 
         elif self.model== "probit_sin_wave":
-            print("working on model ", self.model)
+            #print("working on model ", self.model)
             self.X=dat['X_matrix']
             self.Y=dat['Y']
             self.p=dat['p']
@@ -73,10 +67,10 @@ class particle_filter:
             #print("self.unique_time_values = ", self.unique_time_values)
             for n in range(len(self.unique_time_values)):
                 n_check_point = np.floor(len(self.unique_time_values)*0.10)
-                if n % n_check_point ==0:
-                    print("n=",n, "     ", "self.N=", self.N)
-                    print(str(100*n/self.N)+"% of total file complete...")
-                    print(str(100*n/len(self.unique_time_values))+"% of shard complete...")
+                #if n % n_check_point ==0:
+                #    print("n=",n, "     ", "self.N=", self.N)
+                #    print(str(100*n/self.N)+"% of total file complete...")
+                #    print(str(100*n/len(self.unique_time_values))+"% of shard complete...")
                     
                 for pn in range(self.PART_NUM):
                     if self.sample_method=='importance':
@@ -109,8 +103,8 @@ class particle_filter:
             norm_wts=top/bottom#np.exp(logsumexp(self.not_norm_wts)))
         else:
             norm_wts=top/bottom#np.exp(logsumexp(self.not_norm_wts)))
-        if np.sum(norm_wts) < 0.999999 or np.sum(norm_wts) > 1.000001:
-            print("norm_wts=", norm_wts)                
+        #if np.sum(norm_wts) < 0.999999 or np.sum(norm_wts) > 1.000001:
+            #print("norm_wts=", norm_wts)                
         particles_kept=np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
         temp_index=np.zeros(self.PART_NUM)
         temp_index.astype(int)

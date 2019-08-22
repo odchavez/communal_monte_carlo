@@ -38,7 +38,7 @@ class pf_params_synth_data():
 
     def __init__(self, shards_number):
         M=shards_number
-        PART_NUM = 20
+        PART_NUM = 1000
         COMM_PER_SHARD_INTERVAL = 10000#number of observations to process per shard before communication step
         self.params={
             'N_batch':1, 

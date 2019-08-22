@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import norm
 import itertools
-import seaborn as sns
+#import seaborn as sns
 
 def probit_success_probability(X, b):
     x_j_tB=X.dot(b)

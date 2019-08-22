@@ -7,12 +7,12 @@ import glob
 class parameter_history:
     
     def __init__(self):
-        print("history __init__")
+        #print("history __init__")
         self.bo_list_history = list()
         self.bo_machine_list_history = list()
     
     def compile_bo_list_history(self, f_name_stem=''):
-        print("history compile_bo_list_history")
+        #print("history compile_bo_list_history")
 
         nrun, nshard = self.get_particle_history_dim("particle_hold/file_"+f_name_stem+"_*.npy")
         for nr in range(nrun):
@@ -20,17 +20,17 @@ class parameter_history:
             for ns in range(nshard):
                 loop_file_name = "particle_hold/file_" + f_name_stem + "_" + str(nr) + "_" + str(ns) + ".npy"
                 loaded_bo_file = np.load(loop_file_name)
-                print(str(nr) + " out of " + str(nrun))
-                print("attempting file: " + loop_file_name)
-                print("concatinating the following shapes:")
-                print(loaded_bo_file.shape)
-                print(loaded_bo_file)
+                #print(str(nr) + " out of " + str(nrun))
+                #print("attempting file: " + loop_file_name)
+                #print("concatinating the following shapes:")
+                #print(loaded_bo_file.shape)
+                #print(loaded_bo_file)
                 
                 if ns == 0:
                     shard_history_temp = loaded_bo_file.copy()
-                    print(shard_history_temp.shape)
+                    #print(shard_history_temp.shape)
                 else:
-                    print(shard_history_temp.shape)
+                    #print(shard_history_temp.shape)
                     shard_history_temp = np.append(shard_history_temp, loaded_bo_file, axis = 2)
 
             if nr == 0:
@@ -39,7 +39,7 @@ class parameter_history:
                 self.bo_list_history = np.append(self.bo_list_history, shard_history_temp, axis = 0)
                 
     def get_particle_history_dim(self, history_file_path_name_extension = "particle_hold/*.npy"):
-        print("history get_particle_history_dim")
+        #print("history get_particle_history_dim")
         txtfiles = []
         for file in glob.glob(history_file_path_name_extension):
             txtfiles.append(file)
@@ -56,7 +56,7 @@ class parameter_history:
         return nrun, nshard  
     
     def append_bo_list_history(self, parallel_com_obj ):
-        print("history append_bo_list_history")
+        #print("history append_bo_list_history")
 
         temp_all_parts = self.get_temp_all_particles(parallel_com_obj)
         if len(self.bo_list_history) == 0:
@@ -65,7 +65,7 @@ class parameter_history:
             self.bo_list_history = np.append(self.bo_list_history, temp_all_parts, axis = 0)
         
     def get_temp_all_particles(self, parallel_com_obj):
-        print("history get_temp_all_particles")
+        #print("history get_temp_all_particles")
 
         particle_number = len(parallel_com_obj[0].particle_list)
         number_of_shards = len(parallel_com_obj)
@@ -82,3 +82,49 @@ class parameter_history:
                 )
                 counter+=1    
         return temp_all_parts
+    
+    def write_results(
+        self, 
+        f_experiment_path,  
+        f_params_results_file, 
+        f_stats_df, 
+        f_other_stats_file='experiment_results/results.csv'
+    ):
+        
+        params_path = f_experiment_path + f_params_results_file
+        stats_path  = f_experiment_path + f_other_stats_file
+        #print("writing paramater results to ", params_path)
+        if os.path.exists(f_experiment_path):
+            np.save( 
+                params_path,
+                self.bo_list_history
+            )
+            
+        else:
+            os.mkdir(f_experiment_path)
+            np.save( 
+                params_path,
+                self.bo_list_history
+            )
+            
+        # add to existing csv results of 
+        #print("writing experimental run statistics to ", f_other_stats_file)
+        if os.path.exists(f_other_stats_file):
+            # open file and add row
+            f_stats_df.to_csv(
+                f_other_stats_file, 
+                index = False, 
+                mode = 'a', 
+                header=False
+            )
+        else:
+            #create file
+            f_stats_df.to_csv(
+                f_other_stats_file, 
+                index = False, 
+                mode = 'a'
+            )
+        
+
+        
+        

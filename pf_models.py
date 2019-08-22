@@ -67,7 +67,7 @@ class probit_sin_wave_particle:
         x_j_tB=X.dot(self.bo)
         n_rows_of_X = X.shape[0]
         for n_batch in range(X.shape[0]):
-            print( Y[n_batch],'==',1)
+            #print( Y[n_batch],'==',1)
             if Y[n_batch]==1:
                 self.Zi=self.get_truncated_normal(mean=x_j_tB[n_batch], sd=1, low=0, upp=100).rvs(1)
             else:
@@ -122,17 +122,9 @@ class probit_sin_wave_particle:
         self.shards=shards
             
     def set_bo_list(self, time_values):
-        print("***************** In set_bo_list *****************")
         temp_bo_list=np.zeros((len(time_values), len(self.bo)))
         temp_bo_list[temp_bo_list==0]=np.NaN
         self.bo_list = pd.DataFrame(temp_bo_list, index=time_values)
-        #self.bo_list.set_index(keys = time_values, inplace=True)
-        
-        print("***************************")
-        print(min(time_values), " ", max(time_values))
-        print(self.bo_list.shape)
-        print("***************************")
-
         self.bo_machine_list=np.zeros((self.N, len(self.bo)))
         self.bo_machine_list[self.bo_machine_list==0]=np.NaN
 

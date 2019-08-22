@@ -2,13 +2,16 @@ import pandas as pd
 import numpy as np
 
 test_cols = [
-    'v_0',
-    'v_1',
-    'v_2',
-    'v_3',
-    'v_4',
-    'v_5',
-    'v_6',
+    'v_0','v_1','v_2','v_3','v_4','v_5','v_6','v_7','v_8','v_9',
+    'v_10','v_11','v_12','v_13','v_14','v_15','v_16','v_17','v_18','v_19',
+    'v_20','v_21','v_22','v_23','v_24','v_25','v_26','v_27','v_28','v_29',
+    'v_30','v_31','v_32','v_33','v_34','v_35','v_36','v_37','v_38','v_39',
+    'v_40','v_41','v_42','v_43','v_44','v_45','v_46','v_47','v_48','v_49',
+    'v_50','v_51','v_52','v_53','v_54','v_55','v_56','v_57','v_58','v_59',
+    'v_60','v_61','v_62','v_63','v_64','v_65','v_66','v_67','v_68','v_69',
+    'v_70','v_71','v_72','v_73','v_74','v_75','v_76','v_77','v_78','v_79',
+    'v_80','v_81','v_82','v_83','v_84','v_85','v_86','v_87','v_88','v_89',
+    'v_90','v_91','v_92','v_93','v_94','v_95','v_96','v_97','v_98','v_99',
     'y', 
     'time'
 ]
@@ -30,13 +33,13 @@ class prep_data:
             #    full_de_mat['CRSArrTime'].astype(float) - full_de_mat['CRSDepTime'].astype(float)
             #)
 
-            print(".csv dimentions:", full_de_mat.shape)
+            #print(".csv dimentions:", full_de_mat.shape)
             
             
             #print('full_de_mat.head()')
             #print(full_de_mat.head())
             #print(".csv head:", full_de_mat.head(12))
-            print(full_de_mat.columns)
+            #print(full_de_mat.columns)
             #add intercept
             #row = pd.DataFrame(np.ones(len(full_de_mat.columns.values))).T
             #full_de_mat['intercept'] = 1
@@ -48,8 +51,8 @@ class prep_data:
             drop_these=[
                 "y", 'time'
             ]
-            self.predictor_names = list(set(full_de_mat.columns) - set(drop_these))
-            print(self.predictor_names.sort())
+            self.predictor_names = [x for x in full_de_mat.columns if x not in drop_these]
+            #print(self.predictor_names.sort())
             full_de_mat_X = full_de_mat[self.predictor_names]#.drop(index=drop_these, inplace=True)
             #self.predictor_names = ['intercept'] + list(full_de_mat_X.index)
             #self.predictor_names = list(full_de_mat_X.index)
@@ -131,7 +134,7 @@ class prep_data:
            
             data_index=0
             epoch_counter=0
-            print("self.N=", self.N)
+            #print("self.N=", self.N)
             for i in range(self.N):
                 #print(i)
                 key=str(i)+":"+str(data_index)
