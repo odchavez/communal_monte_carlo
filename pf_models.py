@@ -21,23 +21,23 @@ class probit_sin_wave_particle:
         
 
     def evaluate_likelihood(self, X, Y):
-        x_j_tB=X.dot(self.bo)
-        log_PHI=np.log(norm.cdf(x_j_tB))
-        log_1_minus_PHI=np.log(1.0-norm.cdf(x_j_tB))
-        one_minus_Y=1.0-Y 
+        x_j_tB          = X.dot(self.bo)
+        log_PHI         = np.log(norm.cdf(x_j_tB))
+        log_1_minus_PHI = np.log(1.0-norm.cdf(x_j_tB))
+        one_minus_Y     = 1.0-Y 
         if Y == 0:
             A = 0.0
         else:
-            A=np.dot(Y,log_PHI)
+            A = np.dot(Y,log_PHI)
         if one_minus_Y == 0:
-            B=0
+            B = 0
         else:
-            B=np.dot(one_minus_Y,log_1_minus_PHI)
-        log_lik=(A+B)*self.shards
+            B = np.dot(one_minus_Y,log_1_minus_PHI)
+        log_lik      = (A+B)*self.shards
         return_value = np.max([log_lik, self.log_lik])
         return(return_value)
     
-    def update_particle_importance(self, X, Y, j, time_value = None):
+    def update_particle_importance(self,XtX, X, Y, j, time_value = None):
         if time_value != None:
             self.time_delta = time_value - self.this_time
             self.this_time  += self.time_delta
@@ -46,16 +46,14 @@ class probit_sin_wave_particle:
             self.this_time=1.0
             self.sudo_epoch_time = 1.0
 
-        self.useful_calcs(X)
+        self.useful_calcs(X, XtX)
         
-        mu = np.transpose(self.bo)
-        B_mu_proposed = np.random.multivariate_normal(
-            mu, 
+        self.bo = np.random.multivariate_normal(
+            np.transpose(self.bo), 
             self.B_cov,
             1
         ).reshape(self.p,1).flatten()
         
-        self.bo = B_mu_proposed
         if time_value != None:
             idx = int(self.this_time)
         else:
@@ -97,18 +95,11 @@ class probit_sin_wave_particle:
     def get_particle_id_history(self):
         return(self.particle_id_history)
     
-    def useful_calcs(self, X):
-        self.XtX       =X.transpose().dot(X)
-        self.Bo_inv    =np.linalg.inv(self.Bo)
-        #self.B_cov     = np.linalg.inv(
-        #    self.Bo_inv + ( 
-        #        (1.0/.0000007)/self.sudo_epoch_time 
-        #    ) * 
-        #    np.identity(self.p)*.000000025
-        #)
-        #print("self.sudo_epoch_time=", self.sudo_epoch_time)
+    def useful_calcs(self, X, XtX):
+        self.XtX       = XtX
+        self.Bo_inv    = np.linalg.inv(self.Bo)
         self.B_cov     = np.linalg.inv(
-            self.Bo_inv + (1/self.sudo_epoch_time) * self.XtX #( (1.0/.0000007)/self.sudo_epoch_time ) * np.identity(self.p)*.000000025
+            self.Bo_inv + (1.0/self.sudo_epoch_time) * self.XtX
         )
     
     def set_N(self, N):
@@ -134,9 +125,9 @@ class probit_sin_wave_particle:
     def copy_particle_values(self, not_this_particle):
         self.bo=not_this_particle.bo.copy()
         self.Bo=not_this_particle.Bo.copy()
-        self.bo_list=not_this_particle.bo_list.copy()
+        #self.bo_list=not_this_particle.bo_list.copy()
         self.particle_id_history=not_this_particle.particle_id[0]
-        self.B_cov=np.identity(2)*0.00005
+        #self.B_cov=np.identity(2)*0.00005
         self.N=not_this_particle.N
         self.Zi=not_this_particle.Zi.copy()
         
@@ -227,11 +218,11 @@ class probit_particle:
         self.bo=B[0]
 
     def useful_calcs(self,X):
-        self.XtX       =X.transpose().dot(X)
-        self.Bo_inv_bo =np.linalg.inv(self.Bo).dot(self.bo)
-        self.B_cov     =np.linalg.inv(np.linalg.inv(self.Bo) + self.XtX)
-        self.N         =X.shape[0]
-        self.Zi        =np.zeros((self.N,1))
+        self.XtX       = X.transpose().dot(X)
+        self.Bo_inv_bo = np.linalg.inv(self.Bo).dot(self.bo)
+        self.B_cov     = np.linalg.inv(np.linalg.inv(self.Bo) + self.XtX)
+        self.N         = X.shape[0]
+        self.Zi        = np.zeros((self.N,1))
         
     def set_N(self, N):
         self.N=N
