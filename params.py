@@ -36,18 +36,19 @@ class pf_params():
     
 class pf_params_synth_data():
 
-    def __init__(self, shards_number):
+    def __init__(self, shards_number, particles_per_shard, number_of_predictors):
         M=shards_number
         PART_NUM = 1000
         COMM_PER_SHARD_INTERVAL = 10000#number of observations to process per shard before communication step
         self.params={
-            'N_batch':1, 
-            'shards': M,
-            'particles_per_shard':PART_NUM,
-            's_num_before_comm': COMM_PER_SHARD_INTERVAL,
-            'model':'probit_sin_wave',
-            'sample_method':"importance",
-            'data_type':'simulated'
+            'N_batch'            : 1, 
+            'shards'             : M,
+            'p_to_use'           : number_of_predictors,
+            'particles_per_shard': particles_per_shard,
+            's_num_before_comm'  : COMM_PER_SHARD_INTERVAL,
+            'model'              : 'probit_sin_wave',
+            'sample_method'      : "importance",
+            'data_type'          : 'simulated'
         }
         
     def get_params(self):
