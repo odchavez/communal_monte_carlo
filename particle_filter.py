@@ -81,7 +81,10 @@ class particle_filter:
 
                         #print("x_keys[n]=", x_keys[n])
                         #print(int(x_keys[n].split(":")[0]))
+                        XtXpre = self.X[row_index,:]
+                        XtX = XtXpre.transpose().dot(XtXpre)
                         self.particle_list[pn].update_particle_importance(
+                            XtX,
                             self.X[row_index,:], 
                             self.Y[row_index], 
                             int(x_keys[n].split(":")[0]),
@@ -97,17 +100,17 @@ class particle_filter:
         top    = np.exp(self.not_norm_wts)
         bottom = np.sum(top)
         if bottom == 0:
-            max_val=np.max(self.not_norm_wts)
-            top    = np.exp(self.not_norm_wts - max_val)
-            bottom = np.sum(top)
-            norm_wts=top/bottom#np.exp(logsumexp(self.not_norm_wts)))
+            max_val  = np.max(self.not_norm_wts)
+            top      = np.exp(self.not_norm_wts - max_val)
+            bottom   = np.sum(top)
+            norm_wts = top/bottom
         else:
-            norm_wts=top/bottom#np.exp(logsumexp(self.not_norm_wts)))
-        #if np.sum(norm_wts) < 0.999999 or np.sum(norm_wts) > 1.000001:
-            #print("norm_wts=", norm_wts)                
-        particles_kept=np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
+            norm_wts=top/bottom
+                     
+        particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
         temp_index=np.zeros(self.PART_NUM)
         temp_index.astype(int)
+        
         for pn in range(self.PART_NUM):
             temp_index[particles_kept[pn]]+=1
         
