@@ -6,13 +6,13 @@ def get_args():
         description='Runs the synthetic data generator.'
     )
     parser.add_argument(
-        '--Epoch_N', type=int,
-        help='The number of observations to have per epoch, ie. before a communication step.',
+        '--N_total', type=int,
+        help='The number of observations in total accross all epochs and shards.',
         required=True
     )
     parser.add_argument(
-        '--N_total', type=int,
-        help='The number of observations in total accross all epochs and shards.',
+        '--Epoch_N', type=int,
+        help='The number of observations to have per epoch, ie. before a communication step.',
         required=True
     )
     return parser.parse_args()
