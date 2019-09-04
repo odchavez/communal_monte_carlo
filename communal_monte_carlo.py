@@ -1,8 +1,5 @@
-#import time
 from tqdm import tqdm
-#import numpy as np
 import particle_filter
-#import simulate_data
 import communal_monte_carlo as cmc
 import embarrassingly_parallel as ep
 import pf_plots 
