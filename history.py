@@ -7,32 +7,19 @@ import glob
 class parameter_history:
     
     def __init__(self):
-        #print("history __init__")
         self.bo_list_history = list()
         self.bo_machine_list_history = list()
     
     def compile_bo_list_history(self, f_name_stem=''):
-        #print("history compile_bo_list_history")
-
         nrun, nshard = self.get_particle_history_dim("particle_hold/file_"+f_name_stem+"_*.npy")
         for nr in range(nrun):
-             
             for ns in range(nshard):
                 loop_file_name = "particle_hold/file_" + f_name_stem + "_" + str(nr) + "_" + str(ns) + ".npy"
                 loaded_bo_file = np.load(loop_file_name)
-                #print(str(nr) + " out of " + str(nrun))
-                #print("attempting file: " + loop_file_name)
-                #print("concatinating the following shapes:")
-                #print(loaded_bo_file.shape)
-                #print(loaded_bo_file)
-                
                 if ns == 0:
                     shard_history_temp = loaded_bo_file.copy()
-                    #print(shard_history_temp.shape)
                 else:
-                    #print(shard_history_temp.shape)
                     shard_history_temp = np.append(shard_history_temp, loaded_bo_file, axis = 2)
-
             if nr == 0:
                 self.bo_list_history = shard_history_temp.copy()
             else:
@@ -83,16 +70,10 @@ class parameter_history:
                 counter+=1    
         return temp_all_parts
     
-    def write_results(
-        self, 
-        f_experiment_path,  
-        f_params_results_file, 
-        f_stats_df, 
-        f_other_stats_file='experiment_results/results.csv'
-    ):
+    def write_param_results(self, f_experiment_path,  f_params_results_file):
         
         params_path = f_experiment_path + f_params_results_file
-        stats_path  = f_experiment_path + f_other_stats_file
+        #stats_path  = f_experiment_path + f_other_stats_file
         #print("writing paramater results to ", params_path)
         if os.path.exists(f_experiment_path):
             np.save( 
@@ -107,6 +88,9 @@ class parameter_history:
                 self.bo_list_history
             )
             
+        
+        
+    def write_stats_results(self,  f_stats_df, f_other_stats_file='experiment_results/results.csv'):
         # add to existing csv results of 
         #print("writing experimental run statistics to ", f_other_stats_file)
         if os.path.exists(f_other_stats_file):
@@ -124,7 +108,4 @@ class parameter_history:
                 index = False, 
                 mode = 'a'
             )
-        
-
-        
         
