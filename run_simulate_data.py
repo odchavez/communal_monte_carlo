@@ -10,12 +10,17 @@ def get_args():
         help='The number of observations to have per epoch, ie. before a communication step.',
         required=True
     )
+    parser.add_argument(
+        '--N_total', type=int,
+        help='The number of observations in total accross all epochs and shards.',
+        required=True
+    )
     return parser.parse_args()
 
 if __name__ == "__main__":
     
     args = get_args()
     
-    sim_data_obj = sd.simulated_data2(n_per_file = args.Epoch_N)
+    sim_data_obj = sd.simulated_data2(n_per_file = args.Epoch_N, N_total = args.N_total)
     sim_data_obj.generate_Betas()
     sim_data_obj.generate_data()
