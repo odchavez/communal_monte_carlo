@@ -21,8 +21,8 @@ class prep_data:
         self.model=params['model']
         
         if self.model== "probit_sin_wave":
-            
-            full_de_mat = pd.read_csv(path, low_memory=False, index_col=0).loc[:,test_cols]#.iloc[:,:].T
+            print("params['p_to_use']=", params['p_to_use'])
+            full_de_mat = pd.read_csv(path, low_memory=False, index_col=0).loc[:,test_cols[-params['p_to_use']:]]#.iloc[:,:].T
             full_de_mat.time = full_de_mat.time+1
             all_shard_unique_time_values = full_de_mat.time.unique()
             #full_de_mat['intercept'] = 1
