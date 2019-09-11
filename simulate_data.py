@@ -18,6 +18,8 @@ class simulated_data:
             self.b=params['b']
             self.B=params['B']
         
+            
+            
             for i in range(self.N):
                 inner=self.X[i].dot(self.b)
                 samp=np.random.normal(loc=inner, scale=1.0, size=1)[0]
@@ -116,12 +118,14 @@ class simulated_data:
             
             sig=np.max(np.var(self.b[0:(self.N-1),:]-self.b[1:,:], axis=0))
             self.B=30*sig*params['B']
+            self.Tau_inv = np.max(np.std(self.b[0:(self.N-1),:]-self.b[1:,:], axis=0))
             
             for m in range(self.shards):
                 output["shard_"+str(m)]['N'] = self.N
                 output["shard_"+str(m)]['b'] = self.b
                 output["shard_"+str(m)]['B'] = self.B*self.shards
                 output["shard_"+str(m)]['p'] = self.p
+                output["shard_"+str(m)]['Tau_inv'] = self.Tau_inv
                 output["shard_"+str(m)]['model'] = self.model
                 output["shard_"+str(m)]['shards']=self.shards
                 
@@ -134,7 +138,8 @@ class simulated_data:
                 epoch_output["epoch"+str(ep)]['parallel_shards'] = self.shards
                 epoch_output["epoch"+str(ep)]['b']               = self.b
                 epoch_output["epoch"+str(ep)]['B'] = self.B*self.shards
-
+                epoch_output["epoch"+str(ep)]['Tau_inv'] = self.Tau_inv
+                
                 for m in range(self.shards):
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['N'] = self.N
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['b'] = self.b
@@ -142,7 +147,8 @@ class simulated_data:
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['p'] = self.p
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['model'] = self.model
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['shards']=self.shards
-
+                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Tau_inv']=self.Tau_inv
+                    
             
             self.output=output
             self.output['epoch_data']=epoch_output
@@ -152,6 +158,7 @@ class simulated_data:
             self.output['b']=self.b
             self.output['B']=self.B
             self.output['p']=self.p
+            self.output['Tau_inv']=self.Tau_inv
             self.output['b_oos']=self.b_oos
             self.output['X_oos']=self.X_oos
             self.output['batch_number']=self.N_batch
@@ -159,6 +166,7 @@ class simulated_data:
             self.output['shards']=1
             self.output['parallel_shards']=self.shards
             self.output['data_keys']=self.data_keys
+            
             
     def get_data(self):
         return(self.output)
@@ -238,6 +246,10 @@ class  simulated_data2:
         else:
             self.Beta_vals_df.to_csv(self.output_folder_name + "Beta_t.csv" )
         print("regression coefficients generation complete...")
+        print("estimating Tau_inv parameter...")
+        self.Tau_inv = np.max(self.Beta_vals_df.diff().std())
+        print("Tau_inv = ", self.Tau_inv)
+        
 
     def generate_data(self, path=None):
         
@@ -269,13 +281,14 @@ class  simulated_data2:
             
             #X_i.columns=pnames
             
-            Beta_t = self.Beta_vals_df.iloc[tt].T#Beta_vals[tt,:]
+            Beta_t = self.Beta_vals_df.iloc[tt].T
                 
             X_B_t = X_i.dot(np.array(Beta_t))
-            event_prob = norm.cdf(X_B_t)
-            #print(event_prob)
+            event_prob = 1.0/(1.0+np.exp(-X_B_t))
+            Y_vals = np.random.binomial(n=1, p=event_prob, size=None)
             
-            X_i['y'] = np.random.binomial(1,event_prob)
+            X_i['y'] = Y_vals
+            X_i['Tau_inv'] = self.Tau_inv
             X_i['time'] = tt
             
             if X_i_all.shape[0]==0:

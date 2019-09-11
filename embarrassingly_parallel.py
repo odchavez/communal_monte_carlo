@@ -33,7 +33,7 @@ def plot_CMC_parameter_path_(ObsN_ParamN_Part_N, predictor_names, ground_truth =
     params_std = np.nanstd(ObsN_ParamN_Part_N, axis=2)
     
     plot_column_count = 4
-    plot_row_count = int(m.ceil(param_num/plot_column_count))+1
+    plot_row_count = int(m.ceil(param_num/plot_column_count))
     fig_outer, axes_outer = plt.subplots(nrows=plot_row_count, ncols=plot_column_count)
 
     

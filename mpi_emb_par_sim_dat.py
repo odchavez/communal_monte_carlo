@@ -73,6 +73,11 @@ def get_args():
         help='number of files to process if running a test',
         required=False, default=999999999999
     )
+    parser.add_argument(
+        '--plot_at_end', type=int,
+        help='number of files to process if running a test',
+        required=False, default=0
+    )
     return parser.parse_args()
 
 
@@ -196,4 +201,24 @@ if rank == 0:
     parameter_history_obj = history.parameter_history()    
     parameter_history_obj.write_stats_results(f_stats_df = stats_results_file)
     
-    
+    if args.plot_at_end:
+        print("Hail! - I would have plotted...")
+        parameter_history_obj.compile_bo_list_history(name_stem.code)
+        
+        parmas_shape = parameter_history_obj.bo_list_history.shape
+        print("parmas_shape=",parmas_shape)
+        parmas_truth = pd.read_csv(
+            'synth_data/Xy_N=' + args.Xy_N + 
+            '_Epoch_N=' + args.Epoch_N +
+            '_Nt=' + args.Nt +
+            '_p=' + args.p + '/Beta_t.csv',
+            index_col=0
+        ).iloc[:parmas_shape[0],:parmas_shape[1]]
+        print("parmas_truth.shape=", parmas_truth.shape)
+        print("type(shard_data['predictors'])=", type(shard_data['predictors']))
+        print("shard_data['predictors']=", shard_data['predictors'])
+        embarrassingly_parallel.plot_CMC_parameter_path_(
+            parameter_history_obj.bo_list_history,
+            shard_data['predictors'],
+            parmas_truth
+        )

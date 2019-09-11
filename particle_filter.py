@@ -1,16 +1,12 @@
 import pf_models as pf
 import numpy as np
-import numpy as np
 import pandas as pd
+
 from matplotlib import pyplot as plt
 
 class particle_filter:
 #particle filter class    
     def __init__(self, dat, params_obj, pf_rank = 0, run_number = 0):
-        
-        
-                       
-                        
         
         self.PART_NUM           = params_obj.get_particles_per_shard()
         self.particle_list      = list()
@@ -38,13 +34,16 @@ class particle_filter:
             self.Y=dat['Y']
             self.p=dat['p']
             self.N=dat['N']
+            #self.Tau=dat['Tau']
+            #print(dat.keys())
             #self.time_values = dat['time_value']
             
             self.shards=dat['shards']
             for pn in range(self.PART_NUM):
-                temp_particle=pf.probit_sin_wave_particle( np.array(dat['b'][0]), dat['B'], pn)#( np.array(dat['b'][0]), dat['B'], pn)
+                temp_particle=pf.probit_sin_wave_particle( np.array(dat['b'][0]), dat['Tau_inv'], pn)#( np.array(dat['b'][0]), dat['B'], pn)
                 temp_particle.set_N(self.N)
-                temp_particle.set_Zi(self.X)
+                #temp_particle.set_Zi(self.X)
+                
                 #temp_particle.set_bo_list(int(1+max(self.time_values)))
                 temp_particle.set_shard_number(self.shards)
                 self.particle_list.append(temp_particle)
@@ -66,7 +65,7 @@ class particle_filter:
             #print("range(len(self.unique_time_values))=",range(len(self.unique_time_values)))
             #print("self.unique_time_values = ", self.unique_time_values)
             for n in range(len(self.unique_time_values)):
-                n_check_point = np.floor(len(self.unique_time_values)*0.10)
+                #n_check_point = np.floor(len(self.unique_time_values)*0.10)
                 #if n % n_check_point ==0:
                 #    print("n=",n, "     ", "self.N=", self.N)
                 #    print(str(100*n/self.N)+"% of total file complete...")
@@ -75,7 +74,10 @@ class particle_filter:
                 for pn in range(self.PART_NUM):
                     if self.sample_method=='importance':
                         row_index = self.time_values == self.unique_time_values[n]
-                        #print(self.X[row_index,:])
+                        #print("in particle filter")
+                        #print("row_index=",row_index)
+                        #print("self.X[row_index,:]=", self.X[row_index,:])
+                        #print("self.Y[row_index]=",self.Y[row_index])
                         #print("x_keys", x_keys)
                         #print("n=", n)
 
@@ -90,9 +92,10 @@ class particle_filter:
                             int(x_keys[n].split(":")[0]),
                             self.unique_time_values[n]
                         )
+                        self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[row_index,:], self.Y[row_index])
                     else:
                         self.particle_list[pn].update_particle(self.X[n,:], self.Y[n], n)
-                    self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[n,:], self.Y[n])
+                        self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[n,:], self.Y[n])
                 self.shuffle_particles()
         return
     
