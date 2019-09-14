@@ -56,7 +56,7 @@ def get_args():
     parser.add_argument(
         '--p_to_use', type=int,
         help='The number of predictor in X to use.',
-        required=True
+        required=False, default=10000
     )
     parser.add_argument(
         '--particles_per_shard', type=int,
