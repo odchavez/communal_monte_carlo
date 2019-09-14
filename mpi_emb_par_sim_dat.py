@@ -23,7 +23,7 @@ import embarrassingly_parallel
 import prep_simulation_data
 import history
 import params
-import pf_plots 
+import pf_plots
 
 
 start_time=time.time()
@@ -91,7 +91,7 @@ size = comm.Get_size()
 first_time = True
 run_number = -1
 params_obj = params.pf_params_synth_data( size, args.particles_per_shard, args.p_to_use )
-    
+
 particle_filter_run_time   = 0
 comm_time_scatter_data     = 0
 comm_time_gather_particles  = 0
@@ -101,23 +101,23 @@ files_to_process = min(args.test_run, int(args.Xy_N)/int(args.Epoch_N))
 for fn in tqdm(range(files_to_process)):
 
     folder = (
-        '/Xy_N=' + args.Xy_N + 
+        '/Xy_N=' + args.Xy_N +
         '_Epoch_N=' + args.Epoch_N +
         '_Nt=' + args.Nt +
         '_p=' + args.p
     )
     experiment_path = 'experiment_results/synth_data' + folder
     data_path = 'synth_data' + folder + '/fn='+ str(fn) + '.csv'
-    
+
     params_results_file = '/params_resutls_' + args.experiment_number
-    
+
     exists = os.path.isfile(data_path)
     if rank == 0:
 
         if exists:
             data_obj = prep_simulation_data.prep_data(params_obj.get_params(), data_path)
             to_scatter = data_obj.format_for_scatter(epoch=0)
-            
+
         else:
             to_scatter = None
             next
@@ -128,35 +128,35 @@ for fn in tqdm(range(files_to_process)):
         comm_time_scatter_data -= time.time()
         shard_data = comm.scatter(to_scatter, root=0)
         comm_time_scatter_data += time.time()
-    
+
     #print("#INITIALIZE PARTICLES IN FIRST PASS WITH DATA")
     if first_time and exists:
         first_time = False
-        
+
         shard_pfo = particle_filter.particle_filter(
-            shard_data, 
+            shard_data,
             params_obj,
-            rank, 
+            rank,
             run_number
         )
-        
+
         if rank == 0:
             name_stem_orig = randomString(20)
         else:
             name_stem_orig = None
         name_stem  = comm.bcast(name_stem_orig, root=0)
-        
+
     if exists:
         run_number+=1
         shard_pfo.update_data(shard_data, run_number)
-        
+
         particle_filter_run_time -= time.time()
         shard_pfo.run_particle_filter()
         particle_filter_run_time +=time.time()
-        
+
         shard_pfo.write_bo_list(name_stem.code)
         shard_pfo.collect_params()
-        
+
         comm_time_gather_particles-=time.time()
         all_shard_params = comm.gather(shard_pfo.params_to_ship, root=0)
         comm_time_gather_particles+=time.time()
@@ -198,17 +198,16 @@ if rank == 0:
             'code'                       : [name_stem.code]
         }
     )
-    parameter_history_obj = history.parameter_history()    
-    parameter_history_obj.write_stats_results(f_stats_df = stats_results_file)
-    
+    parameter_history_obj = history.parameter_history()
+    parameter_history_obj.write_stats_results(f_stats_df=stats_results_file)
+
     if args.plot_at_end:
-        print("Hail! - I would have plotted...")
         parameter_history_obj.compile_bo_list_history(name_stem.code)
-        
+
         parmas_shape = parameter_history_obj.bo_list_history.shape
         print("parmas_shape=",parmas_shape)
         parmas_truth = pd.read_csv(
-            'synth_data/Xy_N=' + args.Xy_N + 
+            'synth_data/Xy_N=' + args.Xy_N +
             '_Epoch_N=' + args.Epoch_N +
             '_Nt=' + args.Nt +
             '_p=' + args.p + '/Beta_t.csv',
