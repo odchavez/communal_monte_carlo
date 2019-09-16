@@ -23,11 +23,11 @@
 #
 #----------------------------------------------------
 
-#SBATCH -J cmc_test_4      # Job name
-#SBATCH -o exp_out/cmc_test.o%j # Name of stdout output file
-#SBATCH -e exp_err/cmc_test.e%j # Name of stderr error file
+#SBATCH -J cmc_test_3_nodes=10        # Job name
+#SBATCH -o exp_out/cmc_test_3_nodes=10.o%j # Name of stdout output file
+#SBATCH -e exp_err/cmc_test_3_nodes=10.e%j # Name of stderr error file
 #SBATCH -p normal          # Queue (partition) name
-#SBATCH -N 1               # Total # of nodes
+#SBATCH -N 10              # Total # of nodes
 #SBATCH -n 10              # Total # of mpi tasks
 #SBATCH -t 48:00:00        # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
@@ -41,6 +41,6 @@
 
 # Launch MPI code...
 
-ibrun python mpi_emb_par_sim_dat.py --Xy_N 50000 --Epoch_N 50000 --Nt 10 --p 100 --particles_per_shard 1000 --experiment_number -1      # Use ibrun instead of mpirun or mpiexec
+ibrun python mpi_emb_par_sim_dat.py --Xy_N 50000 --Epoch_N 10000 --Nt 10 --p 100 --particles_per_shard 1000 --experiment_number -1      # Use ibrun instead of mpirun or mpiexec
 
 # ---------------------------------------------------
