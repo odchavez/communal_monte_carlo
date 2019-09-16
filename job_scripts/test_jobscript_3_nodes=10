@@ -28,7 +28,7 @@
 #SBATCH -e exp_err/cmc_test_3_nodes=10.e%j # Name of stderr error file
 #SBATCH -p normal                          # Queue (partition) name
 #SBATCH -N 10                              # Total # of nodes
-#SBATCH --ntasks-per-node 1                # # of mpi tasks per node
+#SBATCH -n 10                              # Total # of mpi tasks
 #SBATCH -t 48:00:00                        # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
 #SBATCH --mail-type=all                    # Send email at begin and end of job
