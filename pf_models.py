@@ -84,31 +84,23 @@ class probit_sin_wave_particle:
         temp_bo_list=np.zeros((len(time_values), len(self.bo)))
         temp_bo_list[temp_bo_list==0]=np.NaN
         self.bo_list = pd.DataFrame(temp_bo_list, index=time_values)
-        self.bo_machine_list=np.zeros((self.N, len(self.bo)))
-        self.bo_machine_list[self.bo_machine_list==0]=np.NaN
 
     def get_truncated_normal(self, mean, sd, low, upp):
         return truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
 
     def copy_particle_values(self, not_this_particle):
         self.bo=not_this_particle.bo.copy()
-        #self.Bo=not_this_particle.Bo.copy()
-        #self.bo_list=not_this_particle.bo_list.copy()
         self.particle_id_history=not_this_particle.particle_id[0]
-        #self.B_cov=np.identity(2)*0.00005
         self.N=not_this_particle.N
-        #self.Zi=not_this_particle.Zi.copy()
 
     def print_vals(self):
         print(self.bo)
         print(self.Bo)
         print("particle_id=",self.particle_id)
         print("particle_id_history=",self.particle_id_history)
-        #print(self.XtX)
         print(self.Bo_inv)
         print(self.B_cov)
         print(self.N)
-        #print(self.Zi)
         print("self.bo_list=",self.bo_list)
 
     def print_max(self):
@@ -122,11 +114,9 @@ class probit_sin_wave_particle:
                 ,(np.amax( self.B_cov ))
                 ,(np.amax( self.Bo_inv))
                 ,(np.amax( self.N ))
-                #,(np.amax( self.Zi ))
                 ,(np.amax( self.bo_list ))
                 ,(np.amax( self.Bo_suf_stat ))
                 ,(np.amax( self.log_lik ))
-                ,(np.amax( self.bo_machine_list))
                 ,(np.amin(self.log_lik))
             ]
         print(max(L))
@@ -142,11 +132,9 @@ class probit_sin_wave_particle:
                 ,(np.amin( self.B_cov ))
                 ,(np.amin( self.Bo_inv))
                 ,(np.amin( self.N ))
-                #,(np.amin( self.Zi ))
                 ,(np.amin( self.bo_list ))
                 ,(np.amin( self.Bo_suf_stat ))
                 ,(np.amin( self.log_lik ))
-                ,(np.amin( self.bo_machine_list))
                 ,(np.amin(self.log_lik))
             ]
         print(min(L))
