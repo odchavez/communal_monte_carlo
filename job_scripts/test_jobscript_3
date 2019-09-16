@@ -23,9 +23,9 @@
 #
 #----------------------------------------------------
 
-#SBATCH -J cmc_test        # Job name
-#SBATCH -o exp_out/cmc_test.o%j # Name of stdout output file
-#SBATCH -e exp_err/cmc_test.e%j # Name of stderr error file
+#SBATCH -J cmc_test_3      # Job name
+#SBATCH -o exp_out/cmc_test_3.o%j # Name of stdout output file
+#SBATCH -e exp_err/cmc_test_3.e%j # Name of stderr error file
 #SBATCH -p normal          # Queue (partition) name
 #SBATCH -N 1               # Total # of nodes
 #SBATCH -n 10              # Total # of mpi tasks
