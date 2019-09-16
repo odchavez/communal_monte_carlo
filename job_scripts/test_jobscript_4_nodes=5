@@ -24,11 +24,11 @@
 #----------------------------------------------------
 
 #SBATCH -J cmc_test_4_nodes=5       # Job name
-#SBATCH -o exp_out/cmc_test.o%j     # Name of stdout output file
-#SBATCH -e exp_err/cmc_test.e%j     # Name of stderr error file
+#SBATCH -o exp_out/cmc_test_4_nodes=5.o%j     # Name of stdout output file
+#SBATCH -e exp_err/cmc_test_4_nodes=5.e%j     # Name of stderr error file
 #SBATCH -p normal                   # Queue (partition) name
 #SBATCH -N 5                        # Total # of nodes
-#SBATCH --ntasks-per-node 2         # of mpi tasks per node
+#SBATCH -n 10                       # Total # of mpi tasks
 #SBATCH -t 48:00:00                 # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
 #SBATCH --mail-type=all             # Send email at begin and end of job
