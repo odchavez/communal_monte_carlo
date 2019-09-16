@@ -23,7 +23,7 @@
 #
 #----------------------------------------------------
 
-#SBATCH -J cmc_test        # Job name
+#SBATCH -J cmc_test_4      # Job name
 #SBATCH -o exp_out/cmc_test.o%j # Name of stdout output file
 #SBATCH -e exp_err/cmc_test.e%j # Name of stderr error file
 #SBATCH -p normal          # Queue (partition) name
