@@ -44,6 +44,11 @@ def get_args():
         required=True
     )
     parser.add_argument(
+        '--N_Node', type=str,
+        help='The number of compute nodes allocated.',
+        required=True
+    )
+    parser.add_argument(
         '--Nt', type=str,
         help='The number of observations with the same timestep.',
         required=True
@@ -182,10 +187,11 @@ if rank == 0:
     stats_results_file = pd.DataFrame(
         {
             'shards'                     : [size],
-            '/Xy_N='                     : [args.Xy_N],
-            '_Epoch_N='                  : [args.Epoch_N],
-            '_Nt='                       : [args.Nt],
-            '_p='                        : [args.p],
+            'Xy_N='                      : [args.Xy_N],
+            'Epoch_N='                   : [args.Epoch_N],
+            'N_Node='                    : [args.N_Node],
+            'Nt='                        : [args.Nt],
+            'p='                         : [args.p],
             'exp_number'                 : [args.experiment_number],
             'data_type'                  : ["synthetic"],
             'particle_number'            : params_obj.get_particles_per_shard(),
