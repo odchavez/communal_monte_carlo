@@ -69,6 +69,11 @@ def get_args():
         required=True
     )
     parser.add_argument(
+        '--keep_history', type=int,
+        help='keep a record of sampled particles if 1.  If 0 do not track history.',
+        required=False,  default=0
+    )
+    parser.add_argument(
         '--experiment_number', type=str,
         help='The experimental run number',
         required=True
@@ -158,10 +163,11 @@ for fn in tqdm(range(files_to_process)):
         particle_filter_run_time -= time.time()
         shard_pfo.run_particle_filter()
         particle_filter_run_time +=time.time()
-
-        shard_pfo.write_bo_list(name_stem.code)
+        
+        if args.keep_history:
+            shard_pfo.write_bo_list(name_stem.code)
+        
         shard_pfo.collect_params()
-
         comm_time_gather_particles-=time.time()
         all_shard_params = comm.gather(shard_pfo.params_to_ship, root=0)
         comm_time_gather_particles+=time.time()
@@ -201,7 +207,8 @@ if rank == 0:
             'comm_time_scatter_particles': [comm_time_scatter_particles_all],
             'start_time'                 : [start_time],
             'end_time'                   : [time.time()],
-            'code'                       : [name_stem.code]
+            'code'                       : [name_stem.code],
+            'final_params'               : [shuffled_particles]
         }
     )
     parameter_history_obj = history.parameter_history()
