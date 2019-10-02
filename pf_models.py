@@ -49,7 +49,7 @@ class probit_sin_wave_particle:
             np.transpose(self.bo),
             self.Tau_inv*np.identity(len(self.bo)),
             1
-        ).reshape(self.p,1).flatten()*self.std_rescale
+        ).astype(float).reshape(self.p,1).flatten()*self.std_rescale
 
         if time_value != None:
             idx = int(self.this_time)
