@@ -208,7 +208,7 @@ if rank == 0:
             'start_time'                 : [start_time],
             'end_time'                   : [time.time()],
             'code'                       : [name_stem.code],
-            'final_params'               : [str(shuffled_particles)]
+            'final_params'               : [str(np.array(shuffled_particles))]
         }
     )
     parameter_history_obj = history.parameter_history()
