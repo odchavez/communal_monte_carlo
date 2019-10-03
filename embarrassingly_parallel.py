@@ -185,7 +185,19 @@ def shuffel_embarrassingly_parallel_params(all_shard_params):
             index+=1
         output.append(shard_part)
     return(output)
+
+
+def convert_to_list_of_type(params_nd_list, f_type = float):
+    all_shards = list()
+    for s in range(len(params_nd_list)):
+        all_particles = list()
+        for p_n in range(len(params_nd_list[s])):
+            float_params = np.array(params_nd_list[s][p_n]).tolist()
+            all_particles.append(float_params)
+        all_shards.append(all_particles)
     
+    return all_shards
+          
 class embarrassingly_parallel:
     
     def __init__(self, data, params):

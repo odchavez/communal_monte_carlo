@@ -188,8 +188,9 @@ particle_filter_run_time_all    = str(comm.gather(particle_filter_run_time, root
 comm_time_scatter_data_all      = str(comm.gather(comm_time_scatter_data, root=0))
 comm_time_gather_particles_all  = str(comm.gather(comm_time_gather_particles, root=0))
 comm_time_scatter_particles_all = str(comm.gather(comm_time_scatter_particles, root=0))
-
+    
 if rank == 0:
+    float_valued_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles, f_type = float)
     stats_results_file = pd.DataFrame(
         {
             'shards'                     : [size],
@@ -208,7 +209,7 @@ if rank == 0:
             'start_time'                 : [start_time],
             'end_time'                   : [time.time()],
             'code'                       : [name_stem.code],
-            'final_params'               : [str(shuffled_particles)]
+            'final_params'               : [str(float_valued_particles)]
         }
     )
     parameter_history_obj = history.parameter_history()
