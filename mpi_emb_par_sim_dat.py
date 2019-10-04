@@ -190,7 +190,19 @@ comm_time_gather_particles_all  = str(comm.gather(comm_time_gather_particles, ro
 comm_time_scatter_particles_all = str(comm.gather(comm_time_scatter_particles, root=0))
     
 if rank == 0:
+    print(shuffled_particles[0][:3])
     float_valued_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles, f_type = float)
+    print("*****************")
+    print("*****************")
+    print("*****************")
+    print("*****************")
+    print("*****************")
+    print("*****************")
+    print("*****************")
+    print("*****************")
+    print("*****************")
+    print(float_valued_particles[0][:3])
+    
     stats_results_file = pd.DataFrame(
         {
             'shards'                     : [size],
