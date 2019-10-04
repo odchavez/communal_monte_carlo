@@ -175,17 +175,7 @@ for fn in tqdm(range(files_to_process)):
             shuffled_particles = embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
                 all_shard_params
             )
-            print("shuffled_particles = ", shuffled_particles)
-            print("*****************")
-            print("*****************")
-            print("*****************")
-            print("*****************")
-            print("*****************")
-            print("*****************")
-            print("*****************")
-            print("*****************")
-            print("*****************")
-            print(float_valued_particles)
+            output_shuffled_particles = shuffled_particles.copy()
         else:
             shuffled_particles = None
         comm_time_scatter_particles-=time.time()
@@ -201,18 +191,7 @@ comm_time_gather_particles_all  = str(comm.gather(comm_time_gather_particles, ro
 comm_time_scatter_particles_all = str(comm.gather(comm_time_scatter_particles, root=0))
     
 if rank == 0:
-    print("shuffled_particles = ", shuffled_particles)
-    float_valued_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles, f_type = float)
-    print("*****************")
-    print("*****************")
-    print("*****************")
-    print("*****************")
-    print("*****************")
-    print("*****************")
-    print("*****************")
-    print("*****************")
-    print("*****************")
-    print('float_valued_particles = ', float_valued_particles)
+    #float_valued_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles, f_type = float)
     
     stats_results_file = pd.DataFrame(
         {
@@ -232,7 +211,7 @@ if rank == 0:
             'start_time'                 : [start_time],
             'end_time'                   : [time.time()],
             'code'                       : [name_stem.code],
-            'final_params'               : [str(float_valued_particles)]
+            'final_params'               : [str(output_shuffled_particles)]
         }
     )
     parameter_history_obj = history.parameter_history()
