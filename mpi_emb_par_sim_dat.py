@@ -154,7 +154,7 @@ for fn in tqdm(range(files_to_process)):
             name_stem_orig = randomString(20)
         else:
             name_stem_orig = None
-        name_stem  = comm.bcast(name_stem_orig, root=0)
+        name_stem = comm.bcast(name_stem_orig, root=0)
 
     if exists:
         run_number+=1
@@ -175,7 +175,7 @@ for fn in tqdm(range(files_to_process)):
             shuffled_particles = embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
                 all_shard_params
             )
-            output_shuffled_particles = = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles)
+            output_shuffled_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles)
         else:
             shuffled_particles = None
         comm_time_scatter_particles-=time.time()
