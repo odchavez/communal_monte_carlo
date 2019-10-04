@@ -175,6 +175,17 @@ for fn in tqdm(range(files_to_process)):
             shuffled_particles = embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
                 all_shard_params
             )
+            print("shuffled_particles = ", shuffled_particles)
+            print("*****************")
+            print("*****************")
+            print("*****************")
+            print("*****************")
+            print("*****************")
+            print("*****************")
+            print("*****************")
+            print("*****************")
+            print("*****************")
+            print(float_valued_particles)
         else:
             shuffled_particles = None
         comm_time_scatter_particles-=time.time()
@@ -190,7 +201,7 @@ comm_time_gather_particles_all  = str(comm.gather(comm_time_gather_particles, ro
 comm_time_scatter_particles_all = str(comm.gather(comm_time_scatter_particles, root=0))
     
 if rank == 0:
-    print(shuffled_particles[0][:3])
+    print("shuffled_particles = ", shuffled_particles)
     float_valued_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles, f_type = float)
     print("*****************")
     print("*****************")
@@ -201,7 +212,7 @@ if rank == 0:
     print("*****************")
     print("*****************")
     print("*****************")
-    print(float_valued_particles[0][:3])
+    print('float_valued_particles = ', float_valued_particles)
     
     stats_results_file = pd.DataFrame(
         {
