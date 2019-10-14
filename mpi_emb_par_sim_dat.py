@@ -107,7 +107,7 @@ comm_time_scatter_data     = 0
 comm_time_gather_particles  = 0
 comm_time_scatter_particles = 0
 
-files_to_process = min(args.test_run, int(args.Xy_N)/int(args.Epoch_N))
+files_to_process = min(args.test_run, int(int(args.Xy_N)/int(args.Epoch_N)))
 for fn in tqdm(range(files_to_process)):
 
     folder = (
