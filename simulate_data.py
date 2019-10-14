@@ -56,7 +56,7 @@ class simulated_data2:
         output = np.sin((T-T_min)*2*math.pi/T_max)
         return output
 
-    def generate_Betas(self, path="synth_data/"):
+    def generate_Betas(self):
         print("generating regression coefficients...")
         self.Beta_vals_base = {
             'B_0': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = 1.0, y_1 = 0.0),
@@ -72,10 +72,7 @@ class simulated_data2:
         #Beta_vals.head()
         self.Beta_vals_df = pd.DataFrame(Beta_vals)[beta_cnames]
 
-        if path == '':
-            self.Beta_vals_df.to_csv(self.output_folder_name + "Beta_t.csv" )
-        else:
-            self.Beta_vals_df.to_csv(self.output_folder_name + "Beta_t.csv" )
+        self.Beta_vals_df.to_csv(self.output_folder_name + "Beta_t.csv" )
         print("regression coefficients generation complete...")
         print("estimating Tau_inv_std parameter...")
         self.Tau_inv_std = np.max(self.Beta_vals_df.diff().std())
@@ -83,13 +80,10 @@ class simulated_data2:
         print("Tau_inv_std = ", self.Tau_inv_std)
         print("Bo_std = ", self.Bo_std)
 
-    def generate_data(self, path=None):
-
-        if ~(path == None):
-            path = self.output_folder_name
+    def generate_data(self):
 
         print("generating data...")
-        print("writing data to " + path)
+        print("writing data to " + self.output_folder_name)
         X_i_all = pd.DataFrame()
         vcnames=list(range(self.pred_number))
         #pnames={}
@@ -135,7 +129,7 @@ class simulated_data2:
                     ".csv"
                 )
 
-                X_i_all.to_csv(path + file_name )
+                X_i_all.to_csv(self.output_folder_name + file_name )
 
                 file_num+=1
                 X_i_all = pd.DataFrame()
