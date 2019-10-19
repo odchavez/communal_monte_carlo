@@ -96,10 +96,10 @@ class simulated_data2:
             np.random.seed(tt)
 
             X_i =  pd.DataFrame(
-                np.random.multivariate_normal(
-                    np.zeros(self.pred_number),
-                    np.identity(self.pred_number)*.01,
-                    self.n_per_tic
+                np.random.uniform(
+                    low = -1,
+                    high = 1,
+                    (self.n_per_tic, self.pred_number)
                 )
             )
             X_i.columns=vcnames
