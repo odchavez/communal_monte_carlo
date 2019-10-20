@@ -99,7 +99,7 @@ class simulated_data2:
                 np.random.uniform(
                     low = -1,
                     high = 1,
-                    (self.n_per_tic, self.pred_number)
+                    size = (self.n_per_tic, self.pred_number)
                 )
             )
             X_i.columns=vcnames
