@@ -1,26 +1,17 @@
 import pandas as pd
 import numpy as np
 
-test_cols = [
-    'v_0','v_1','v_2','v_3','v_4','v_5','v_6','v_7','v_8','v_9',
-    'v_10','v_11','v_12','v_13','v_14','v_15','v_16','v_17','v_18','v_19',
-    'v_20','v_21','v_22','v_23','v_24','v_25','v_26','v_27','v_28','v_29',
-    'v_30','v_31','v_32','v_33','v_34','v_35','v_36','v_37','v_38','v_39',
-    'v_40','v_41','v_42','v_43','v_44','v_45','v_46','v_47','v_48','v_49',
-    'v_50','v_51','v_52','v_53','v_54','v_55','v_56','v_57','v_58','v_59',
-    'v_60','v_61','v_62','v_63','v_64','v_65','v_66','v_67','v_68','v_69',
-    'v_70','v_71','v_72','v_73','v_74','v_75','v_76','v_77','v_78','v_79',
-    'v_80','v_81','v_82','v_83','v_84','v_85','v_86','v_87','v_88','v_89',
-    'v_90','v_91','v_92','v_93','v_94','v_95','v_96','v_97','v_98','v_99',
-    'y', 'time', 'Tau_inv_std', 'Bo_std'
-]
+
 class prep_data:
     def __init__(self, params, path):
 
         self.model=params['model']
 
         if self.model== "probit_sin_wave":
-            full_de_mat = pd.read_csv(path, low_memory=False, index_col=0).loc[:,test_cols[-params['p_to_use']:]]
+            loaded_df = pd.read_csv(path, low_memory=False, index_col=0)
+            test_cols = loaded_df.columns
+            full_de_mat = loaded_df.loc[:,test_cols[-params['p_to_use']:]]
+            
             full_de_mat.time = full_de_mat.time+1
             all_shard_unique_time_values = full_de_mat.time.unique()
 

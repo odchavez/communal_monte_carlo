@@ -29,7 +29,6 @@ class particle_filter:
                 self.particle_list.append(temp_particle)
 
         elif self.model== "probit_sin_wave":
-            #print("working on model ", self.model)
             self.X=dat['X_matrix']
             self.Y=dat['Y']
             self.p=dat['p']
