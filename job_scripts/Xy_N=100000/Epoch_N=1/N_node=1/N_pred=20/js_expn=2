@@ -23,9 +23,9 @@
 #
 #----------------------------------------------------
 
-#SBATCH -J Xy_N=100000_Epoch_N=1_N_Node=1_expn=2             # Job name
-#SBATCH -o exp_out/Xy_N=100000_Epoch_N=1_N_Node=1_expn=2.o%j # Name of stdout output file
-#SBATCH -e exp_err/Xy_N=100000_Epoch_N=1_N_Node=1_expn=2.e%j # Name of stderr error file
+#SBATCH -J Xy_N=100000_Epoch_N=10_N_Node=1_expn=2             # Job name
+#SBATCH -o exp_out/Xy_N=100000_Epoch_N=10_N_Node=1_expn=2.o%j # Name of stdout output file
+#SBATCH -e exp_err/Xy_N=100000_Epoch_N=10_N_Node=1_expn=2.e%j # Name of stderr error file
 #SBATCH -p normal                                              # Queue (partition) name
 #SBATCH -N 1                                                   # Total # of nodes
 #SBATCH -n 10                                                  # Total # of mpi tasks
@@ -41,6 +41,6 @@
 
 # Launch MPI code...
 
-ibrun python mpi_emb_par_sim_dat.py --Xy_N 100000 --Epoch_N 1 --N_Node 1 --Nt 10 --p 20 --particles_per_shard 1000 --experiment_number 2      # Use ibrun instead of mpirun or mpiexec
+ibrun python mpi_emb_par_sim_dat.py --Xy_N 100000 --Epoch_N 10 --N_Node 1 --Nt 10 --p 20 --particles_per_shard 1000 --experiment_number 2      # Use ibrun instead of mpirun or mpiexec
 
 # ---------------------------------------------------
