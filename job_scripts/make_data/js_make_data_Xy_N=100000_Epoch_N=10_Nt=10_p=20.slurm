@@ -41,6 +41,6 @@
 
 # Launch MPI code...
 
-ibrun python run_simulate_data.py --N_total 100000 --Epoch_N 1 --predictor_N 20 # Use ibrun instead of mpirun or mpiexec
+ibrun python run_simulate_data.py --N_total 100000 --Epoch_N 10 --predictor_N 20 # Use ibrun instead of mpirun or mpiexec
 
 # ---------------------------------------------------
