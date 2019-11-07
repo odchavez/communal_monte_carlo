@@ -41,6 +41,6 @@
 
 # Launch MPI code...
 
-ibrun python emb_par_sim_dat_fit_test.py --Xy_N 100000 --Epoch_N 100 --N_Node 1 --Nt 10 --p 4 --particles_per_shard 1000 --experiment_number 1 --keep_history 1      # Use ibrun instead of mpirun or mpiexec
+ibrun python emb_par_sim_dat_fit_test_p=4.py --Xy_N 100000 --Epoch_N 100 --N_Node 1 --Nt 10 --p 4 --particles_per_shard 1000 --experiment_number 1 --keep_history 1      # Use ibrun instead of mpirun or mpiexec
 
 # ---------------------------------------------------
