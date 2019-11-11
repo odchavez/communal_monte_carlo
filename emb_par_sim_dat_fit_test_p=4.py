@@ -205,7 +205,7 @@ for fn in tqdm(range(files_to_process)):
             parameter_history_obj = history.parameter_history()
             parameter_history_obj.write_stats_results(
                 f_stats_df=stats_results_file, 
-                f_other_stats_file='experiment_results/results_emb_par_fit_test_p=4.csv'
+                f_other_stats_file='experiment_results/results_emb_par_fit_test_p=4_exp_num='+str(args.experiment_number)+'.csv'
             )
         else:
             shuffled_particles = None
@@ -250,7 +250,7 @@ if rank == 0:
     parameter_history_obj = history.parameter_history()
     parameter_history_obj.write_stats_results(
         f_stats_df=stats_results_file,
-        f_other_stats_file='experiment_results/results_emb_par_fit_test_p=4.csv'
+        f_other_stats_file='experiment_results/results_emb_par_fit_test_p=4_exp_num='+str(args.experiment_number)+'.csv'
     )
 
     if args.plot_at_end:
