@@ -25,6 +25,8 @@ import history
 import params
 import pf_plots
 
+np.set_printoptions(suppress=True)
+np.set_printoptions(threshold=sys.maxsize)
 
 start_time=time.time()
 
