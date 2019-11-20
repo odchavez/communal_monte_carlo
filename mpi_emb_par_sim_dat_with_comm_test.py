@@ -215,8 +215,7 @@ for fn in tqdm(range(files_to_process)):
         comm_time_scatter_particles+=time.time()
         shard_pfo.update_params(post_shuffle_params)
 
-    # preparing output
-
+# preparing output
 particle_filter_run_time_all    = str(comm.gather(particle_filter_run_time, root=0))
 comm_time_scatter_data_all      = str(comm.gather(comm_time_scatter_data, root=0))
 comm_time_gather_particles_all  = str(comm.gather(comm_time_gather_particles, root=0))
