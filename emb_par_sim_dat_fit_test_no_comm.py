@@ -114,7 +114,7 @@ for fn in tqdm(range(files_to_process)):
     
     name_stem = 'Xy_N=' + args.Xy_N + '_Epoch_N=' + args.Epoch_N + '_Nt=' + args.Nt + '_p=' + args.p
     data_path = 'synth_data/' + name_stem + '/fn='+ str(fn) + '.csv'
-    params_results_file = (
+    params_results_file_path = (
         'experiment_results/results_emb_par_fit_test_no_comm' + 
         name_stem + 
         '_exp_num=' + args.experiment_number + 
@@ -202,7 +202,7 @@ for fn in tqdm(range(files_to_process)):
             parameter_history_obj = history.parameter_history()
             parameter_history_obj.write_stats_results(
                 f_stats_df=stats_results_file, 
-                f_other_stats_file=params_results_file
+                f_other_stats_file=params_results_file_path
             )
         else:
             shuffled_particles = None
@@ -247,7 +247,7 @@ if rank == 0:
     parameter_history_obj = history.parameter_history()
     parameter_history_obj.write_stats_results(
         f_stats_df=stats_results_file,
-        f_other_stats_file=params_results_file
+        f_other_stats_file=params_results_file_path
     )
 
     if args.plot_at_end:
