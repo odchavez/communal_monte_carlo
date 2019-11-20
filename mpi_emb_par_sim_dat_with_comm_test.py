@@ -112,17 +112,13 @@ comm_time_scatter_particles = 0
 files_to_process = min(args.test_run, int(int(args.Xy_N)/int(args.Epoch_N)))
 for fn in tqdm(range(files_to_process)):
 
-    folder = (
-        '/Xy_N=' + args.Xy_N +
-        '_Epoch_N=' + args.Epoch_N +
-        '_Nt=' + args.Nt +
-        '_p=' + args.p
-    )
-    experiment_path = 'experiment_results/synth_data' + folder
-    data_path = 'synth_data' + folder + '/fn='+ str(fn) + '.csv'
-    results_path = 'experiment_results' + folder + '_exp_num=' + args.experiment_number +'_test_results.csv'
-
-    params_results_file = '/params_results_' + args.experiment_number
+    name_stem = 'Xy_N=' + args.Xy_N + '_Epoch_N=' + args.Epoch_N + '_Nt=' + args.Nt + '_p=' + args.p
+    data_path = 'synth_data/' + name_stem + '/fn='+ str(fn) + '.csv'
+    params_results_file_path = (
+        'experiment_results/results_emb_par_fit_test_no_comm' + 
+        name_stem + 
+        '_exp_num=' + args.experiment_number + 
+        '.csv')
 
     exists = os.path.isfile(data_path)
     if rank == 0:
@@ -206,7 +202,7 @@ for fn in tqdm(range(files_to_process)):
             parameter_history_obj = history.parameter_history()
             parameter_history_obj.write_stats_results(
                 f_stats_df=stats_results_file, 
-                f_other_stats_file=results_path
+                f_other_stats_file=params_results_file_path
             )
         else:
             shuffled_particles = None
@@ -248,7 +244,7 @@ if rank == 0:
     parameter_history_obj = history.parameter_history()
     parameter_history_obj.write_stats_results(
         f_stats_df=stats_results_file, 
-        f_other_stats_file=results_path
+        f_other_stats_file=params_results_file_path
     )
 
     if args.plot_at_end:
