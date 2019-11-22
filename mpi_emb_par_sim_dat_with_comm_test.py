@@ -115,7 +115,7 @@ for fn in tqdm(range(files_to_process)):
     file_stem = 'Xy_N=' + args.Xy_N + '_Epoch_N=' + args.Epoch_N + '_Nt=' + args.Nt + '_p=' + args.p
     data_path = 'synth_data/' + file_stem + '/fn='+ str(fn) + '.csv'
     params_results_file_path = (
-        'experiment_results/results_emb_par_fit_test_no_comm' + 
+        'experiment_results/results_emb_par_fit_test_with_comm' + 
         file_stem + 
         '_exp_num=' + args.experiment_number + 
         '.csv')
