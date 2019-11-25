@@ -112,11 +112,17 @@ comm_time_scatter_particles = 0
 files_to_process = min(args.test_run, int(int(args.Xy_N)/int(args.Epoch_N)))
 for fn in tqdm(range(files_to_process)): 
     
-    file_stem = 'Xy_N=' + args.Xy_N + '_Epoch_N=' + args.Epoch_N + '_Nt=' + args.Nt + '_p=' + args.p
+    file_stem = (
+        'Xy_N=' + args.Xy_N + 
+        '_Epoch_N=' + args.Epoch_N + 
+        '_Nt=' + args.Nt + 
+        '_p=' + args.p
+    )
     data_path = 'synth_data/' + file_stem + '/fn='+ str(fn) + '.csv'
     params_results_file_path = (
         'experiment_results/results_emb_par_fit_test_no_comm' + 
         file_stem + 
+        '_part_num=' + str(args.particles_per_shard) +
         '_exp_num=' + args.experiment_number + 
         '.csv')
 
