@@ -53,14 +53,14 @@ class simulated_data2:
         T_max = max(f_time_tic)
         T_min = min(f_time_tic)
         T = np.array(range(int(T_min), int(T_max+1.0)))
-        output = np.sin((T-T_min)*2*math.pi/T_max)
+        output = np.cos((T-T_min)*2*math.pi/T_max)
         return output
 
     def generate_Betas(self):
         print("generating regression coefficients...")
         self.Beta_vals_base = {
-            'B_0': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = 1.0, y_1 = 0.0),
-            'B_1': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = -2.0, y_1 = 0.0),
+            'B_0': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = 2.0, y_1 = 1.0),
+            'B_1': self.make_linear_trajectory(f_time_tic = self.time_tics, y_2 = -3.0, y_1 = -1.0),
             'B_2': self.make_logrithmic_trajectory(f_time_tic = self.time_tics),
             'B_3': self.make_sin_wave_trajectory(f_time_tic = self.time_tics)
         }
