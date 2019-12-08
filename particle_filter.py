@@ -112,11 +112,6 @@ class particle_filter:
             norm_wts = top/bottom
         else:
             norm_wts=top/bottom
-        
-        #
-        #uniform_wt = np.ones(len(self.PART_NUM))/len(self.PART_NUM)
-        #true_min = np.nanmin([min_wt, uniform_wt])
-        #norm_wts = 
 
         particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
         temp_index=np.zeros(self.PART_NUM)
