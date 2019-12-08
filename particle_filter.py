@@ -100,6 +100,10 @@ class particle_filter:
 
     def shuffle_particles(self):
         top    = np.exp(self.not_norm_wts)
+        top_min = np.nanmin(top)
+        fill_min = np.min([top_min, 1/len(top)])
+        top[np.isnan(top)]=fill_min
+
         bottom = np.sum(top)
         if bottom == 0:
             max_val  = np.max(self.not_norm_wts)
