@@ -100,6 +100,10 @@ class particle_filter:
 
     def shuffle_particles(self):
         top    = np.exp(self.not_norm_wts)
+        top_min = np.nanmin(top)
+        fill_min = np.min([top_min, 1/len(top)])
+        top[np.isnan(top)]=fill_min
+
         bottom = np.sum(top)
         if bottom == 0:
             max_val  = np.max(self.not_norm_wts)
@@ -108,6 +112,11 @@ class particle_filter:
             norm_wts = top/bottom
         else:
             norm_wts=top/bottom
+        
+        #
+        #uniform_wt = np.ones(len(self.PART_NUM))/len(self.PART_NUM)
+        #true_min = np.nanmin([min_wt, uniform_wt])
+        #norm_wts = 
 
         particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
         temp_index=np.zeros(self.PART_NUM)
