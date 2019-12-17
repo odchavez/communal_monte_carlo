@@ -99,6 +99,9 @@ class particle_filter:
         return
 
     def shuffle_particles(self):
+        
+        self.not_norm_wts[np.isnan(self.not_norm_wts)] = -100.0
+        
         top    = np.exp(self.not_norm_wts)
         top_min = np.nanmin(top)
         fill_min = np.min([top_min, 1/len(top)])
@@ -112,7 +115,7 @@ class particle_filter:
             norm_wts = top/bottom
         else:
             norm_wts=top/bottom
-
+        
         particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
         temp_index=np.zeros(self.PART_NUM)
         temp_index.astype(int)
