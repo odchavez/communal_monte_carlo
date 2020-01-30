@@ -105,8 +105,9 @@ class analyze_run:
         
         self.particle_history_ids = self.id_cleaner(path=f_path, column_name='particle_history_ids')
         self.machine_history_ids = self.id_cleaner(path=f_path, column_name='machine_history_ids')
-        self.post_particle_history_ids = self.id_cleaner(path=f_path, column_name='post_particle_history_ids')
-        self.post_machine_history_ids = self.id_cleaner(path=f_path, column_name='post_machine_history_ids')
+        if comm:
+            self.post_particle_history_ids = self.id_cleaner(path=f_path, column_name='post_particle_history_ids')
+            self.post_machine_history_ids = self.id_cleaner(path=f_path, column_name='post_machine_history_ids')
         
     def get_particle_id_counts(self):
         flat_particle_history_ids = self.particle_history_ids.flatten()

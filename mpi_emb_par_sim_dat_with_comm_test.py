@@ -81,6 +81,11 @@ def get_args():
         required=True
     )
     parser.add_argument(
+        '--GP_version', type=str,
+        help='The GP data version number',
+        required=False
+    )
+    parser.add_argument(
         '--test_run', type=int,
         help='number of files to process if running a test',
         required=False, default=999999999999
@@ -111,20 +116,36 @@ comm_time_scatter_particles = 0
 
 files_to_process = min(args.test_run, int(int(args.Xy_N)/int(args.Epoch_N)))
 for fn in tqdm(range(files_to_process)):
-
-    file_stem = file_stem = (
-        'Xy_N=' + args.Xy_N + 
-        '_Epoch_N=' + args.Epoch_N + 
-        '_Nt=' + args.Nt + 
-        '_p=' + args.p
-    )
-    data_path = 'synth_data/' + file_stem + '/fn='+ str(fn) + '.csv'
-    params_results_file_path = (
-        'experiment_results/results_emb_par_fit_test_with_comm' + 
-        file_stem + 
-        '_part_num=' + str(args.particles_per_shard) +
-        '_exp_num=' + args.experiment_number + 
-        '.csv')
+    
+    if args.GP_version:
+        file_stem = file_stem = (
+            'Xy_N=' + args.Xy_N + 
+            '_Epoch_N=' + args.Epoch_N + 
+            '_Nt=' + args.Nt + 
+            '_p=' + args.p +
+            '_GPversion=' + args.GP_version
+        )
+        data_path = 'synth_data/' + file_stem + '/fn='+ str(fn) + '.csv'
+        params_results_file_path = (
+            'experiment_results/results_emb_par_fit_test_with_comm' + 
+            file_stem + 
+            '_part_num=' + str(args.particles_per_shard) +
+            '_exp_num=' + args.experiment_number + 
+            '.csv')
+    else:    
+        file_stem = file_stem = (
+            'Xy_N=' + args.Xy_N + 
+            '_Epoch_N=' + args.Epoch_N + 
+            '_Nt=' + args.Nt + 
+            '_p=' + args.p
+        )
+        data_path = 'synth_data/' + file_stem + '/fn='+ str(fn) + '.csv'
+        params_results_file_path = (
+            'experiment_results/results_emb_par_fit_test_with_comm' + 
+            file_stem + 
+            '_part_num=' + str(args.particles_per_shard) +
+            '_exp_num=' + args.experiment_number + 
+            '.csv')
 
     exists = os.path.isfile(data_path)
     if rank == 0:
@@ -144,7 +165,6 @@ for fn in tqdm(range(files_to_process)):
         shard_data = comm.scatter(to_scatter, root=0)
         comm_time_scatter_data += time.time()
 
-    #print("#INITIALIZE PARTICLES IN FIRST PASS WITH DATA")
     if first_time and exists:
         first_time = False
 
@@ -173,8 +193,11 @@ for fn in tqdm(range(files_to_process)):
             shard_pfo.write_bo_list(name_stem.code)
         
         shard_pfo.collect_params()
+        shard_pfo.collect_history_ids()
         comm_time_gather_particles-=time.time()
         all_shard_params = comm.gather(shard_pfo.params_to_ship, root=0)
+        all_shard_particle_history_ids = comm.gather(shard_pfo.particle_history_ids_to_ship, root=0)
+        all_shard_machine_history_ids  = comm.gather(shard_pfo.machine_history_ids_to_ship, root=0)
         comm_time_gather_particles+=time.time()
         if rank == 0:
             
@@ -197,14 +220,27 @@ for fn in tqdm(range(files_to_process)):
                     'end_time'                   : [time.time()],
                     'code'                       : [name_stem.code],
                     'final_params'               : [str(all_shard_params)],
-                    'run_number'                 : [run_number]
+                    'run_number'                 : [run_number],
+                    'pre_shuffel_params'         : [str(all_shard_params)],
+                    'post_shuffel_params'        : ["place holder"],
+                    'machine_history_ids'        : [str(all_shard_machine_history_ids)],
+                    'post_machine_history_ids'   : ["place holder"],
+                    'particle_history_ids'       : [str(all_shard_particle_history_ids)],
+                    'post_particle_history_ids'  : ["place holder"],
                 }
             )
+            
             #record particles from all shards rather than shuffle to assess fit
-            shuffled_particles = embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
-                all_shard_params
+            shuffled_particles , shuffled_mach_hist_ids, shuffled_part_hist_ids = embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
+                all_shard_params, 
+                all_shard_machine_history_ids, 
+                all_shard_particle_history_ids
             )
             output_shuffled_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles)
+            stats_results_file.post_shuffel_params=[str(output_shuffled_particles)]
+            stats_results_file.post_machine_history_ids=[str(shuffled_mach_hist_ids)]
+            stats_results_file.post_particle_history_ids=[str(shuffled_part_hist_ids)]
+            
             parameter_history_obj = history.parameter_history()
             parameter_history_obj.write_stats_results(
                 f_stats_df=stats_results_file, 
@@ -212,10 +248,17 @@ for fn in tqdm(range(files_to_process)):
             )
         else:
             shuffled_particles = None
+            shuffled_mach_hist_ids = None
+            shuffled_part_hist_ids = None
         comm_time_scatter_particles-=time.time()
         post_shuffle_params = comm.scatter(shuffled_particles, root=0)
+        post_shuffle_machine_ids = comm.scatter(shuffled_mach_hist_ids, root=0)
+        post_shuffle_particle_ids = comm.scatter(shuffled_part_hist_ids, root=0)
         comm_time_scatter_particles+=time.time()
         shard_pfo.update_params(post_shuffle_params)
+        shard_pfo.update_particle_id_history(post_shuffle_machine_ids, post_shuffle_particle_ids)
+        #shard_pfo.collect_history_ids()
+        #all_shard_particle_history_ids = comm.gather(shard_pfo.particle_history_ids_to_ship, root=0)
 
 # preparing output
 particle_filter_run_time_all    = str(comm.gather(particle_filter_run_time, root=0))
