@@ -168,7 +168,8 @@ def shuffel_embarrassingly_parallel_particles(data,
 
     return pf_obj
 
-def shuffel_embarrassingly_parallel_params(all_shard_params):
+def shuffel_embarrassingly_parallel_params(all_shard_params, machine_id_history=False, particle_id_history=False):
+
     unlisted = list()
     for m in range(len(all_shard_params)):
         for p in range(len(all_shard_params[0])):
@@ -176,15 +177,48 @@ def shuffel_embarrassingly_parallel_params(all_shard_params):
     unlisted = np.array(unlisted)
     rows = np.random.randint(len(unlisted), size = len(unlisted))
     sampled_unlisted = unlisted[rows,:]
-    output = list()
-    index = 0
-    for m in range(len(all_shard_params)):
-        shard_part = list()
-        for p in range(len(all_shard_params[0])):
-            shard_part.append(sampled_unlisted[index,:].copy())
-            index+=1
-        output.append(shard_part)
-    return(output)
+    
+    if machine_id_history:
+        unlisted_machine = list()
+        unlisted_partilce_id = list()
+        for m in range(len(machine_id_history)):
+            for p in range(len(machine_id_history[0])):
+                unlisted_machine.append(machine_id_history[m][p])
+                unlisted_partilce_id.append(particle_id_history[m][p])
+        unlisted_machine = np.array(unlisted_machine)
+        unlisted_partilce_id=np.array(unlisted_partilce_id)
+        #rows = np.random.randint(len(unlisted), size = len(unlisted))
+        sampled_unlisted_machine_ids = unlisted_machine[rows]
+        sampled_unlisted_particle_ids = unlisted_partilce_id[rows]
+        
+        output = list()
+        output_machine_id = list()
+        output_particle_id = list()
+        index = 0
+        for m in range(len(all_shard_params)):
+            shard_part = list()
+            shard_part_machine = list()
+            shard_part_particle_id = list()
+            for p in range(len(all_shard_params[0])):
+                shard_part.append(sampled_unlisted[index,:].copy())
+                shard_part_machine.append(sampled_unlisted_machine_ids[index])
+                shard_part_particle_id.append(sampled_unlisted_particle_ids[index])
+                index+=1
+            output.append(shard_part)
+            output_machine_id.append(shard_part_machine)
+            output_particle_id.append(shard_part_particle_id)
+        # use rows to transfer history records
+        return output, output_machine_id, output_particle_id
+    else:
+        output = list()
+        index = 0
+        for m in range(len(all_shard_params)):
+            shard_part = list()
+            for p in range(len(all_shard_params[0])):
+                shard_part.append(sampled_unlisted[index,:].copy())
+                index+=1
+            output.append(shard_part)
+        return(output)
 
 
 def convert_to_list_of_type(params_nd_list, f_type = float):

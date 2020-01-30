@@ -173,8 +173,11 @@ for fn in tqdm(range(files_to_process)):
             shard_pfo.write_bo_list(name_stem.code)
         
         shard_pfo.collect_params()
+        shard_pfo.collect_history_ids()
         comm_time_gather_particles-=time.time()
         all_shard_params = comm.gather(shard_pfo.params_to_ship, root=0)
+        all_shard_particle_history_ids = comm.gather(shard_pfo.particle_history_ids_to_ship, root=0)
+        all_shard_machine_history_ids  = comm.gather(shard_pfo.machine_history_ids_to_ship, root=0)
         comm_time_gather_particles+=time.time()
         if rank == 0:
             
@@ -197,14 +200,24 @@ for fn in tqdm(range(files_to_process)):
                     'end_time'                   : [time.time()],
                     'code'                       : [name_stem.code],
                     'final_params'               : [str(all_shard_params)],
-                    'run_number'                 : [run_number]
+                    'run_number'                 : [run_number],
+                    'pre_shuffel_params'         : [str(all_shard_params)],
+                    'machine_history_ids'        : [str(all_shard_machine_history_ids)],
+                    'particle_history_ids'       : [str(all_shard_particle_history_ids)],
                 }
             )
+            
             #record particles from all shards rather than shuffle to assess fit
-            shuffled_particles = embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
-                all_shard_params
+            shuffled_particles , shuffled_mach_hist_ids, shuffled_part_hist_ids = embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
+                all_shard_params, 
+                all_shard_machine_history_ids, 
+                all_shard_particle_history_ids
             )
             output_shuffled_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles)
+            #stats_results_file.post_shuffel_params=[str(output_shuffled_particles)]
+            #stats_results_file.post_machine_history_ids=[str(shuffled_mach_hist_ids)]
+            #stats_results_file.post_particle_history_ids=[str(shuffled_part_hist_ids)]
+            
             parameter_history_obj = history.parameter_history()
             parameter_history_obj.write_stats_results(
                 f_stats_df=stats_results_file, 
@@ -247,7 +260,10 @@ if rank == 0:
             'end_time'                   : [time.time()],
             'code'                       : [name_stem.code],
             'final_params'               : [str(output_shuffled_particles)],
-            'run_number'                 : [run_number]
+            'run_number'                 : [run_number],
+            'pre_shuffel_params'         : [str(all_shard_params)],
+            'machine_history_ids'        : [str(all_shard_machine_history_ids)],
+            'particle_history_ids'       : [str(all_shard_particle_history_ids)],
         }
     )
     parameter_history_obj = history.parameter_history()
