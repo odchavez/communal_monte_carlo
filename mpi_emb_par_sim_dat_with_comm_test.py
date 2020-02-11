@@ -123,7 +123,7 @@ for fn in tqdm(range(files_to_process)):
             '_Epoch_N=' + args.Epoch_N + 
             '_Nt=' + args.Nt + 
             '_p=' + args.p +
-            '_GPversion=' + args.GP_version
+            '_GP_version=' + args.GP_version
         )
         data_path = 'synth_data/' + file_stem + '/fn='+ str(fn) + '.csv'
         params_results_file_path = (
@@ -133,7 +133,7 @@ for fn in tqdm(range(files_to_process)):
             '_exp_num=' + args.experiment_number + 
             '.csv')
     else:    
-        file_stem = file_stem = (
+        file_stem = (
             'Xy_N=' + args.Xy_N + 
             '_Epoch_N=' + args.Epoch_N + 
             '_Nt=' + args.Nt + 

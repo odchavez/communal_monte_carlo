@@ -38,17 +38,17 @@ class simulated_data2:
                 "_Epoch_N=" + str(self.n_per_epoch) +
                 "_Nt=" + str(self.n_per_tic) +
                 "_p=" + str(self.pred_number) +
-                "_GPversion=" + str(self.GB_version) +
+                "_GP_version=" + str(self.GB_version) +
                 "/"
             )
         
             self.Beta_file_name = (
-                "_Beta_t" + 
+                "Beta_t" + 
                 "_Xy_N=" + str(self.N_total) +
                 "_Epoch_N=" + str(self.n_per_epoch) +
                 "_Nt=" + str(self.n_per_tic) +
                 "_p=" + str(self.pred_number) +
-                "_GPversion=" + str(self.GB_version)
+                "_GP_version=" + str(self.GB_version)
             )
                 
         if not os.path.exists(self.output_folder_name):
