@@ -1,2 +1,3 @@
-# ignore generated html files,
+# ignore generated files types
 *.pyc
+*.DS_Store
