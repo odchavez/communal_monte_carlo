@@ -1,3 +1,4 @@
 # ignore generated files types
 *.pyc
 *.DS_Store
+*.ipynb_checkpoints
