@@ -38,7 +38,7 @@ class simulated_data2:
                 "_Epoch_N=" + str(self.n_per_epoch) +
                 "_Nt=" + str(self.n_per_tic) +
                 "_p=" + str(self.pred_number) +
-                "_GP_version=" + str(self.GB_version) +
+                "/GP_version=" + str(self.GB_version) +
                 "/"
             )
         
@@ -48,7 +48,8 @@ class simulated_data2:
                 "_Epoch_N=" + str(self.n_per_epoch) +
                 "_Nt=" + str(self.n_per_tic) +
                 "_p=" + str(self.pred_number) +
-                "_GP_version=" + str(self.GB_version)
+                "_GP_version=" + str(self.GB_version) +
+                ".csv"
             )
                 
         if not os.path.exists(self.output_folder_name):

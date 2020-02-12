@@ -92,7 +92,7 @@ class parameter_history:
         
     def write_stats_results(self,  f_stats_df, f_other_stats_file='experiment_results/results.csv'):
         # add to existing csv results of 
-        #print("writing experimental run statistics to ", f_other_stats_file)
+        print("writing experimental run statistics to ", f_other_stats_file)
         if os.path.exists(f_other_stats_file):
             # open file and add row
             f_stats_df.to_csv(
@@ -106,6 +106,6 @@ class parameter_history:
             f_stats_df.to_csv(
                 f_other_stats_file, 
                 index = False, 
-                mode = 'a'
+                #mode = 'a'
             )
         
