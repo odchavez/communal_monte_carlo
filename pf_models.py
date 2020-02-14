@@ -13,8 +13,6 @@ class probit_sin_wave_particle:
         self.Tau_inv=Tau_inv
         self.Bo = Bo
         self.std_rescale = Bo/(m.sqrt(Bo*Bo + Tau_inv*Tau_inv))
-        #print("self.Tau=",self.Tau)
-        #self.Bo_suf_stat=Bo.copy()
         self.df=2
         self.particle_id=[idval]
         self.particle_id_history=idval
@@ -90,7 +88,7 @@ class probit_sin_wave_particle:
 
     def copy_particle_values(self, not_this_particle):
         self.bo=not_this_particle.bo.copy()
-        self.particle_id_history=not_this_particle.particle_id[0]
+        self.particle_id_history=not_this_particle.particle_id_history #[0]
         self.N=not_this_particle.N
 
     def print_vals(self):

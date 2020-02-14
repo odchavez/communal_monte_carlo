@@ -39,11 +39,8 @@ class particle_filter:
 
             self.shards=dat['shards']
             for pn in range(self.PART_NUM):
-                temp_particle=pf.probit_sin_wave_particle( np.array(dat['b'][0]), dat['B'], dat['Tau_inv_std'], pn)#( np.array(dat['b'][0]), dat['B'], pn)
+                temp_particle=pf.probit_sin_wave_particle( np.array(dat['b'][0]), dat['B'], dat['Tau_inv_std'], (self.rank, pn))
                 temp_particle.set_N(self.N)
-                #temp_particle.set_Zi(self.X)
-
-                #temp_particle.set_bo_list(int(1+max(self.time_values)))
                 temp_particle.set_shard_number(self.shards)
                 self.particle_list.append(temp_particle)
         else:
@@ -176,6 +173,11 @@ class particle_filter:
     def update_params(self, updated_params):
         for i in range(len(self.particle_list)):
             self.particle_list[i].bo = updated_params[i]
+            
+    def update_particle_id_history(self, updated_machine_history_id, updated_particle_history_id):
+        for i in range(len(self.particle_list)):
+            new_tuple = (updated_machine_history_id[i], updated_particle_history_id[i])
+            self.particle_list[i].particle_id_history = new_tuple
 
     def get_predictive_distribution(self, X_new):
         self.predictive_distribution = np.zeros(self.PART_NUM)
@@ -258,3 +260,10 @@ class particle_filter:
         self.params_to_ship = np.zeros((self.PART_NUM, self.p))
         for pn in range(self.PART_NUM):
             self.params_to_ship[pn,:] = self.particle_list[pn].bo
+
+    def collect_history_ids(self):
+        self.machine_history_ids_to_ship = np.zeros((self.PART_NUM))
+        self.particle_history_ids_to_ship = np.zeros((self.PART_NUM))
+        for pn in range(self.PART_NUM):
+            self.machine_history_ids_to_ship[pn] = self.particle_list[pn].particle_id_history[0]
+            self.particle_history_ids_to_ship[pn] = self.particle_list[pn].particle_id_history[1]
