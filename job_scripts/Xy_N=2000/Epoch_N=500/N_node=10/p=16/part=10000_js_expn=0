@@ -23,13 +23,13 @@
 #
 #----------------------------------------------------
 
-#SBATCH -J         Xy_N=2000_Epoch_N=500_N_Node=10_p=16_expn=0     # Job name
-#SBATCH -o exp_out/Xy_N=2000_Epoch_N=500_N_Node=10_p=16_expn=0.o%j # Name of stdout output file
-#SBATCH -e exp_err/Xy_N=2000_Epoch_N=500_N_Node=10_p=16_expn=0.e%j # Name of stderr error file
+#SBATCH -J         Xy_N=2000_Epoch_N=500_N_Node=10_p=16particles=10000_expn=0     # Job name
+#SBATCH -o exp_out/Xy_N=2000_Epoch_N=500_N_Node=10_p=16particles=10000_expn=0.o%j # Name of stdout output file
+#SBATCH -e exp_err/Xy_N=2000_Epoch_N=500_N_Node=10_p=16particles=10000_expn=0.e%j # Name of stderr error file
 #SBATCH -p normal                                                # Queue (partition) name
 #SBATCH -N 1                                                     # Total # of nodes
 #SBATCH -n 10                                                    # Total # of mpi tasks
-#SBATCH -t 12:00:00                                              # Run time (hh:mm:ss)
+#SBATCH -t 48:00:00                                              # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
 #SBATCH --mail-type=all                                          # Send email at begin and end of job
 

@@ -83,7 +83,7 @@ class analyze_run:
         self.beta_i_avg = self.get_beta_i_avg(self.Betas_in_columns)
         self.beta_i_var = self.get_beta_i_var(self.Betas_in_columns)
         self.skip_size = f_step_size # SKIP SIZE BASED ON TIME STEPS SKIPPED
-        self.Beta_true_data = pd.read_csv(f_beta_file_path)
+        self.Beta_true_data = pd.read_csv(f_beta_file_path, engine='python')
         #print("True Beta shape = ", self.Beta_true_data.shape)
         self.Beta_com = self.Beta_true_data[self.true_cols][(self.skip_size-1)::self.skip_size]#Beta_true_data.B_0.index % skip_size == 0]
         self.Beta_com.reset_index(inplace=True)
@@ -122,7 +122,7 @@ class analyze_run:
         return history_df.groupby(['machine_id', 'partilce_id']).size()
 
     def get_Beta_t(path, Beta_index = -1):
-        B_t = pd.read_csv(path, index_col=0).iloc[Beta_index,:]
+        B_t = pd.read_csv(path, index_col=0, engine='python').iloc[Beta_index,:]
         return np.array(B_t.T)
     
     
@@ -161,7 +161,7 @@ class analyze_run:
         return f_params_PREDxPARTxSHARDxEPOCH
     
     def get_params_from_results_with_comm(self, path):
-        results_output = pd.read_csv(path)
+        results_output = pd.read_csv(path, engine='python')
         #print(results_output.shape)
         f_Betas_in_columns = list()
         if self.col == 'final_params':
@@ -229,7 +229,7 @@ class analyze_run:
     
     
     def get_params_from_results_no_comm(self, path):
-        results_output = pd.read_csv(path)
+        results_output = pd.read_csv(path, engine='python')
         #print(results_output.shape)
         f_Betas_in_columns = list()
         for nr in range(len(results_output.final_params[:-1])):
@@ -338,7 +338,7 @@ class analyze_run:
         beta_i_var = get_beta_i_var(Betas_in_columns)
         
         skip_size = f_step_size # SKIP SIZE BASED ON TIME STEPS SKIPPED
-        Beta_true_data = pd.read_csv(f_beta_file_path)
+        Beta_true_data = pd.read_csv(f_beta_file_path, engine='python')
         #print("True Beta shape = ", Beta_true_data.shape)
         Beta_com = Beta_true_data[true_cols][(skip_size-1)::skip_size]#Beta_true_data.B_0.index % skip_size == 0]
         Beta_com.reset_index(inplace=True)
@@ -356,7 +356,7 @@ class analyze_run:
         beta_i_var = get_beta_i_var(Betas_in_columns)
         
         skip_size = f_step_size # SKIP SIZE BASED ON TIME STEPS SKIPPED
-        Beta_true_data = pd.read_csv(f_beta_file_path)
+        Beta_true_data = pd.read_csv(f_beta_file_path, engine='python')
         #print("True Beta shape = ", Beta_true_data.shape)
         Beta_com = Beta_true_data[true_cols][(skip_size-1)::skip_size]#Beta_true_data.B_0.index % skip_size == 0]
         Beta_com.reset_index(inplace=True)
@@ -480,7 +480,7 @@ class analyze_run:
         return np.array(all_bi_avg)
     
     def id_cleaner(self, path, column_name):
-        df = pd.read_csv(path)
+        df = pd.read_csv(path, engine='python')
         df[column_name][1].split(', ')
         all_integer_ids=list()
         for nr in range(len(df[column_name][:-1])):
