@@ -23,9 +23,9 @@
 #
 #----------------------------------------------------
 
-#SBATCH -J         Xy_N=2000_Epoch_N=200_N_Node=10_p=16particles=10000_expn=0     # Job name
-#SBATCH -o exp_out/Xy_N=2000_Epoch_N=200_N_Node=10_p=16particles=10000_expn=0.o%j # Name of stdout output file
-#SBATCH -e exp_err/Xy_N=2000_Epoch_N=200_N_Node=10_p=16particles=10000_expn=0.e%j # Name of stderr error file
+#SBATCH -J         Xy_N=2000_Epoch_N=200_N_Node=10_p=8_particles=10000_expn=0     # Job name
+#SBATCH -o exp_out/Xy_N=2000_Epoch_N=200_N_Node=10_p=8_particles=10000_expn=0.o%j # Name of stdout output file
+#SBATCH -e exp_err/Xy_N=2000_Epoch_N=200_N_Node=10_p=8_particles=10000_expn=0.e%j # Name of stderr error file
 #SBATCH -p normal                                                # Queue (partition) name
 #SBATCH -N 1                                                     # Total # of nodes
 #SBATCH -n 10                                                    # Total # of mpi tasks
@@ -41,11 +41,11 @@
 
 # Launch MPI code...
 # Use ibrun instead of mpirun or mpiexec
-ibrun python mpi_emb_par_sim_dat_with_comm.py --Xy_N 2000 --Epoch_N 200 --N_Node 10 --Nt 10 --p 16 --particles_per_shard 10000 --experiment_number 0 --GP_version 0      
-ibrun   python mpi_emb_par_sim_dat_no_comm.py --Xy_N 2000 --Epoch_N 200 --N_Node 10 --Nt 10 --p 16 --particles_per_shard 10000 --experiment_number 0 --GP_version 0      
 
-ibrun python mpi_emb_par_sim_dat_with_comm.py --Xy_N 2000 --Epoch_N 200 --N_Node 10 --Nt 10 --p 16 --particles_per_shard 10000 --experiment_number 0 --GP_version 1      
-ibrun   python mpi_emb_par_sim_dat_no_comm.py --Xy_N 2000 --Epoch_N 200 --N_Node 10 --Nt 10 --p 16 --particles_per_shard 10000 --experiment_number 0 --GP_version 1      
+ibrun python mpi_emb_par_sim_dat_with_comm.py --Xy_N 2000 --Epoch_N 200 --N_Node 10 --Nt 10 --p 8 --particles_per_shard 10000 --experiment_number 0 --GP_version 2      
+ibrun   python mpi_emb_par_sim_dat_no_comm.py --Xy_N 2000 --Epoch_N 200 --N_Node 10 --Nt 10 --p 8 --particles_per_shard 10000 --experiment_number 0 --GP_version 2      
 
+ibrun python mpi_emb_par_sim_dat_with_comm.py --Xy_N 2000 --Epoch_N 200 --N_Node 10 --Nt 10 --p 8 --particles_per_shard 10000 --experiment_number 0 --GP_version 3      
+ibrun   python mpi_emb_par_sim_dat_no_comm.py --Xy_N 2000 --Epoch_N 200 --N_Node 10 --Nt 10 --p 8 --particles_per_shard 10000 --experiment_number 0 --GP_version 3      
 
 # ---------------------------------------------------
