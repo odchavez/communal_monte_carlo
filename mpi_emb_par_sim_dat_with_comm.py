@@ -125,7 +125,8 @@ for fn in tqdm(range(files_to_process)):
         output_stem=string.format(args.Xy_N, args.Epoch_N, args.Nt, args.p, '_',args.GP_version)
         params_results_file_path = (
             'experiment_results/synth_data/results_emb_par_fit_test_with_comm' + 
-            output_stem + 
+            '_shard_num=' + str(size) +
+            '_' + output_stem + 
             '_part_num=' + str(args.particles_per_shard) +
             '_exp_num=' + args.experiment_number + 
             '.csv')
@@ -139,11 +140,12 @@ for fn in tqdm(range(files_to_process)):
         data_path = 'synth_data/' + file_stem + '/fn='+ str(fn) + '.csv'
         params_results_file_path = (
             'experiment_results/results_emb_par_fit_test_with_comm' + 
-            file_stem + 
+            '_shard_num=' + str(size) +
+            '_' + file_stem + 
             '_part_num=' + str(args.particles_per_shard) +
             '_exp_num=' + args.experiment_number + 
             '.csv')
-
+    
     exists = os.path.isfile(data_path)
     if rank == 0:
 
