@@ -70,6 +70,56 @@ def make_like_path_plots_by_shard(no_comm, with_comm):
         #print("********************************")
 
 
+def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_version, f_part_num, f_predictors):
+    wi_comm_list = list()
+    no_comm_list = list()
+    big_results_dict = {}
+    for shard_number_item in f_shard_number:
+        for N_Epoch_item in f_N_Epoch:
+            for Nt_item in f_Nt:
+                for p_item in f_p:
+                    for part_num_item in f_part_num:
+                        temp_ao = analysis_obj()
+                        
+                        for GP_version_item in f_GP_version:
+                            print(GP_version_item)
+                        
+                            step_size = int(N_Epoch_item/shard_number_item)
+                            
+                            path_obj_instance = exp_file_path( 
+                                shard_number_item, f_Xy_N, N_Epoch_item, Nt_item, p_item, GP_version_item, part_num_item
+                            )
+                            both_exist = (
+                                os.path.exists(path_obj_instance.with_comm_results_file) 
+                                and os.path.exists(path_obj_instance.no_comm_results_file)
+                            )
+                            print(path_obj_instance.exp_key)
+                            print(path_obj_instance.with_comm_results_file)
+                            if both_exist:
+                                print(both_exist)
+                                w_run = af.analyze_run(
+                                    f_path = path_obj_instance.with_comm_results_file,
+                                    f_beta_file_path = path_obj_instance.beta_file,
+                                    f_step_size = step_size,
+                                    true_cols = f_predictors[:p_item], 
+                                    comm = True, 
+                                    col='post_shuffel_params'
+                                )
+                                n_run = af.analyze_run(
+                                    f_path = path_obj_instance.no_comm_results_file,
+                                    f_beta_file_path = path_obj_instance.beta_file,
+                                    f_step_size = step_size,
+                                    true_cols = f_predictors[:p_item], 
+                                    comm = False, 
+                                )
+                                temp_ao.wi_comm_list.append(w_run)
+                                temp_ao.no_comm_list.append(n_run)
+                        temp_ao.compute_lik_diffs()
+                        big_results_dict[path_obj_instance.exp_key] = temp_ao
+
+    return big_results_dict
+
+
 class analyze_run:
     
     def __init__(self, f_path, f_beta_file_path, f_step_size, true_cols, comm, col='final_params'):
@@ -288,15 +338,15 @@ class analyze_run:
     
     
     def get_plot_likelihoods(self, f_Beta_com, f_cols, f_beta_i_avg):
-        #print("In get_plot_likelihoods")
-        #print("f_Beta_com.shape=", f_Beta_com.shape)
-        #print("f_beta_i_avg.shape", f_beta_i_avg.shape)
+        print("In get_plot_likelihoods")
+        print("f_Beta_com.shape=", f_Beta_com.shape)
+        print("f_beta_i_avg.shape", f_beta_i_avg.shape)
         f_true_lik = list()
         f_esti_lik = list()
-        #print("type(f_Beta_com)=", type(f_Beta_com))
-        #print("type(f_beta_i_avg)=", type(f_beta_i_avg))
-        #print("f_Beta_com.shape=", f_Beta_com.shape)
-        #print("f_beta_i_avg.shape=", f_beta_i_avg.shape)
+        print("type(f_Beta_com)=", type(f_Beta_com))
+        print("type(f_beta_i_avg)=", type(f_beta_i_avg))
+        print("f_Beta_com.shape=", f_Beta_com.shape)
+        print("f_beta_i_avg.shape=", f_beta_i_avg.shape)
         for i in range(f_Beta_com.shape[0]):
             Beta_t = f_Beta_com[f_cols].loc[i]
             Beta_fit = f_beta_i_avg[:,i]
@@ -570,3 +620,73 @@ class analyze_run:
                     )
                 
         return total_particle_count
+
+
+class analysis_obj:
+    
+    def __init__(self):
+        self.wi_comm_list = list()
+        self.no_comm_list = list()
+
+    def compute_lik_diffs(self):
+        if len(self.no_comm_list) > 0:
+            self.lik_diffs = np.zeros(
+                (
+                    len(self.no_comm_list), 
+                    len(self.no_comm_list[0].esti_lik)
+                )
+            )
+            for i in range(len(self.no_comm_list)):
+                self.lik_diffs[i,:] = np.array(self.wi_comm_list[i].esti_lik - np.array(self.no_comm_list[i].esti_lik))
+    
+            last_comm = len(self.no_comm_list[0].esti_lik)-1
+            self.last_avg_lik_diff = np.mean(self.lik_diffs[:, last_comm])
+            self.last_std_lik_diff = np.std(self.lik_diffs[:, last_comm])
+        else:
+            self.lik_diffs = None
+            self.last_avg_lik_diff = None
+            self.last_std_lik_diff = None
+
+
+class exp_file_path:
+    def __init__(self, shard_num, Xy_N, N_Epoch_item, Nt_item, p_item, GP_version_item, part_num_item):
+        
+        self.with_comm_results_file = (
+            'experiment_results/synth_data/results_emb_par_fit_test_with_comm'
+            '_shard_num=' + str(shard_num) + 
+            '_Xy_N=2000_Epoch_N=' + str(N_Epoch_item) + 
+            '_Nt=' + str(Nt_item) + 
+            '_p=' + str(p_item) + 
+            '_GP_version=' + str(GP_version_item) + 
+            '_part_num=' + str(part_num_item) + '_exp_num=0.csv'
+        )
+        self.no_comm_results_file = (
+            'experiment_results/synth_data/results_emb_par_fit_test_no_comm'
+            '_shard_num=' + str(shard_num) + 
+            '_Xy_N=2000_Epoch_N=' + str(N_Epoch_item) +
+            '_Nt=' + str(Nt_item) + 
+            '_p=' + str(p_item) + 
+            '_GP_version=' + str(GP_version_item) + 
+            '_part_num=' + str(part_num_item) + '_exp_num=0.csv'
+        )
+        self.beta_file = (
+            'synth_data/Xy_N=2000_Epoch_N='+str(N_Epoch_item)+
+            '_Nt='+str(Nt_item)+
+            '_p='+str(p_item)+
+            '/GP_version='+str(GP_version_item)+
+            '/Beta_t_Xy_N=2000_Epoch_N='+str(N_Epoch_item)+
+            '_Nt='+str(Nt_item)+
+            '_p='+str(p_item)+
+            '_GP_version='+str(GP_version_item)+'.csv'
+        )
+        self.exp_key = (
+            'synth_data'
+            '_shard_num=' + str(shard_num) + 
+            '_Xy_N=2000_Epoch_N=' + str(N_Epoch_item) +
+            '_Nt='+str(Nt_item)+
+            '_p='+str(p_item) +
+            '_part_num=' + str(part_num_item) + 
+            '_'
+        )
+
+
