@@ -5,13 +5,13 @@ import pickle
 
 
 
-shard_number = [4,10, 20]
+shard_number = [10]#[4,10, 20]  #it may be that Nt must equal shard number to avoid bug
 Xy_N=2000
 N_Epoch = [100,200,500]
 Nt = [10]
 p = [2, 8, 16]
-GP_version = list(range(3))
-part_num = [20]#,100,1000,10000]
+GP_version = list(range(10))
+part_num = [20,100,1000,10000]
 predictors = ['B_0','B_1','B_2','B_3','B_4','B_5','B_6','B_7','B_8','B_9','B_10','B_11','B_12','B_13','B_14','B_15']
                         
                         
