@@ -82,39 +82,44 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                         temp_ao = analysis_obj()
                         
                         for GP_version_item in f_GP_version:
-                            print(GP_version_item)
-                        
-                            step_size = int(N_Epoch_item/shard_number_item)
+                            try:
+                                print(GP_version_item)
                             
-                            path_obj_instance = exp_file_path( 
-                                shard_number_item, f_Xy_N, N_Epoch_item, Nt_item, p_item, GP_version_item, part_num_item
-                            )
-                            both_exist = (
-                                os.path.exists(path_obj_instance.with_comm_results_file) 
-                                and os.path.exists(path_obj_instance.no_comm_results_file)
-                            )
-                            print(path_obj_instance.exp_key)
-                            print(path_obj_instance.with_comm_results_file)
-                            print("files exist?", both_exist)
-                            if both_exist:
-                                print(both_exist)
-                                w_run = af.analyze_run(
-                                    f_path = path_obj_instance.with_comm_results_file,
-                                    f_beta_file_path = path_obj_instance.beta_file,
-                                    f_step_size = step_size,
-                                    true_cols = f_predictors[:p_item], 
-                                    comm = True, 
-                                    col='post_shuffel_params'
+                                step_size = int(N_Epoch_item/shard_number_item)
+                                
+                                path_obj_instance = exp_file_path( 
+                                    shard_number_item, f_Xy_N, N_Epoch_item, Nt_item, p_item, GP_version_item, part_num_item
                                 )
-                                n_run = af.analyze_run(
-                                    f_path = path_obj_instance.no_comm_results_file,
-                                    f_beta_file_path = path_obj_instance.beta_file,
-                                    f_step_size = step_size,
-                                    true_cols = f_predictors[:p_item], 
-                                    comm = False, 
+                                both_exist = (
+                                    os.path.exists(path_obj_instance.with_comm_results_file) 
+                                    and os.path.exists(path_obj_instance.no_comm_results_file)
                                 )
-                                temp_ao.wi_comm_list.append(w_run)
-                                temp_ao.no_comm_list.append(n_run)
+                                print(path_obj_instance.exp_key)
+                                print(path_obj_instance.with_comm_results_file)
+                                print("files exist?", both_exist)
+                                if both_exist:
+                                    print(both_exist)
+                                    w_run = af.analyze_run(
+                                        f_path = path_obj_instance.with_comm_results_file,
+                                        f_beta_file_path = path_obj_instance.beta_file,
+                                        f_step_size = step_size,
+                                        true_cols = f_predictors[:p_item], 
+                                        comm = True, 
+                                        col='post_shuffel_params'
+                                    )
+                                    n_run = af.analyze_run(
+                                        f_path = path_obj_instance.no_comm_results_file,
+                                        f_beta_file_path = path_obj_instance.beta_file,
+                                        f_step_size = step_size,
+                                        true_cols = f_predictors[:p_item], 
+                                        comm = False, 
+                                    )
+                                    temp_ao.wi_comm_list.append(w_run)
+                                    temp_ao.no_comm_list.append(n_run)
+                            except AttributeError:
+                                ".......AttributeError......."
+                            else:
+                                continue
                         temp_ao.compute_lik_diffs()
                         big_results_dict[path_obj_instance.exp_key] = temp_ao
 
@@ -178,12 +183,12 @@ class analyze_run:
     
     
     def compute_lik(self, f_X, f_Y, f_B):
-        print("f_X.shape=", f_X.shape)
-        print("f_Y.shape=",f_Y.shape)
-        print("f_B.shape=", f_B.shape)
-        print("type(f_X)=", type(f_X))
-        print("type(f_Y)=", type(f_Y))
-        print("type(f_B)=", type(f_B))
+        #print("f_X.shape=", f_X.shape)
+        #print("f_Y.shape=",f_Y.shape)
+        #print("f_B.shape=", f_B.shape)
+        #print("type(f_X)=", type(f_X))
+        #print("type(f_Y)=", type(f_Y))
+        #print("type(f_B)=", type(f_B))
         x_j_tB = np.matmul(f_X.as_matrix() , np.array(f_B))
         p_of_x_i = 1.0/(1.0+np.exp(-1*x_j_tB))
         likelihood =  f_Y*p_of_x_i + (1-f_Y)*(1-p_of_x_i)
