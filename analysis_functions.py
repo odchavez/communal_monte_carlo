@@ -95,6 +95,7 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                             )
                             print(path_obj_instance.exp_key)
                             print(path_obj_instance.with_comm_results_file)
+                            print("files exist?", both_exist)
                             if both_exist:
                                 print(both_exist)
                                 w_run = af.analyze_run(
@@ -177,6 +178,9 @@ class analyze_run:
     
     
     def compute_lik(self, f_X, f_Y, f_B):
+        print("f_X.shape=", f_X.shape)
+        print("f_Y.shape=",f_Y.shape)
+        print("f_B.shape=", f_B.shape)
         x_j_tB = np.matmul(f_X.as_matrix() , f_B)
         p_of_x_i = 1.0/(1.0+np.exp(-1*x_j_tB))
         likelihood =  f_Y*p_of_x_i + (1-f_Y)*(1-p_of_x_i)
