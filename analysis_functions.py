@@ -184,7 +184,7 @@ class analyze_run:
         print("type(f_X)=", type(f_X))
         print("type(f_Y)=", type(f_Y))
         print("type(f_B)=", type(f_B))
-        x_j_tB = np.matmul(f_X.as_matrix() , f_B)
+        x_j_tB = np.matmul(f_X.as_matrix() , np.array(f_B))
         p_of_x_i = 1.0/(1.0+np.exp(-1*x_j_tB))
         likelihood =  f_Y*p_of_x_i + (1-f_Y)*(1-p_of_x_i)
         return likelihood
