@@ -5,9 +5,9 @@ import pickle
 
 
 
-shard_number = [4]#[4,10, 20]  #it may be that Nt must equal shard number to avoid bug
+shard_number = [4,10]#[4,10, 20]  #it may be that Nt must equal shard number to avoid bug
 Xy_N=2000
-N_Epoch = [100,200,500]
+N_Epoch = [100,200]
 Nt = [10]
 p = [2, 8, 16]
 GP_version = list(range(10))
@@ -26,6 +26,6 @@ results = af.prep_big_results_dict(
     f_predictors = predictors
 )
 
-pickle_out = open("first_set_of_simulation_results_Node=4.pickle","wb")
+pickle_out = open("first_set_of_simulation_results_test.pickle","wb")
 pickle.dump(results, pickle_out)
 pickle_out.close()

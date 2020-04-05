@@ -83,7 +83,7 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                         
                         for GP_version_item in f_GP_version:
                             try:
-                                print(GP_version_item)
+                                #print(GP_version_item)
                             
                                 step_size = int(N_Epoch_item/shard_number_item)
                                 
@@ -94,11 +94,11 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                     os.path.exists(path_obj_instance.with_comm_results_file) 
                                     and os.path.exists(path_obj_instance.no_comm_results_file)
                                 )
-                                print(path_obj_instance.exp_key)
-                                print(path_obj_instance.with_comm_results_file)
-                                print("files exist?", both_exist)
+                                #print(path_obj_instance.exp_key)
+                                #print(path_obj_instance.with_comm_results_file)
+                                #print("files exist?", both_exist)
                                 if both_exist:
-                                    print(both_exist)
+                                    #print(both_exist)
                                     w_run = af.analyze_run(
                                         f_path = path_obj_instance.with_comm_results_file,
                                         f_beta_file_path = path_obj_instance.beta_file,
@@ -350,15 +350,15 @@ class analyze_run:
     
     
     def get_plot_likelihoods(self, f_Beta_com, f_cols, f_beta_i_avg):
-        print("In get_plot_likelihoods")
-        print("f_Beta_com.shape=", f_Beta_com.shape)
-        print("f_beta_i_avg.shape", f_beta_i_avg.shape)
+        #print("In get_plot_likelihoods")
+        #print("f_Beta_com.shape=", f_Beta_com.shape)
+        #print("f_beta_i_avg.shape", f_beta_i_avg.shape)
         f_true_lik = list()
         f_esti_lik = list()
-        print("type(f_Beta_com)=", type(f_Beta_com))
-        print("type(f_beta_i_avg)=", type(f_beta_i_avg))
-        print("f_Beta_com.shape=", f_Beta_com.shape)
-        print("f_beta_i_avg.shape=", f_beta_i_avg.shape)
+        #print("type(f_Beta_com)=", type(f_Beta_com))
+        #print("type(f_beta_i_avg)=", type(f_beta_i_avg))
+        #print("f_Beta_com.shape=", f_Beta_com.shape)
+        #print("f_beta_i_avg.shape=", f_beta_i_avg.shape)
         for i in range(f_Beta_com.shape[0]):
             Beta_t = f_Beta_com[f_cols].loc[i]
             Beta_fit = f_beta_i_avg[:,i]
