@@ -52,12 +52,12 @@ def get_args():
     )
     parser.add_argument(
         '--GP', type=int,
-        help='use Gaussian Process generated Betas - defauts to 0.  Select GP=1 to generate GB Betas',
+        help='use Gaussian Process generated Betas - defauts to 0.  Select GP=1 to generate GP Betas',
         required=False, default= 0
     )
     parser.add_argument(
         '--GP_version', type=int,
-        help='use Gaussian Process generated Betas - defauts to 0.  Select GP=1 to generate GB Betas',
+        help='use Gaussian Process generated Betas - defauts to 0.  Select GP=1 to generate GP Betas',
         required=False, default= 0
     )
     return parser.parse_args()
