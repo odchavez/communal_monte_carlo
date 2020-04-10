@@ -29,7 +29,7 @@
 #SBATCH -p normal          # Queue (partition) name
 #SBATCH -N 1               # Total # of nodes
 #SBATCH -n 1               # Total # of mpi tasks
-#SBATCH -t 5:00:00        # Run time (hh:mm:ss)
+#SBATCH -t 48:00:00        # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
 #SBATCH --mail-type=all    # Send email at begin and end of job
 
@@ -41,6 +41,142 @@
 
 # Launch MPI code...
 
-ibrun python run_simulate_data.py --N_total 100000 --Epoch_N 10 --predictor_N 20 # Use ibrun instead of mpirun or mpiexec
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 9
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 9
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 9
+
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 9
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 9
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 300 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 9
+
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 9
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 9
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 600 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 9
+
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 9
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 8 --N_per_tic 30 --GP 1 --GP_version 9
+
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 16 --N_per_tic 30 --GP 1 --GP_version 9
+
+
+# Use ibrun instead of mpirun or mpiexec
 
 # ---------------------------------------------------
