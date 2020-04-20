@@ -98,6 +98,7 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                 #print(path_obj_instance.with_comm_results_file)
                                 #print("files exist?", both_exist)
                                 if both_exist:
+                                    #print("in if both_exist")
                                     #print(both_exist)
                                     w_run = af.analyze_run(
                                         f_path = path_obj_instance.with_comm_results_file,
@@ -107,6 +108,8 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         comm = True, 
                                         col='post_shuffel_params'
                                     )
+                                    #print(1)
+                                    #print("in prep_big_results_dict , w_run.esti_lik=", w_run.esti_lik)
                                     n_run = af.analyze_run(
                                         f_path = path_obj_instance.no_comm_results_file,
                                         f_beta_file_path = path_obj_instance.beta_file,
@@ -114,6 +117,8 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         true_cols = f_predictors[:p_item], 
                                         comm = False, 
                                     )
+                                    #print(2)
+                                    #print("in prep_big_results_dict , n_run.esti_lik=", n_run.esti_lik)
                                     temp_ao.wi_comm_list.append(w_run)
                                     temp_ao.no_comm_list.append(n_run)
                             except AttributeError:
@@ -129,23 +134,28 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
 class analyze_run:
     
     def __init__(self, f_path, f_beta_file_path, f_step_size, true_cols, comm, col='final_params'):
+        #print("in analyze_run __init__")
         self.comm = comm
+        #print(1)
         self.true_cols = true_cols
         self.col = col
+        #print(2)
         if comm:
             self.Betas_in_columns = self.get_params_from_results_with_comm(f_path)
         else:
             self.Betas_in_columns = self.get_params_from_results_no_comm(f_path)
+        #print(3)
         self.beta_i_avg = self.get_beta_i_avg(self.Betas_in_columns)
         self.beta_i_var = self.get_beta_i_var(self.Betas_in_columns)
         self.skip_size = f_step_size # SKIP SIZE BASED ON TIME STEPS SKIPPED
         self.Beta_true_data = pd.read_csv(f_beta_file_path)
+        #print(4)
         #print("True Beta shape = ", self.Beta_true_data.shape)
         self.Beta_com = self.Beta_true_data[self.true_cols][(self.skip_size-1)::self.skip_size]#Beta_true_data.B_0.index % skip_size == 0]
         self.Beta_com.reset_index(inplace=True)
         self.predictor_number = self.Betas_in_columns[0].shape[0]
         self.epoch_number = len(self.Betas_in_columns)
-        
+        #print(5)
         #print("len(f_Betas_in_columns = self.Betas_in_columns)=", len(self.Betas_in_columns))
         #print("len(f_Betas_in_columns = self.Betas_in_columns[0])=", len(self.Betas_in_columns[0]))
         
@@ -156,9 +166,9 @@ class analyze_run:
             f_shard_num = self.number_of_shards, 
             f_epoch_num = self.epoch_number
         )
-        
+        #print(6)
         self.true_lik, self.esti_lik = self.get_plot_likelihoods(self.Beta_com, self.true_cols, self.beta_i_avg)
-        
+        #print("in analyze_run __init__, self.esti_lik=", self.esti_lik)
         self.particle_history_ids = self.id_cleaner(path=f_path, column_name='particle_history_ids')
         self.machine_history_ids = self.id_cleaner(path=f_path, column_name='machine_history_ids')
         if comm:
@@ -224,10 +234,13 @@ class analyze_run:
     
     def get_params_from_results_with_comm(self, path):
         results_output = pd.read_csv(path)
+        results_output = results_output[results_output.start_time==np.max(results_output.start_time)]
+        results_output.reset_index(inplace=True)
+        #print(results_output.shape)
         #print(results_output.shape)
         f_Betas_in_columns = list()
         if self.col == 'final_params':
-            for nr in range(len(results_output.final_params[:-1])):
+            for nr in range(len(results_output.final_params)):
                 output = list()
                 dirty_list = results_output.final_params[nr].split(',')
                 
@@ -246,7 +259,7 @@ class analyze_run:
                     ).T
                 )
         if self.col == 'pre_shuffel_params':
-            for nr in range(len(results_output.pre_shuffel_params[:-1])):
+            for nr in range(len(results_output.pre_shuffel_params)):
                 output = list()
                 dirty_list = results_output.pre_shuffel_params[nr].split(',')
                 
@@ -265,7 +278,7 @@ class analyze_run:
                     ).T
                 )
         if self.col == 'post_shuffel_params':
-            for nr in range(len(results_output.post_shuffel_params[:-1])):
+            for nr in range(len(results_output.post_shuffel_params)):
                 output = list()
                 dirty_list = results_output.post_shuffel_params[nr].split(',')
                 
@@ -292,9 +305,12 @@ class analyze_run:
     
     def get_params_from_results_no_comm(self, path):
         results_output = pd.read_csv(path)
+        results_output = results_output[:-1]
+        results_output = results_output[results_output.start_time==np.max(results_output.start_time)]
+        results_output.reset_index(inplace=True)
         #print(results_output.shape)
         f_Betas_in_columns = list()
-        for nr in range(len(results_output.final_params[:-1])):
+        for nr in range(len(results_output.final_params)):
             output = list()
             dirty_list = results_output.final_params[nr].split(',')
             
@@ -543,9 +559,12 @@ class analyze_run:
     
     def id_cleaner(self, path, column_name):
         df = pd.read_csv(path)
-        df[column_name][1].split(', ')
+        df = df[:-1]
+        df = df[df.start_time==np.max(df.start_time)]
+        df.reset_index(inplace=True)
+        
         all_integer_ids=list()
-        for nr in range(len(df[column_name][:-1])):
+        for nr in range(len(df[column_name])):
             output = list()
             dirty_list = df[column_name][nr].split(',')
             
