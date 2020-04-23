@@ -41,5 +41,5 @@
 
 # Launch MPI code...
 # Use ibrun instead of mpirun or mpiexec
-ibrun python job_scripts/Xy_N=6000/heat_map_part_num_v_Epoch_N
+ibrun python analyze_results_Xy_N=6000.py
 # ---------------------------------------------------
