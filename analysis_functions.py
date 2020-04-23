@@ -721,3 +721,34 @@ class exp_file_path:
         )
 
 
+def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict):
+    hm_plot_data = np.zeros((len(N_Epoch), len(part_num), 100))
+    hm_plot_counter = np.zeros((len(N_Epoch), len(part_num)))
+    
+    #compute individual run value
+    dict_keys = list(big_results_dict.keys())
+    for ne_index in range(len(N_Epoch)):
+        
+        for pn_index in range(len(part_num)):
+            
+            for k in range(len(dict_keys)):
+
+                cond_1 = 'p='+str(pred_num) + '_' in dict_keys[k]
+                cond_2 = 'part_num='+str(part_num[pn_index])+'_' in dict_keys[k]
+                cond_3 = 'Epoch_N='+str(N_Epoch[ne_index])+'_' in dict_keys[k]
+                cond_4 = 'shard_num=' + str(shard_num) + '_' in dict_keys[k]
+                if (cond_1 and cond_2 and cond_3 and cond_4):
+                    hm_plot_data[ne_index, pn_index, int(hm_plot_counter[ne_index, pn_index])] = (
+                        big_results_dict[dict_keys[k]].last_avg_lik_diff
+                    )
+                    hm_plot_counter[ne_index, pn_index]+=1
+    
+    # average runs
+    hm_mean_plot_data = np.zeros((len(N_Epoch), len(part_num)))
+    for row in range(hm_plot_data.shape[0]):
+        for col in range(hm_plot_data.shape[1]):
+            hm_mean_plot_data[row,col] = np.nanmean(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
+    
+    output = pd.DataFrame(hm_mean_plot_data, index=N_Epoch, columns=part_num)
+    
+    return output
