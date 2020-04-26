@@ -685,7 +685,7 @@ class exp_file_path:
         self.with_comm_results_file = (
             'experiment_results/synth_data/results_emb_par_fit_test_with_comm'
             '_shard_num=' + str(shard_num) + 
-            '_Xy_N=2000_Epoch_N=' + str(N_Epoch_item) + 
+            '_Xy_N='+str(Xy_N)+'_Epoch_N=' + str(N_Epoch_item) + 
             '_Nt=' + str(Nt_item) + 
             '_p=' + str(p_item) + 
             '_GP_version=' + str(GP_version_item) + 
@@ -694,18 +694,18 @@ class exp_file_path:
         self.no_comm_results_file = (
             'experiment_results/synth_data/results_emb_par_fit_test_no_comm'
             '_shard_num=' + str(shard_num) + 
-            '_Xy_N=2000_Epoch_N=' + str(N_Epoch_item) +
+            '_Xy_N='+str(Xy_N)+'_Epoch_N=' + str(N_Epoch_item) +
             '_Nt=' + str(Nt_item) + 
             '_p=' + str(p_item) + 
             '_GP_version=' + str(GP_version_item) + 
             '_part_num=' + str(part_num_item) + '_exp_num=0.csv'
         )
         self.beta_file = (
-            'synth_data/Xy_N=2000_Epoch_N='+str(N_Epoch_item)+
+            'synth_data/Xy_N='+str(Xy_N)+'_Epoch_N='+str(N_Epoch_item)+
             '_Nt='+str(Nt_item)+
             '_p='+str(p_item)+
             '/GP_version='+str(GP_version_item)+
-            '/Beta_t_Xy_N=2000_Epoch_N='+str(N_Epoch_item)+
+            '/Beta_t_Xy_N='+str(Xy_N)+'_Epoch_N='+str(N_Epoch_item)+
             '_Nt='+str(Nt_item)+
             '_p='+str(p_item)+
             '_GP_version='+str(GP_version_item)+'.csv'
@@ -713,7 +713,7 @@ class exp_file_path:
         self.exp_key = (
             'synth_data'
             '_shard_num=' + str(shard_num) + 
-            '_Xy_N=2000_Epoch_N=' + str(N_Epoch_item) +
+            '_Xy_N='+str(Xy_N)+'_Epoch_N=' + str(N_Epoch_item) +
             '_Nt='+str(Nt_item)+
             '_p='+str(p_item) +
             '_part_num=' + str(part_num_item) + 
