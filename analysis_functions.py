@@ -82,24 +82,23 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                         temp_ao = analysis_obj()
                         
                         for GP_version_item in f_GP_version:
-                            try:
-                                #print(GP_version_item)
+
+                            #print(GP_version_item)
+                            step_size = int(N_Epoch_item/shard_number_item)
                             
-                                step_size = int(N_Epoch_item/shard_number_item)
-                                
-                                path_obj_instance = exp_file_path( 
-                                    shard_number_item, f_Xy_N, N_Epoch_item, Nt_item, p_item, GP_version_item, part_num_item
-                                )
-                                both_exist = (
-                                    os.path.exists(path_obj_instance.with_comm_results_file) 
-                                    and os.path.exists(path_obj_instance.no_comm_results_file)
-                                )
-                                #print(path_obj_instance.exp_key)
-                                #print(path_obj_instance.with_comm_results_file)
-                                #print("files exist?", both_exist)
-                                if both_exist:
-                                    #print("in if both_exist")
-                                    #print(both_exist)
+                            path_obj_instance = exp_file_path( 
+                                shard_number_item, f_Xy_N, N_Epoch_item, Nt_item, p_item, GP_version_item, part_num_item
+                            )
+                            both_exist = (
+                                os.path.exists(path_obj_instance.with_comm_results_file) 
+                                and os.path.exists(path_obj_instance.no_comm_results_file)
+                            )
+
+                            #print("files exist?", both_exist)
+                            if both_exist:
+                                #print("in if both_exist")
+                                #print(both_exist)
+                                try:
                                     w_run = af.analyze_run(
                                         f_path = path_obj_instance.with_comm_results_file,
                                         f_beta_file_path = path_obj_instance.beta_file,
@@ -108,8 +107,12 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         comm = True, 
                                         col='post_shuffel_params'
                                     )
-                                    #print(1)
-                                    #print("in prep_big_results_dict , w_run.esti_lik=", w_run.esti_lik)
+                                    temp_ao.wi_comm_list.append(w_run)
+                                except Exception:
+                                    print("in prep_big_results_dict , w_run.esti_lik=", w_run.esti_lik)
+                                    print(path_obj_instance.exp_key)
+                                    print(path_obj_instance.with_comm_results_file)
+                                try:
                                     n_run = af.analyze_run(
                                         f_path = path_obj_instance.no_comm_results_file,
                                         f_beta_file_path = path_obj_instance.beta_file,
@@ -117,12 +120,11 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         true_cols = f_predictors[:p_item], 
                                         comm = False, 
                                     )
-                                    #print(2)
-                                    #print("in prep_big_results_dict , n_run.esti_lik=", n_run.esti_lik)
-                                    temp_ao.wi_comm_list.append(w_run)
                                     temp_ao.no_comm_list.append(n_run)
-                            except AttributeError:
-                                ".......AttributeError......."
+                                except Exception:
+                                    print("in prep_big_results_dict , n_run.esti_lik=", n_run.esti_lik)
+                                    print(path_obj_instance.exp_key)
+                                    print(path_obj_instance.with_comm_results_file)
                             else:
                                 continue
                         temp_ao.compute_lik_diffs()
@@ -199,7 +201,7 @@ class analyze_run:
         #print("type(f_X)=", type(f_X))
         #print("type(f_Y)=", type(f_Y))
         #print("type(f_B)=", type(f_B))
-        x_j_tB = np.matmul(f_X.as_matrix() , np.array(f_B))
+        x_j_tB = np.matmul(f_X.values , np.array(f_B))
         p_of_x_i = 1.0/(1.0+np.exp(-1*x_j_tB))
         likelihood =  f_Y*p_of_x_i + (1-f_Y)*(1-p_of_x_i)
         return likelihood
@@ -721,8 +723,8 @@ class exp_file_path:
         )
 
 
-def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict):
-    hm_plot_data = np.zeros((len(N_Epoch), len(part_num), 100))
+def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict, version_count = 10):
+    hm_plot_data = np.zeros((len(N_Epoch), len(part_num), version_count))
     hm_plot_counter = np.zeros((len(N_Epoch), len(part_num)))
     
     #compute individual run value
@@ -750,5 +752,6 @@ def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict)
             hm_mean_plot_data[row,col] = np.nanmean(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
     
     output = pd.DataFrame(hm_mean_plot_data, index=N_Epoch, columns=part_num)
+    output['index']=N_Epoch
     
     return output
