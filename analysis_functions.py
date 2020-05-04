@@ -84,7 +84,7 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                         for GP_version_item in f_GP_version:
 
                             #print(GP_version_item)
-                            step_size = int(N_Epoch_item/shard_number_item)
+                            step_size = int(N_Epoch_item/f_Nt[0])#shard_number_item)
                             
                             path_obj_instance = exp_file_path( 
                                 shard_number_item, f_Xy_N, N_Epoch_item, Nt_item, p_item, GP_version_item, part_num_item
@@ -127,6 +127,11 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                     print(path_obj_instance.with_comm_results_file)
                             else:
                                 continue
+                        print("shard_number_item=", shard_number_item)
+                        print("N_Epoch_item=",N_Epoch_item)
+                        print("Nt_item=", Nt_item)
+                        print("p_item=", p_item)
+                        print("part_num_item=",part_num_item)
                         temp_ao.compute_lik_diffs()
                         big_results_dict[path_obj_instance.exp_key] = temp_ao
 
@@ -368,14 +373,15 @@ class analyze_run:
     
     
     def get_plot_likelihoods(self, f_Beta_com, f_cols, f_beta_i_avg):
-        #print("In get_plot_likelihoods")
+        print("In get_plot_likelihoods")
         #print("f_Beta_com.shape=", f_Beta_com.shape)
         #print("f_beta_i_avg.shape", f_beta_i_avg.shape)
         f_true_lik = list()
         f_esti_lik = list()
         #print("type(f_Beta_com)=", type(f_Beta_com))
         #print("type(f_beta_i_avg)=", type(f_beta_i_avg))
-        #print("f_Beta_com.shape=", f_Beta_com.shape)
+        print("f_Beta_com.shape=", f_Beta_com.shape)
+        print("f_Beta_com=", f_Beta_com)
         #print("f_beta_i_avg.shape=", f_beta_i_avg.shape)
         for i in range(f_Beta_com.shape[0]):
             Beta_t = f_Beta_com[f_cols].loc[i]
@@ -384,6 +390,7 @@ class analyze_run:
             X, y = self.generate_OOS_X_y(f_B_t=Beta_t)
             f_true_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_t)))
             f_esti_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_fit)))
+        print("f_esti_lik=", f_esti_lik)   
         return f_true_lik, f_esti_lik
     
     
@@ -662,23 +669,47 @@ class analysis_obj:
         self.no_comm_list = list()
 
     def compute_lik_diffs(self):
-        if len(self.no_comm_list) > 0:
-            self.lik_diffs = np.zeros(
-                (
-                    len(self.no_comm_list), 
-                    len(self.no_comm_list[0].esti_lik)
-                )
-            )
+        print("in compute_lik_diffs")
+        
+        if (len(self.no_comm_list) > 0) and (len(self.wi_comm_list) > 0):
+            
+            for i in range(len(self.no_comm_list)):
+                print("len(self.no_comm_list[i].esti_lik=", len(self.no_comm_list[i].esti_lik))
+                print("(self.no_comm_list[i].esti_lik=", (self.no_comm_list[i].esti_lik))
+            for i in range(len(self.wi_comm_list)):
+                print("len(self.wi_comm_list[i].esti_lik=", len(self.wi_comm_list[i].esti_lik))
+                print("(self.wi_comm_list[i].esti_lik=", (self.wi_comm_list[i].esti_lik))
+                      
+            a=max(len(self.no_comm_list), len(self.wi_comm_list))
+            b=max(len(self.no_comm_list[0].esti_lik), len(self.wi_comm_list[0].esti_lik))
+            self.lik_diffs = np.zeros((a, b))
+            print("self.lik_diffs.shape = ", self.lik_diffs.shape)
+            
             for i in range(len(self.no_comm_list)):
                 self.lik_diffs[i,:] = np.array(self.wi_comm_list[i].esti_lik - np.array(self.no_comm_list[i].esti_lik))
-    
-            last_comm = len(self.no_comm_list[0].esti_lik)-1
-            self.last_avg_lik_diff = np.mean(self.lik_diffs[:, last_comm])
-            self.last_std_lik_diff = np.std(self.lik_diffs[:, last_comm])
+            
+            no_com_len=list()
+            for i in range(len(self.no_comm_list)):
+                no_com_len.append(len(self.no_comm_list[0].esti_lik)-1)
+                
+            wi_com_len=list()
+            for i in range(len(self.wi_comm_list)):
+                wi_com_len.append(len(self.wi_comm_list[0].esti_lik)-1)
+                
+            #wi_com_len = [len(i) for i in self.wi_comm_list]
+            last_comm = max(max(no_com_len), max(wi_com_len))-1
+            #last_comm = len(self.no_comm_list[0].esti_lik)-1
+            if last_comm>0:
+                self.last_avg_lik_diff = np.nanmean(self.lik_diffs[:, last_comm])
+                self.last_std_lik_diff = np.nanstd(self.lik_diffs[:, last_comm])
+            else:
+                self.last_avg_lik_diff = None
+                self.last_std_lik_diff = None
         else:
             self.lik_diffs = None
             self.last_avg_lik_diff = None
             self.last_std_lik_diff = None
+        print("##############################################################################################################################")
 
 
 class exp_file_path:
