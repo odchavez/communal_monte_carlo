@@ -82,11 +82,10 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                         temp_ao = analysis_obj()
                         
                         for GP_version_item in f_GP_version:
-
                             #print(GP_version_item)
-                            step_size = int(N_Epoch_item/f_Nt[0])#shard_number_item)
+                            step_size = int(N_Epoch_item/Nt_item)
                             
-                            path_obj_instance = exp_file_path( 
+                            path_obj_instance = exp_file_path(
                                 shard_number_item, f_Xy_N, N_Epoch_item, Nt_item, p_item, GP_version_item, part_num_item
                             )
                             both_exist = (
@@ -107,12 +106,6 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         comm = True, 
                                         col='post_shuffel_params'
                                     )
-                                    temp_ao.wi_comm_list.append(w_run)
-                                except Exception:
-                                    print("in prep_big_results_dict , w_run.esti_lik=", w_run.esti_lik)
-                                    print(path_obj_instance.exp_key)
-                                    print(path_obj_instance.with_comm_results_file)
-                                try:
                                     n_run = af.analyze_run(
                                         f_path = path_obj_instance.no_comm_results_file,
                                         f_beta_file_path = path_obj_instance.beta_file,
@@ -120,18 +113,23 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         true_cols = f_predictors[:p_item], 
                                         comm = False, 
                                     )
-                                    temp_ao.no_comm_list.append(n_run)
                                 except Exception:
+                                    print("in prep_big_results_dict , w_run.esti_lik=", w_run.esti_lik)
+                                    print(path_obj_instance.exp_key)
+                                    print(path_obj_instance.with_comm_results_file)
                                     print("in prep_big_results_dict , n_run.esti_lik=", n_run.esti_lik)
                                     print(path_obj_instance.exp_key)
                                     print(path_obj_instance.with_comm_results_file)
+                                    
+                                temp_ao.wi_comm_list.append(w_run)
+                                temp_ao.no_comm_list.append(n_run)
                             else:
                                 continue
-                        print("shard_number_item=", shard_number_item)
-                        print("N_Epoch_item=",N_Epoch_item)
-                        print("Nt_item=", Nt_item)
-                        print("p_item=", p_item)
-                        print("part_num_item=",part_num_item)
+                        #print("shard_number_item=", shard_number_item)
+                        #print("N_Epoch_item=",N_Epoch_item)
+                        #print("Nt_item=", Nt_item)
+                        #print("p_item=", p_item)
+                        #print("part_num_item=",part_num_item)
                         temp_ao.compute_lik_diffs()
                         big_results_dict[path_obj_instance.exp_key] = temp_ao
 
@@ -373,15 +371,15 @@ class analyze_run:
     
     
     def get_plot_likelihoods(self, f_Beta_com, f_cols, f_beta_i_avg):
-        print("In get_plot_likelihoods")
+        #print("In get_plot_likelihoods")
         #print("f_Beta_com.shape=", f_Beta_com.shape)
         #print("f_beta_i_avg.shape", f_beta_i_avg.shape)
         f_true_lik = list()
         f_esti_lik = list()
         #print("type(f_Beta_com)=", type(f_Beta_com))
         #print("type(f_beta_i_avg)=", type(f_beta_i_avg))
-        print("f_Beta_com.shape=", f_Beta_com.shape)
-        print("f_Beta_com=", f_Beta_com)
+        #print("f_Beta_com.shape=", f_Beta_com.shape)
+        #print("f_Beta_com=", f_Beta_com)
         #print("f_beta_i_avg.shape=", f_beta_i_avg.shape)
         for i in range(f_Beta_com.shape[0]):
             Beta_t = f_Beta_com[f_cols].loc[i]
@@ -390,7 +388,7 @@ class analyze_run:
             X, y = self.generate_OOS_X_y(f_B_t=Beta_t)
             f_true_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_t)))
             f_esti_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_fit)))
-        print("f_esti_lik=", f_esti_lik)   
+        #print("f_esti_lik=", f_esti_lik)   
         return f_true_lik, f_esti_lik
     
     
@@ -669,36 +667,33 @@ class analysis_obj:
         self.no_comm_list = list()
 
     def compute_lik_diffs(self):
-        print("in compute_lik_diffs")
+        #print("in compute_lik_diffs")
         
-        if (len(self.no_comm_list) > 0) and (len(self.wi_comm_list) > 0):
-            
-            for i in range(len(self.no_comm_list)):
-                print("len(self.no_comm_list[i].esti_lik=", len(self.no_comm_list[i].esti_lik))
-                print("(self.no_comm_list[i].esti_lik=", (self.no_comm_list[i].esti_lik))
-            for i in range(len(self.wi_comm_list)):
-                print("len(self.wi_comm_list[i].esti_lik=", len(self.wi_comm_list[i].esti_lik))
-                print("(self.wi_comm_list[i].esti_lik=", (self.wi_comm_list[i].esti_lik))
-                      
-            a=max(len(self.no_comm_list), len(self.wi_comm_list))
-            b=max(len(self.no_comm_list[0].esti_lik), len(self.wi_comm_list[0].esti_lik))
+        condition_1 = len(self.no_comm_list) > 0
+        condition_2 = len(self.no_comm_list) == len(self.wi_comm_list)
+        if condition_1 and condition_2:
+            #print(self.no_comm_list)
+            a = len(self.no_comm_list)
+            b = len(self.no_comm_list[0].esti_lik)
             self.lik_diffs = np.zeros((a, b))
-            print("self.lik_diffs.shape = ", self.lik_diffs.shape)
             
             for i in range(len(self.no_comm_list)):
                 self.lik_diffs[i,:] = np.array(self.wi_comm_list[i].esti_lik - np.array(self.no_comm_list[i].esti_lik))
             
             no_com_len=list()
             for i in range(len(self.no_comm_list)):
-                no_com_len.append(len(self.no_comm_list[0].esti_lik)-1)
+                no_com_len.append(len(self.no_comm_list[i].esti_lik))#-1)
                 
             wi_com_len=list()
             for i in range(len(self.wi_comm_list)):
-                wi_com_len.append(len(self.wi_comm_list[0].esti_lik)-1)
+                wi_com_len.append(len(self.wi_comm_list[i].esti_lik))#-1)
                 
             #wi_com_len = [len(i) for i in self.wi_comm_list]
-            last_comm = max(max(no_com_len), max(wi_com_len))-1
-            #last_comm = len(self.no_comm_list[0].esti_lik)-1
+            if wi_com_len == no_com_len:
+               last_comm = max(max(no_com_len), max(wi_com_len))-1
+            else:
+               last_comm = 0
+               
             if last_comm>0:
                 self.last_avg_lik_diff = np.nanmean(self.lik_diffs[:, last_comm])
                 self.last_std_lik_diff = np.nanstd(self.lik_diffs[:, last_comm])
@@ -709,7 +704,7 @@ class analysis_obj:
             self.lik_diffs = None
             self.last_avg_lik_diff = None
             self.last_std_lik_diff = None
-        print("##############################################################################################################################")
+        #print("##############################################################################################################################")
 
 
 class exp_file_path:
@@ -783,6 +778,39 @@ def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict,
             hm_mean_plot_data[row,col] = np.nanmean(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
     
     output = pd.DataFrame(hm_mean_plot_data, index=N_Epoch, columns=part_num)
+    output['index']=N_Epoch
+    
+    return output
+
+
+def heat_map_data_prep_shard_num_VS_N_Epoch(pred_num, part_num, N_Epoch, shard_num, big_results_dict, version_count = 10):
+    hm_plot_data = np.zeros((len(N_Epoch), len(shard_num), version_count))
+    hm_plot_counter = np.zeros((len(N_Epoch), len(shard_num)))
+    
+    #compute individual run value
+    dict_keys = list(big_results_dict.keys())
+    for ne_index in range(len(N_Epoch)):
+        for sn_index in range(len(shard_num)):
+            
+            for k in range(len(dict_keys)):
+
+                cond_1 = 'p='+str(pred_num) + '_' in dict_keys[k]
+                cond_2 = 'part_num='+str(part_num)+'_' in dict_keys[k]
+                cond_3 = 'Epoch_N='+str(N_Epoch[ne_index])+'_' in dict_keys[k]
+                cond_4 = 'shard_num=' + str(shard_num[sn_index]) + '_' in dict_keys[k]
+                if (cond_1 and cond_2 and cond_3 and cond_4):
+                    hm_plot_data[ne_index, sn_index, int(hm_plot_counter[ne_index, sn_index])] = (
+                        big_results_dict[dict_keys[k]].last_avg_lik_diff
+                    )
+                    hm_plot_counter[ne_index, sn_index]+=1
+    
+    # average runs
+    hm_mean_plot_data = np.zeros((len(N_Epoch), len(shard_num)))
+    for row in range(hm_plot_data.shape[0]):
+        for col in range(hm_plot_data.shape[1]):
+            hm_mean_plot_data[row,col] = np.nanmean(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
+    
+    output = pd.DataFrame(hm_mean_plot_data, index=N_Epoch, columns=shard_num)
     output['index']=N_Epoch
     
     return output
