@@ -93,10 +93,10 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                 and os.path.exists(path_obj_instance.no_comm_results_file)
                             )
 
-                            #print("files exist?", both_exist)
+                            print("files exist?", both_exist)
                             if both_exist:
-                                #print("in if both_exist")
-                                #print(both_exist)
+                                print("in if both_exist")
+                                print(both_exist)
                                 try:
                                     w_run = af.analyze_run(
                                         f_path = path_obj_instance.with_comm_results_file,
@@ -113,13 +113,16 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         true_cols = f_predictors[:p_item], 
                                         comm = False, 
                                     )
+                                    print("SUCCESS WITH ", path_obj_instance.exp_key)
                                 except Exception:
-                                    print("in prep_big_results_dict , w_run.esti_lik=", w_run.esti_lik)
-                                    print(path_obj_instance.exp_key)
-                                    print(path_obj_instance.with_comm_results_file)
-                                    print("in prep_big_results_dict , n_run.esti_lik=", n_run.esti_lik)
-                                    print(path_obj_instance.exp_key)
-                                    print(path_obj_instance.with_comm_results_file)
+                                    print("****************** Exception ******************")
+                                    print("FAILED WITH ", path_obj_instance.exp_key)
+                                    #print("in prep_big_results_dict , w_run.esti_lik=", w_run.esti_lik)
+                                    #print(path_obj_instance.exp_key)
+                                    #print(path_obj_instance.with_comm_results_file)
+                                    #print("in prep_big_results_dict , n_run.esti_lik=", n_run.esti_lik)
+                                    #print(path_obj_instance.exp_key)
+                                    #print(path_obj_instance.with_comm_results_file)
                                     
                                 temp_ao.wi_comm_list.append(w_run)
                                 temp_ao.no_comm_list.append(n_run)
@@ -773,14 +776,19 @@ def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict,
     
     # average runs
     hm_mean_plot_data = np.zeros((len(N_Epoch), len(part_num)))
+    hm_std_plot_data = np.zeros((len(N_Epoch), len(part_num)))
     for row in range(hm_plot_data.shape[0]):
         for col in range(hm_plot_data.shape[1]):
             hm_mean_plot_data[row,col] = np.nanmean(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
+            hm_std_plot_data[row,col] = np.nanstd(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
+            
+    output_mean = pd.DataFrame(hm_mean_plot_data, index=N_Epoch, columns=part_num)
+    output_mean['index']=N_Epoch
     
-    output = pd.DataFrame(hm_mean_plot_data, index=N_Epoch, columns=part_num)
-    output['index']=N_Epoch
+    output_std = pd.DataFrame(hm_std_plot_data, index=N_Epoch, columns=part_num)
+    output_std['index']=N_Epoch
     
-    return output
+    return output_mean, output_std
 
 
 def heat_map_data_prep_shard_num_VS_N_Epoch(pred_num, part_num, N_Epoch, shard_num, big_results_dict, version_count = 10):
