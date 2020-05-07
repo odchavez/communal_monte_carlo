@@ -10,8 +10,8 @@ Xy_N=6000
 N_Epoch = [150,300,600,1200]
 Nt = [30]
 p = [2, 8, 16]
-GP_version = list(range(1)) #list(range(10))
-part_num = [20, 100]#, 1000]
+GP_version = list(range(10))
+part_num = [20, 100, 1000]
 predictors = ['B_0','B_1','B_2','B_3','B_4','B_5','B_6','B_7','B_8','B_9','B_10','B_11','B_12','B_13','B_14','B_15']
 
 big_results_dict = af.prep_big_results_dict(
