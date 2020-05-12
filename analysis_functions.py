@@ -2,6 +2,7 @@ import analysis_functions as af
 
 import pandas as pd
 import numpy as np
+import math
 import re
 import os
 import matplotlib.pyplot as plt
@@ -93,10 +94,10 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                 and os.path.exists(path_obj_instance.no_comm_results_file)
                             )
 
-                            print("files exist?", both_exist)
+                            #print("files exist?", both_exist)
                             if both_exist:
-                                print("in if both_exist")
-                                print(both_exist)
+                                #print("in if both_exist")
+                                #print(both_exist)
                                 try:
                                     w_run = af.analyze_run(
                                         f_path = path_obj_instance.with_comm_results_file,
@@ -113,10 +114,14 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         true_cols = f_predictors[:p_item], 
                                         comm = False, 
                                     )
-                                    print("SUCCESS WITH ", path_obj_instance.exp_key)
+                                    #print("SUCCESS WITH ", path_obj_instance.exp_key, " GP_version_item = ", GP_version_item)
+                                    
+                                    temp_ao.wi_comm_list.append(w_run)
+                                    temp_ao.no_comm_list.append(n_run)
+                                    
                                 except Exception:
                                     print("****************** Exception ******************")
-                                    print("FAILED WITH ", path_obj_instance.exp_key)
+                                    print("FAILED WITH ", path_obj_instance.exp_key, " GP_version_item = ", GP_version_item)
                                     #print("in prep_big_results_dict , w_run.esti_lik=", w_run.esti_lik)
                                     #print(path_obj_instance.exp_key)
                                     #print(path_obj_instance.with_comm_results_file)
@@ -124,8 +129,7 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                     #print(path_obj_instance.exp_key)
                                     #print(path_obj_instance.with_comm_results_file)
                                     
-                                temp_ao.wi_comm_list.append(w_run)
-                                temp_ao.no_comm_list.append(n_run)
+                                
                             else:
                                 continue
                         #print("shard_number_item=", shard_number_item)
@@ -670,7 +674,7 @@ class analysis_obj:
         self.no_comm_list = list()
 
     def compute_lik_diffs(self):
-        #print("in compute_lik_diffs")
+        print("in compute_lik_diffs")
         
         condition_1 = len(self.no_comm_list) > 0
         condition_2 = len(self.no_comm_list) == len(self.wi_comm_list)
@@ -681,6 +685,8 @@ class analysis_obj:
             self.lik_diffs = np.zeros((a, b))
             
             for i in range(len(self.no_comm_list)):
+                #print("self.wi_comm_list[i].esti_lik = ", self.wi_comm_list[i].esti_lik)
+                #print("np.array(self.no_comm_list[i].esti_lik) = ", np.array(self.no_comm_list[i].esti_lik))
                 self.lik_diffs[i,:] = np.array(self.wi_comm_list[i].esti_lik - np.array(self.no_comm_list[i].esti_lik))
             
             no_com_len=list()
@@ -699,14 +705,17 @@ class analysis_obj:
                
             if last_comm>0:
                 self.last_avg_lik_diff = np.nanmean(self.lik_diffs[:, last_comm])
-                self.last_std_lik_diff = np.nanstd(self.lik_diffs[:, last_comm])
+                self.last_std_err_lik_diff = np.nanstd(self.lik_diffs[:, last_comm])/math.sqrt(a)
+                #print("In compute_lik_diffs with list = ", self.lik_diffs[:, last_comm])
+                #print("In compute_lik_diffs FULL  self.lik_diffs = ", self.lik_diffs)
+                #print("np.nanstd(self.lik_diffs[:, last_comm]) = ", np.nanstd(self.lik_diffs[:, last_comm]))
             else:
                 self.last_avg_lik_diff = None
-                self.last_std_lik_diff = None
+                self.last_std_err_lik_diff = None
         else:
             self.lik_diffs = None
             self.last_avg_lik_diff = None
-            self.last_std_lik_diff = None
+            self.last_std_err_lik_diff = None
         #print("##############################################################################################################################")
 
 
@@ -752,9 +761,15 @@ class exp_file_path:
         )
 
 
-def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict, version_count = 10):
-    hm_plot_data = np.zeros((len(N_Epoch), len(part_num), version_count))
-    hm_plot_counter = np.zeros((len(N_Epoch), len(part_num)))
+def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict):#, version_count = 10):
+    #print("******************")
+    #print("heat_map_data_prep")
+    #print("******************")
+
+    hm_plot_data = np.zeros((len(N_Epoch), len(part_num)))#, version_count))
+    #hm_plot_counter = np.zeros((len(N_Epoch), len(part_num)))
+    hm_plot_data_std = np.zeros((len(N_Epoch), len(part_num)))#, version_count))
+    #hm_plot_counter_std = np.zeros((len(N_Epoch), len(part_num)))
     
     #compute individual run value
     dict_keys = list(big_results_dict.keys())
@@ -763,62 +778,53 @@ def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict,
         for pn_index in range(len(part_num)):
             
             for k in range(len(dict_keys)):
-
+                #print("working on dictionary item:" , dict_keys[k])
                 cond_1 = 'p='+str(pred_num) + '_' in dict_keys[k]
                 cond_2 = 'part_num='+str(part_num[pn_index])+'_' in dict_keys[k]
                 cond_3 = 'Epoch_N='+str(N_Epoch[ne_index])+'_' in dict_keys[k]
                 cond_4 = 'shard_num=' + str(shard_num) + '_' in dict_keys[k]
                 if (cond_1 and cond_2 and cond_3 and cond_4):
-                    hm_plot_data[ne_index, pn_index, int(hm_plot_counter[ne_index, pn_index])] = (
+                    
+                    hm_plot_data[ne_index, pn_index] = (
                         big_results_dict[dict_keys[k]].last_avg_lik_diff
                     )
-                    hm_plot_counter[ne_index, pn_index]+=1
+                    #hm_plot_data[ne_index, pn_index, int(hm_plot_counter[ne_index, pn_index])] = (
+                    #    big_results_dict[dict_keys[k]].last_avg_lik_diff
+                    #)
+                    #hm_plot_counter[ne_index, pn_index]+=1
+                    
+                    hm_plot_data_std[ne_index, pn_index] = (
+                        big_results_dict[dict_keys[k]].last_std_err_lik_diff
+                    )
+                    #hm_plot_data_std[ne_index, pn_index, int(hm_plot_counter[ne_index, pn_index])] = (
+                    #    big_results_dict[dict_keys[k]].last_std_lik_diff
+                    #)
+                    #hm_plot_counter_std[ne_index, pn_index]+=1
+                    
+                    #print("hm_plot_counter = ", hm_plot_counter)
     
-    # average runs
-    hm_mean_plot_data = np.zeros((len(N_Epoch), len(part_num)))
-    hm_std_plot_data = np.zeros((len(N_Epoch), len(part_num)))
-    for row in range(hm_plot_data.shape[0]):
-        for col in range(hm_plot_data.shape[1]):
-            hm_mean_plot_data[row,col] = np.nanmean(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
-            hm_std_plot_data[row,col] = np.nanstd(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
+    #THE BELOW LOOP CAN BE REMOVED AS IT IS REDUNDANT - DON'T FORGET TO TEST!!!
+    
+    #print("hm_plot_data.shape = ", hm_plot_data.shape)
+    #print("hm_plot_data = ", hm_plot_data)
+    #print("hm_plot_data_std.shape = ", hm_plot_data_std.shape)
+    #print("hm_plot_data_std = ", hm_plot_data_std)
+    ## average runs
+    #hm_mean_plot_data = np.zeros((len(N_Epoch), len(part_num)))
+    #hm_std_plot_data = np.zeros((len(N_Epoch), len(part_num)))
+    #for row in range(hm_plot_data.shape[0]):
+    #    for col in range(hm_plot_data.shape[1]):
+    #        hm_mean_plot_data[row,col] = np.nanmean(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
+    #        hm_std_plot_data[row,col] = np.nanmean(hm_plot_data_std[row,col][hm_plot_data_std[row,col,:]!=0.0])
             
-    output_mean = pd.DataFrame(hm_mean_plot_data, index=N_Epoch, columns=part_num)
+    #output_mean = pd.DataFrame(hm_mean_plot_data, index=N_Epoch, columns=part_num)
+    #output_mean['index']=N_Epoch
+    #
+    #output_std = pd.DataFrame(hm_std_plot_data, index=N_Epoch, columns=part_num)
+    #output_std['index']=N_Epoch
+    output_mean = pd.DataFrame(hm_plot_data, index=N_Epoch, columns=part_num)
     output_mean['index']=N_Epoch
     
-    output_std = pd.DataFrame(hm_std_plot_data, index=N_Epoch, columns=part_num)
+    output_std = pd.DataFrame(hm_plot_data_std, index=N_Epoch, columns=part_num)
     output_std['index']=N_Epoch
-    
     return output_mean, output_std
-
-
-def heat_map_data_prep_shard_num_VS_N_Epoch(pred_num, part_num, N_Epoch, shard_num, big_results_dict, version_count = 10):
-    hm_plot_data = np.zeros((len(N_Epoch), len(shard_num), version_count))
-    hm_plot_counter = np.zeros((len(N_Epoch), len(shard_num)))
-    
-    #compute individual run value
-    dict_keys = list(big_results_dict.keys())
-    for ne_index in range(len(N_Epoch)):
-        for sn_index in range(len(shard_num)):
-            
-            for k in range(len(dict_keys)):
-
-                cond_1 = 'p='+str(pred_num) + '_' in dict_keys[k]
-                cond_2 = 'part_num='+str(part_num)+'_' in dict_keys[k]
-                cond_3 = 'Epoch_N='+str(N_Epoch[ne_index])+'_' in dict_keys[k]
-                cond_4 = 'shard_num=' + str(shard_num[sn_index]) + '_' in dict_keys[k]
-                if (cond_1 and cond_2 and cond_3 and cond_4):
-                    hm_plot_data[ne_index, sn_index, int(hm_plot_counter[ne_index, sn_index])] = (
-                        big_results_dict[dict_keys[k]].last_avg_lik_diff
-                    )
-                    hm_plot_counter[ne_index, sn_index]+=1
-    
-    # average runs
-    hm_mean_plot_data = np.zeros((len(N_Epoch), len(shard_num)))
-    for row in range(hm_plot_data.shape[0]):
-        for col in range(hm_plot_data.shape[1]):
-            hm_mean_plot_data[row,col] = np.nanmean(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
-    
-    output = pd.DataFrame(hm_mean_plot_data, index=N_Epoch, columns=shard_num)
-    output['index']=N_Epoch
-    
-    return output

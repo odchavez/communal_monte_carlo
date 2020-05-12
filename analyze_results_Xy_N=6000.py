@@ -25,21 +25,21 @@ big_results_dict = af.prep_big_results_dict(
     f_predictors = predictors
 )
 
-print("number of entries = ", len(big_results_dict))
+print("number of entries in prep_big_results_dict = ", len(big_results_dict))
 keys = big_results_dict.keys()
 for k in keys:
     print(k)
     if len(big_results_dict[k].wi_comm_list)==0:continue
-    print(big_results_dict[k].last_avg_lik_diff -  big_results_dict[k].last_std_lik_diff)
+    print(big_results_dict[k].last_avg_lik_diff +  big_results_dict[k].last_std_err_lik_diff)
     print(big_results_dict[k].last_avg_lik_diff )
-    print(big_results_dict[k].last_avg_lik_diff +  big_results_dict[k].last_std_lik_diff)
+    print(big_results_dict[k].last_avg_lik_diff -  big_results_dict[k].last_std_err_lik_diff)
     print("")
 
 ###########################
 #          p=2
 ###########################
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_3 = af.heat_map_data_prep(
-    pred_num=2, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
+    pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_3[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_2_x_20_1000_x_150_1200_x_3.csv',
@@ -51,7 +51,7 @@ Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_3[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_6 = af.heat_map_data_prep(
-    pred_num=2, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=6, big_results_dict=big_results_dict
+    pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=6, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_6[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_2_x_20_1000_x_150_1200_x_6.csv',
@@ -63,7 +63,7 @@ Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_6[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_10 = af.heat_map_data_prep(
-    pred_num=2, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=10, big_results_dict=big_results_dict
+    pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=10, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_10[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_2_x_20_1000_x_150_1200_x_10.csv',
@@ -75,7 +75,7 @@ Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_10[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_15 = af.heat_map_data_prep(
-    pred_num=2, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
+    pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_15[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_2_x_20_1000_x_150_1200_x_15.csv',
@@ -87,7 +87,7 @@ Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_15[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_30 = af.heat_map_data_prep(
-    pred_num=2, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
+    pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_30[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_2_x_20_1000_x_150_1200_x_30.csv',
@@ -102,7 +102,7 @@ Xy_N_6000_hm_plot_data_2_x_20_1000_x_150_1200_x_30[1].to_csv(
 #          p=8
 ###########################
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_3 = af.heat_map_data_prep(
-    pred_num=8, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
+    pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_3[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_8_x_20_1000_x_150_1200_x_3.csv',
@@ -114,7 +114,7 @@ Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_3[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_6 = af.heat_map_data_prep(
-    pred_num=8, part_num=[20,100,1000], N_Epoch = [150,300,600,1200], shard_num=6, big_results_dict=big_results_dict
+    pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=6, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_6[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_8_x_20_1000_x_150_1200_x_6.csv',
@@ -126,7 +126,7 @@ Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_6[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_10 = af.heat_map_data_prep(
-    pred_num=8, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=10, big_results_dict=big_results_dict
+    pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=10, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_10[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_8_x_20_1000_x_150_1200_x_10.csv',
@@ -138,7 +138,7 @@ Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_10[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_15 = af.heat_map_data_prep(
-    pred_num=8, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
+    pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_15[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_8_x_20_1000_x_150_1200_x_15.csv',
@@ -150,7 +150,7 @@ Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_15[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_30 = af.heat_map_data_prep(
-    pred_num=8, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
+    pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_30[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_8_x_20_1000_x_150_1200_x_30.csv',
@@ -165,7 +165,7 @@ Xy_N_6000_hm_plot_data_8_x_20_1000_x_150_1200_x_30[1].to_csv(
 #          p=16
 ###########################
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_3 = af.heat_map_data_prep(
-    pred_num=16, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
+    pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_3[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_16_x_20_1000_x_150_1200_x_3.csv',
@@ -177,7 +177,7 @@ Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_3[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_6 = af.heat_map_data_prep(
-    pred_num=16, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=6, big_results_dict=big_results_dict
+    pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=6, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_6[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_16_x_20_1000_x_150_1200_x_6.csv',
@@ -189,7 +189,7 @@ Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_6[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_10 = af.heat_map_data_prep(
-    pred_num=16, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=10, big_results_dict=big_results_dict
+    pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=10, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_10[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_16_x_20_1000_x_150_1200_x_10.csv',
@@ -201,7 +201,7 @@ Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_10[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_15 = af.heat_map_data_prep(
-    pred_num=16, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
+    pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_15[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_16_x_20_1000_x_150_1200_x_15.csv',
@@ -213,7 +213,7 @@ Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_15[1].to_csv(
 )
 ######
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_30 = af.heat_map_data_prep(
-    pred_num=16, part_num=[20,100,1000], N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
+    pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
 )
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_30[0].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_16_x_20_1000_x_150_1200_x_30.csv',
