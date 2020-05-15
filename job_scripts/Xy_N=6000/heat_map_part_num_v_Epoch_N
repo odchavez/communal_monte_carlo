@@ -28,7 +28,7 @@
 #SBATCH -e exp_err/Xy_N=6000_heat_map_part_num_v_Epoch_N.e%j # Name of stderr error file
 #SBATCH -p normal                                                # Queue (partition) name
 #SBATCH -N 1                                                     # Total # of nodes
-#SBATCH -n 10                                                    # Total # of mpi tasks
+#SBATCH -n 1                                                    # Total # of mpi tasks
 #SBATCH -t 48:00:00                                              # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
 #SBATCH --mail-type=all                                          # Send email at begin and end of job
