@@ -41,6 +41,17 @@
 
 # Launch MPI code...
 
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 30 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 30 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 1
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 30 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 2
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 30 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 3
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 30 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 4
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 30 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 5
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 30 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 6
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 30 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 7
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 30 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 8
+ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 30 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 9
+
 ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 0
 ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 1
 ibrun python run_simulate_data.py --N_total 6000 --Epoch_N 150 --predictor_N 32 --N_per_tic 30 --GP 1 --GP_version 2
