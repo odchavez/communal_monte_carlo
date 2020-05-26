@@ -138,6 +138,7 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                         #print("p_item=", p_item)
                         #print("part_num_item=",part_num_item)
                         temp_ao.compute_lik_diffs()
+                        temp_ao.compute_run_time()
                         big_results_dict[path_obj_instance.exp_key] = temp_ao
 
     return big_results_dict
@@ -180,7 +181,15 @@ class analyze_run:
         )
         #print(6)
         self.true_lik, self.esti_lik = self.get_plot_likelihoods(self.Beta_com, self.true_cols, self.beta_i_avg)
-        #print("in analyze_run __init__, self.esti_lik=", self.esti_lik)
+
+        _, self.comm_time_gather_particles, _ = self.time_cleaner(
+            path=f_path, column_name = "comm_time_gather_particles"
+        )
+        _, self.comm_time_scatter_particles, self.run_time =  self.time_cleaner(
+            path=f_path, column_name = "comm_time_scatter_particles"
+        )
+        
+        
         self.particle_history_ids = self.id_cleaner(path=f_path, column_name='particle_history_ids')
         self.machine_history_ids = self.id_cleaner(path=f_path, column_name='machine_history_ids')
         if comm:
@@ -596,6 +605,34 @@ class analyze_run:
             )
         return np.array(all_integer_ids)
     
+    def time_cleaner(self, path, column_name):
+    
+        df = pd.read_csv(path)
+        df.start_time.fillna(np.max(df.start_time), inplace = True)
+        df = df[df.start_time==np.max(df.start_time)]
+        
+        df = df.iloc[-1]
+        time_values=list()
+        output = list()
+        
+        dirty_list = df[column_name].split(',')
+
+        for i in range(len(dirty_list)):
+            single_particle_params = re.findall(r'-?\d+\.?\d*',dirty_list[i])
+            if len(single_particle_params)==0: 
+                continue
+            test_list = list(map(float, single_particle_params))[0] 
+            output.append(test_list)
+        
+        time_values.append(
+            np.array(output)
+        )
+        
+        time_values = np.array(time_values)
+        mean_time = np.mean(np.delete(time_values, time_values.argmin()))
+
+        return time_values, mean_time, df.end_time - df.start_time
+    
     def get_unique_particle_count_by_epoch(self, pre_post = 'pre'):
         epoch_number = self.epoch_number
         total_particle_count = np.zeros(epoch_number)
@@ -674,7 +711,7 @@ class analysis_obj:
         self.no_comm_list = list()
 
     def compute_lik_diffs(self):
-        print("in compute_lik_diffs")
+        #print("in compute_lik_diffs")
         
         condition_1 = len(self.no_comm_list) > 0
         condition_2 = len(self.no_comm_list) == len(self.wi_comm_list)
@@ -716,7 +753,24 @@ class analysis_obj:
             self.lik_diffs = None
             self.last_avg_lik_diff = None
             self.last_std_err_lik_diff = None
-        #print("##############################################################################################################################")
+    
+    def compute_run_time(self):
+        self.run_time_array = np.zeros(len(self.wi_comm_list))
+        self.adjusted_run_time_array = np.zeros(len(self.wi_comm_list))
+        
+        for i in range(len(self.wi_comm_list)):
+            self.run_time_array[i] = self.wi_comm_list[i].run_time
+            
+            self.adjusted_run_time_array[i] = (
+                self.wi_comm_list[i].run_time - 
+                self.wi_comm_list[i].comm_time_gather_particles - 
+                self.wi_comm_list[i].comm_time_scatter_particles
+            )
+        
+        self.mean_run_time = np.mean(self.run_time_array)
+        self.mean_adjusted_run_time = np.mean(self.adjusted_run_time_array)
+        self.std_run_time = np.std(self.run_time_array)
+        self.std_adjusted_run_time = np.std(self.adjusted_run_time_array)
 
 
 class exp_file_path:
@@ -767,9 +821,11 @@ def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict)
     #print("******************")
 
     hm_plot_data = np.zeros((len(N_Epoch), len(part_num)))#, version_count))
-    #hm_plot_counter = np.zeros((len(N_Epoch), len(part_num)))
     hm_plot_data_std = np.zeros((len(N_Epoch), len(part_num)))#, version_count))
-    #hm_plot_counter_std = np.zeros((len(N_Epoch), len(part_num)))
+    hm_plot_data_total_run_time = np.zeros((len(N_Epoch), len(part_num)))
+    hm_plot_data_adjusted_run_time = np.zeros((len(N_Epoch), len(part_num)))
+    hm_plot_data_total_run_time_std = np.zeros((len(N_Epoch), len(part_num)))
+    hm_plot_data_adjusted_run_time_std = np.zeros((len(N_Epoch), len(part_num)))
     
     #compute individual run value
     dict_keys = list(big_results_dict.keys())
@@ -778,7 +834,6 @@ def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict)
         for pn_index in range(len(part_num)):
             
             for k in range(len(dict_keys)):
-                #print("working on dictionary item:" , dict_keys[k])
                 cond_1 = 'p='+str(pred_num) + '_' in dict_keys[k]
                 cond_2 = 'part_num='+str(part_num[pn_index])+'_' in dict_keys[k]
                 cond_3 = 'Epoch_N='+str(N_Epoch[ne_index])+'_' in dict_keys[k]
@@ -788,43 +843,55 @@ def heat_map_data_prep(pred_num, part_num, N_Epoch, shard_num, big_results_dict)
                     hm_plot_data[ne_index, pn_index] = (
                         big_results_dict[dict_keys[k]].last_avg_lik_diff
                     )
-                    #hm_plot_data[ne_index, pn_index, int(hm_plot_counter[ne_index, pn_index])] = (
-                    #    big_results_dict[dict_keys[k]].last_avg_lik_diff
-                    #)
-                    #hm_plot_counter[ne_index, pn_index]+=1
                     
                     hm_plot_data_std[ne_index, pn_index] = (
                         big_results_dict[dict_keys[k]].last_std_err_lik_diff
                     )
-                    #hm_plot_data_std[ne_index, pn_index, int(hm_plot_counter[ne_index, pn_index])] = (
-                    #    big_results_dict[dict_keys[k]].last_std_lik_diff
-                    #)
-                    #hm_plot_counter_std[ne_index, pn_index]+=1
                     
-                    #print("hm_plot_counter = ", hm_plot_counter)
-    
-    #THE BELOW LOOP CAN BE REMOVED AS IT IS REDUNDANT - DON'T FORGET TO TEST!!!
-    
-    #print("hm_plot_data.shape = ", hm_plot_data.shape)
-    #print("hm_plot_data = ", hm_plot_data)
-    #print("hm_plot_data_std.shape = ", hm_plot_data_std.shape)
-    #print("hm_plot_data_std = ", hm_plot_data_std)
-    ## average runs
-    #hm_mean_plot_data = np.zeros((len(N_Epoch), len(part_num)))
-    #hm_std_plot_data = np.zeros((len(N_Epoch), len(part_num)))
-    #for row in range(hm_plot_data.shape[0]):
-    #    for col in range(hm_plot_data.shape[1]):
-    #        hm_mean_plot_data[row,col] = np.nanmean(hm_plot_data[row,col][hm_plot_data[row,col,:]!=0.0])
-    #        hm_std_plot_data[row,col] = np.nanmean(hm_plot_data_std[row,col][hm_plot_data_std[row,col,:]!=0.0])
-            
-    #output_mean = pd.DataFrame(hm_mean_plot_data, index=N_Epoch, columns=part_num)
-    #output_mean['index']=N_Epoch
-    #
-    #output_std = pd.DataFrame(hm_std_plot_data, index=N_Epoch, columns=part_num)
-    #output_std['index']=N_Epoch
+                    hm_plot_data_total_run_time[ne_index, pn_index] = (
+                        big_results_dict[dict_keys[k]].mean_run_time
+                    )
+                    
+                    hm_plot_data_adjusted_run_time[ne_index, pn_index] = (
+                        (
+                            big_results_dict[dict_keys[k]].mean_adjusted_run_time
+                        )
+                    )
+                    
+                    hm_plot_data_total_run_time_std[ne_index, pn_index] = (
+                        big_results_dict[dict_keys[k]].std_run_time
+                    )
+                    
+                    hm_plot_data_adjusted_run_time_std[ne_index, pn_index] = (
+                        (
+                            big_results_dict[dict_keys[k]].std_adjusted_run_time
+                        )
+                    )
+                    
     output_mean = pd.DataFrame(hm_plot_data, index=N_Epoch, columns=part_num)
     output_mean['index']=N_Epoch
     
     output_std = pd.DataFrame(hm_plot_data_std, index=N_Epoch, columns=part_num)
     output_std['index']=N_Epoch
-    return output_mean, output_std
+    
+    output_mean_total_run_time = pd.DataFrame(hm_plot_data_total_run_time, index=N_Epoch, columns=part_num)
+    output_mean_total_run_time['index']=N_Epoch
+    
+    output_std_total_run_time = pd.DataFrame(hm_plot_data_total_run_time_std, index=N_Epoch, columns=part_num)
+    output_std_total_run_time['index']=N_Epoch
+    
+    output_mean_adjusted_run_time = pd.DataFrame(
+        hm_plot_data_adjusted_run_time, 
+        index=N_Epoch, 
+        columns=part_num
+    )
+    output_mean_adjusted_run_time['index']=N_Epoch
+    
+    output_std_adjusted_run_time_std = pd.DataFrame(
+        hm_plot_data_adjusted_run_time_std, 
+        index=N_Epoch, 
+        columns=part_num
+    )
+    output_std_adjusted_run_time_std['index']=N_Epoch
+    
+    return output_mean, output_std, output_mean_total_run_time, output_std_total_run_time, output_mean_adjusted_run_time, output_std_adjusted_run_time_std
