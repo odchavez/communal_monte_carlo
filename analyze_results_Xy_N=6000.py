@@ -342,7 +342,8 @@ Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_3[2].to_csv(
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_3[3].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_std_run_time_plot_data_16_x_20_1000_x_150_1200_x_3.csv',
     index = False,
-)Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_3[4].to_csv(
+)
+Xy_N_6000_hm_plot_data_16_x_20_1000_x_150_1200_x_3[4].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_adjusted_run_time_plot_data_16_x_20_1000_x_150_1200_x_3.csv',
     index = False,
 )
@@ -485,7 +486,8 @@ Xy_N_6000_hm_plot_data_32_x_20_1000_x_150_1200_x_3[2].to_csv(
 Xy_N_6000_hm_plot_data_32_x_20_1000_x_150_1200_x_3[3].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_std_run_time_plot_data_32_x_20_1000_x_150_1200_x_3.csv',
     index = False,
-)Xy_N_6000_hm_plot_data_32_x_20_1000_x_150_1200_x_3[4].to_csv(
+)
+Xy_N_6000_hm_plot_data_32_x_20_1000_x_150_1200_x_3[4].to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_adjusted_run_time_plot_data_32_x_20_1000_x_150_1200_x_3.csv',
     index = False,
 )
