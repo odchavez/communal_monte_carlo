@@ -7,7 +7,7 @@ import pickle
 # format = sn_en_nt_p_gpv_
 shard_number = [3,6, 10,15,30]
 Xy_N=6000
-N_Epoch = [30,150,300,600,1200]
+N_Epoch = [30]
 Nt = [30]
 p = [32]
 GP_version = list(range(10))
