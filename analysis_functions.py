@@ -97,7 +97,7 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                 #print("in if both_exist")
                                 #print(both_exist)
                                 try:
-                                    w_run = af.analyze_run(
+                                    w_run = analyze_run(
                                         f_path = path_obj_instance.with_comm_results_file,
                                         f_beta_file_path = path_obj_instance.beta_file,
                                         f_step_size = step_size,
@@ -105,7 +105,7 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         comm = True, 
                                         col='post_shuffel_params'
                                     )
-                                    n_run = af.analyze_run(
+                                    n_run = analyze_run(
                                         f_path = path_obj_instance.no_comm_results_file,
                                         f_beta_file_path = path_obj_instance.beta_file,
                                         f_step_size = step_size,
