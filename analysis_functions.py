@@ -1,5 +1,3 @@
-import analysis_functions as af
-
 import pandas as pd
 import numpy as np
 import math
@@ -835,10 +833,6 @@ def heat_map_data_prep_mean(pred_num, part_num, N_Epoch, shard_num, big_results_
                     hm_plot_data[ne_index, pn_index] = (
                         big_results_dict[dict_keys[k]].last_avg_lik_diff
                     )
-                    
-                    hm_plot_data_std[ne_index, pn_index] = (
-                        big_results_dict[dict_keys[k]].last_std_err_lik_diff
-                    )
 
     output_mean = pd.DataFrame(hm_plot_data, index=N_Epoch, columns=part_num)
     output_mean['index']=N_Epoch
@@ -862,10 +856,6 @@ def heat_map_data_prep_std(pred_num, part_num, N_Epoch, shard_num, big_results_d
                 cond_3 = 'Epoch_N='+str(N_Epoch[ne_index])+'_' in dict_keys[k]
                 cond_4 = 'shard_num=' + str(shard_num) + '_' in dict_keys[k]
                 if (cond_1 and cond_2 and cond_3 and cond_4):
-                    
-                    hm_plot_data[ne_index, pn_index] = (
-                        big_results_dict[dict_keys[k]].last_avg_lik_diff
-                    )
                     
                     hm_plot_data_std[ne_index, pn_index] = (
                         big_results_dict[dict_keys[k]].last_std_err_lik_diff
@@ -898,10 +888,6 @@ def heat_map_data_prep_total_run_time_mean(pred_num, part_num, N_Epoch, shard_nu
                         big_results_dict[dict_keys[k]].mean_run_time
                     )
 
-                    hm_plot_data_total_run_time_std[ne_index, pn_index] = (
-                        big_results_dict[dict_keys[k]].std_run_time
-                    )
-
     output_mean_total_run_time = pd.DataFrame(hm_plot_data_total_run_time, index=N_Epoch, columns=part_num)
     output_mean_total_run_time['index']=N_Epoch
 
@@ -925,10 +911,6 @@ def heat_map_data_prep_total_run_time_std(pred_num, part_num, N_Epoch, shard_num
                 cond_4 = 'shard_num=' + str(shard_num) + '_' in dict_keys[k]
                 if (cond_1 and cond_2 and cond_3 and cond_4):
 
-                    hm_plot_data_total_run_time[ne_index, pn_index] = (
-                        big_results_dict[dict_keys[k]].mean_run_time
-                    )
-
                     hm_plot_data_total_run_time_std[ne_index, pn_index] = (
                         big_results_dict[dict_keys[k]].std_run_time
                     )
@@ -942,7 +924,7 @@ def heat_map_data_prep_total_run_time_std(pred_num, part_num, N_Epoch, shard_num
 def heat_map_data_prep_adjusted_run_time_mean(pred_num, part_num, N_Epoch, shard_num, big_results_dict):#, version_count = 10):
 
     hm_plot_data_adjusted_run_time = np.zeros((len(N_Epoch), len(part_num)))
-    
+
     #compute individual run value
     dict_keys = list(big_results_dict.keys())
     for ne_index in range(len(N_Epoch)):
@@ -959,12 +941,6 @@ def heat_map_data_prep_adjusted_run_time_mean(pred_num, part_num, N_Epoch, shard
                     hm_plot_data_adjusted_run_time[ne_index, pn_index] = (
                         (
                             big_results_dict[dict_keys[k]].mean_adjusted_run_time
-                        )
-                    )
-                    
-                    hm_plot_data_adjusted_run_time_std[ne_index, pn_index] = (
-                        (
-                            big_results_dict[dict_keys[k]].std_adjusted_run_time
                         )
                     )
                     
@@ -994,13 +970,7 @@ def heat_map_data_prep_adjusted_run_time_std(pred_num, part_num, N_Epoch, shard_
                 cond_3 = 'Epoch_N='+str(N_Epoch[ne_index])+'_' in dict_keys[k]
                 cond_4 = 'shard_num=' + str(shard_num) + '_' in dict_keys[k]
                 if (cond_1 and cond_2 and cond_3 and cond_4):
-                    
-                    hm_plot_data_adjusted_run_time[ne_index, pn_index] = (
-                        (
-                            big_results_dict[dict_keys[k]].mean_adjusted_run_time
-                        )
-                    )
-                    
+
                     hm_plot_data_adjusted_run_time_std[ne_index, pn_index] = (
                         (
                             big_results_dict[dict_keys[k]].std_adjusted_run_time
