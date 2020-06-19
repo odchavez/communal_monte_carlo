@@ -23,12 +23,12 @@
 #
 #----------------------------------------------------
 
-#SBATCH -J         Xy_N=6000_heat_map_part_num_v_Epoch_N_analyze_results_Xy_N=6000_total_run_time_std     # Job name
-#SBATCH -o exp_out/Xy_N=6000_heat_map_part_num_v_Epoch_N_analyze_results_Xy_N=6000_total_run_time_std.o%j # Name of stdout output file
-#SBATCH -e exp_err/Xy_N=6000_heat_map_part_num_v_Epoch_N_analyze_results_Xy_N=6000_total_run_time_std.e%j # Name of stderr error file
+#SBATCH -J         analyze_results_Xy_N=6000_total_run_time_std_Epoch_N=30_p=8     # Job name
+#SBATCH -o exp_out/analyze_results_Xy_N=6000_total_run_time_std_Epoch_N=30_p=8.o%j # Name of stdout output file
+#SBATCH -e exp_err/analyze_results_Xy_N=6000_total_run_time_std_Epoch_N=30_p=8.e%j # Name of stderr error file
 #SBATCH -p normal                                                # Queue (partition) name
 #SBATCH -N 1                                                     # Total # of nodes
-#SBATCH -n 1                                                    # Total # of mpi tasks
+#SBATCH -n 1                                                     # Total # of mpi tasks
 #SBATCH -t 48:00:00                                              # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
 #SBATCH --mail-type=all                                          # Send email at begin and end of job
@@ -41,5 +41,5 @@
 
 # Launch MPI code...
 # Use ibrun instead of mpirun or mpiexec
-ibrun python analyze_results_Xy_N=6000_total_run_time_std_Epoch_N=30.py
+ibrun python analyze_results_Xy_N=6000_total_run_time_std_Epoch_N=30_p=8.py
 # ---------------------------------------------------
