@@ -2,8 +2,8 @@
 *.pyc
 *.DS_Store
 *.ipynb_checkpoints
-*.csv
+# *.csv
 
 Untitled Folder/
 temp/
-synth_data/*
+# synth_data/*
