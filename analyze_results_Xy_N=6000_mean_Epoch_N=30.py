@@ -12,17 +12,6 @@ Nt = [30]
 GP_version = list(range(10))
 predictors = ['B_0','B_1','B_2','B_3','B_4','B_5','B_6','B_7','B_8','B_9','B_10','B_11','B_12','B_13','B_14','B_15']
 
-big_results_dict = af.prep_big_results_dict(
-    f_shard_number = shard_number,
-    f_Xy_N = Xy_N,
-    f_N_Epoch = N_Epoch,
-    f_Nt = Nt,
-    f_p = p ,
-    f_GP_version = GP_version,
-    f_part_num = part_num,
-    f_predictors = predictors
-)
-
 p = [2]
 ###########################
 #          p=2
