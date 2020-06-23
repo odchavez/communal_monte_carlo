@@ -9,9 +9,12 @@ class particle_filter:
     def __init__(self, dat, params_obj, pf_rank = 0, run_number = 0):
 
         self.PART_NUM           = params_obj.get_particles_per_shard()
+        #print("self.PART_NUM = ", self.PART_NUM)
         self.particle_list      = list()
         self.model              = params_obj.get_model()
+        #print("self.model = ", self.model)
         self.sample_method      = params_obj.get_sample_method()
+        #print("self.sample_method = ", self.sample_method)
         self.dat                = dat
         self.data_keys          = dat['data_keys']
         self.time_values        = [0]#dat['time_value']
@@ -19,16 +22,16 @@ class particle_filter:
         self.rank               = pf_rank
         self.run_number         = run_number
         #print(self.unique_time_values)
-        if self.model=="probit":
-            #create particles
-            self.X=dat.X
-            self.Y=dat.Y
-            self.p=dat.p
-            for pn in range(self.PART_NUM):
-                temp_particle=pf.probit_particle(np.zeros((1,p)),np.identity(p)*1000.0, pn)
-                self.particle_list.append(temp_particle)
+        #if self.model=="probit":
+        #    #create particles
+        #    self.X=dat.X
+        #    self.Y=dat.Y
+        #    self.p=dat.p
+        #    for pn in range(self.PART_NUM):
+        #        temp_particle=pf.probit_particle(np.zeros((1,p)),np.identity(p)*1000.0, pn)
+        #        self.particle_list.append(temp_particle)
 
-        elif self.model== "probit_sin_wave":
+        if self.model== "probit_sin_wave":
             self.X=dat['X_matrix']
             self.Y=dat['Y']
             self.p=dat['p']
@@ -39,7 +42,9 @@ class particle_filter:
 
             self.shards=dat['shards']
             for pn in range(self.PART_NUM):
-                temp_particle=pf.probit_sin_wave_particle( np.array(dat['b'][0]), dat['B'], dat['Tau_inv_std'], (self.rank, pn))
+                temp_particle=pf.probit_sin_wave_particle( 
+                    np.array(dat['b'][0]), dat['B'], dat['Tau_inv_std'], (self.rank, pn)
+                )
                 temp_particle.set_N(self.N)
                 temp_particle.set_shard_number(self.shards)
                 self.particle_list.append(temp_particle)
@@ -72,7 +77,13 @@ class particle_filter:
                         row_index = self.time_values == self.unique_time_values[n]
                         #print("in particle filter")
                         #print("row_index=",row_index)
-                        #print("self.X[row_index,:]=", self.X[row_index,:])
+                        #print("len(self.time_values) = ", len(self.time_values))
+                        #print("self.unique_time_values[n] = ", self.unique_time_values[n])
+                        #print("self.X.shape = ", self.X.shape)
+                        #print("len(row_index)=", len(row_index) )
+                        #print("self.X[:5,:] = ", self.X[:5,:])
+                        
+                        #print("self.X[row_index,:].head()=", self.X[row_index,:].head())
                         #print("self.Y[row_index]=",self.Y[row_index])
                         #print("x_keys", x_keys)
                         #print("n=", n)

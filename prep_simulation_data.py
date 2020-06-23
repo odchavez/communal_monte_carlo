@@ -9,6 +9,8 @@ class prep_data:
 
         if self.model== "probit_sin_wave":
             loaded_df = pd.read_csv(path, low_memory=False, index_col=0)
+            #print("loaded_df.shape = ", loaded_df.shape)
+            #print("loaded_df.head() = ", loaded_df.head())
             test_cols = loaded_df.columns
             full_de_mat = loaded_df.loc[:,test_cols[-params['p_to_use']:]]
             
@@ -20,6 +22,7 @@ class prep_data:
                 "y", 'time', 'Tau_inv_std', 'Bo_std'
             ]
             self.predictor_names = [x for x in full_de_mat.columns if x not in drop_these]
+            #print("self.predictor_names = ", self.predictor_names)
             full_de_mat_X = full_de_mat[self.predictor_names]
 
             p=len(self.predictor_names)
@@ -151,6 +154,8 @@ class prep_data:
                     epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y'] = (
                         epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y'][keep_rows_index]
                     )
+                    
+            #print("self.X_matrix.shape = ", self.X_matrix.shape)
             self.output=output
             self.output['epoch_data']=epoch_output
             self.output['X_matrix']=self.X_matrix
