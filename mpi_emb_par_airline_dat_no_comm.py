@@ -1,9 +1,11 @@
 """
 ** fix seed to catch error
-** post random walk step, intorduce division to makevariance = 1 (sqrt(1+ t*sigma^2)), ie. N(0,1) - DONE
-** add functionality to make epocks be more than every 'day' - NOT GOING TO DO
 ** keep track of time since last flight on pf to not allow too much drift between flights
-** email anonio about his arrival
+
+    RUN WITH:  python mpi_emb_par_airline_dat_with_comm.py --N_Node 4 --particles_per_shard 20 --experiment_number 0
+    
+    for testing use --test_run 2
+    
 """
 import os
 import sys
