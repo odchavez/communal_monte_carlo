@@ -97,14 +97,17 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                 #print("in if both_exist")
                                 #print(both_exist)
                                 try:
+                                    #print("analyze run with comm begin")
                                     w_run = analyze_run(
                                         f_path = path_obj_instance.with_comm_results_file,
                                         f_beta_file_path = path_obj_instance.beta_file,
                                         f_step_size = step_size,
                                         true_cols = f_predictors[:p_item], 
                                         comm = True, 
-                                        col='post_shuffel_params'
+                                        col='final_params'
                                     )
+                                    #print("analyze run with comm complete")
+                                    #print("analyze run no comm begin")
                                     n_run = analyze_run(
                                         f_path = path_obj_instance.no_comm_results_file,
                                         f_beta_file_path = path_obj_instance.beta_file,
@@ -112,6 +115,7 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         true_cols = f_predictors[:p_item], 
                                         comm = False, 
                                     )
+                                    #print("analyze run no comm complete")
                                     #print("SUCCESS WITH ", path_obj_instance.exp_key, " GP_version_item = ", GP_version_item)
                                     
                                     temp_ao.wi_comm_list.append(w_run)
@@ -157,8 +161,11 @@ class analyze_run:
             self.Betas_in_columns = self.get_params_from_results_no_comm(f_path)
         #print(3)
         self.beta_i_avg = self.get_beta_i_avg(self.Betas_in_columns)
+        #print(3.1)
         self.beta_i_var = self.get_beta_i_var(self.Betas_in_columns)
+        #print(3.2)
         self.skip_size = f_step_size # SKIP SIZE BASED ON TIME STEPS SKIPPED
+        #print(3.3)
         self.Beta_true_data = pd.read_csv(f_beta_file_path)
         #print(4)
         #print("True Beta shape = ", self.Beta_true_data.shape)
@@ -170,13 +177,13 @@ class analyze_run:
         #print("len(f_Betas_in_columns = self.Betas_in_columns)=", len(self.Betas_in_columns))
         #print("len(f_Betas_in_columns = self.Betas_in_columns[0])=", len(self.Betas_in_columns[0]))
         
-        self.params_PREDxPARTxSHARDxEPOCH = self.params_PREDxPARTxSHARDxEPOCH(
-            f_Betas_in_columns = self.Betas_in_columns, 
-            f_pred_num  = self.number_of_predictors, 
-            f_part_num  = self.number_of_particles, 
-            f_shard_num = self.number_of_shards, 
-            f_epoch_num = self.epoch_number
-        )
+        #self.params_PREDxPARTxSHARDxEPOCH = self.params_PREDxPARTxSHARDxEPOCH(
+        #    f_Betas_in_columns = self.Betas_in_columns, 
+        #    f_pred_num  = self.number_of_predictors, 
+        #    f_part_num  = self.number_of_particles, 
+        #    f_shard_num = self.number_of_shards, 
+        #    f_epoch_num = self.epoch_number
+        #)
         #print(6)
         self.true_lik, self.esti_lik = self.get_plot_likelihoods(self.Beta_com, self.true_cols, self.beta_i_avg)
 
@@ -212,15 +219,20 @@ class analyze_run:
     
     
     def compute_lik(self, f_X, f_Y, f_B):
+        #print(" in compute_lik(self, f_X, f_Y, f_B)")
         #print("f_X.shape=", f_X.shape)
         #print("f_Y.shape=",f_Y.shape)
         #print("f_B.shape=", f_B.shape)
         #print("type(f_X)=", type(f_X))
         #print("type(f_Y)=", type(f_Y))
         #print("type(f_B)=", type(f_B))
+        #print("A")
         x_j_tB = np.matmul(f_X.values , np.array(f_B))
+        #print("B")
         p_of_x_i = 1.0/(1.0+np.exp(-1*x_j_tB))
+        #print("C")
         likelihood =  f_Y*p_of_x_i + (1-f_Y)*(1-p_of_x_i)
+        #print("D and returning")
         return likelihood
     
     
@@ -252,13 +264,19 @@ class analyze_run:
         return f_params_PREDxPARTxSHARDxEPOCH
     
     def get_params_from_results_with_comm(self, path):
-        results_output = pd.read_csv(path)
+        #print("in get_params_from_results_with_comm")
+        results_output = pd.read_csv(path).tail(1)
+        #print("A")
         results_output = results_output[results_output.start_time==np.max(results_output.start_time)]
+        #print("B")
         results_output.reset_index(inplace=True)
+        #print("C")
         #print(results_output.shape)
-        #print(results_output.shape)
+        #print("results_output=", results_output)
+        
         f_Betas_in_columns = list()
         if self.col == 'final_params':
+            #print("enter final_params")
             for nr in range(len(results_output.final_params)):
                 output = list()
                 dirty_list = results_output.final_params[nr].split(',')
@@ -277,44 +295,59 @@ class analyze_run:
                         (self.number_of_particles*self.number_of_shards,self.number_of_predictors)
                     ).T
                 )
-        if self.col == 'pre_shuffel_params':
-            for nr in range(len(results_output.pre_shuffel_params)):
-                output = list()
-                dirty_list = results_output.pre_shuffel_params[nr].split(',')
-                
-                self.number_of_particles = int(results_output.particle_number[nr])
-                self.number_of_shards = int(results_output.shards[nr])
-                self.number_of_predictors = int(results_output['p='][nr])
-                for i in range(len(dirty_list)):
-                    single_particle_params = re.findall(r'-?\d+\.?\d*',dirty_list[i])
-                    if len(single_particle_params)==0: 
-                        continue
-                    test_list = list(map(float, single_particle_params))[0] 
-                    output.append(test_list)
-                f_Betas_in_columns.append(
-                    np.array(output).reshape(
-                        (self.number_of_particles*self.number_of_shards,self.number_of_predictors)
-                    ).T
-                )
-        if self.col == 'post_shuffel_params':
-            for nr in range(len(results_output.post_shuffel_params)):
-                output = list()
-                dirty_list = results_output.post_shuffel_params[nr].split(',')
-                
-                self.number_of_particles = int(results_output.particle_number[nr])
-                self.number_of_shards = int(results_output.shards[nr])
-                self.number_of_predictors = int(results_output['p='][nr])
-                for i in range(len(dirty_list)):
-                    single_particle_params = re.findall(r'-?\d+\.?\d*',dirty_list[i])
-                    if len(single_particle_params)==0: 
-                        continue
-                    test_list = list(map(float, single_particle_params))[0] 
-                    output.append(test_list)
-                f_Betas_in_columns.append(
-                    np.array(output).reshape(
-                        (self.number_of_particles*self.number_of_shards,self.number_of_predictors)
-                    ).T
-                )
+        #if self.col == 'pre_shuffel_params':
+        #    print("enter pre_shuffel_params")
+        #    for nr in range(len(results_output.pre_shuffel_params)):
+        #        output = list()
+        #        dirty_list = results_output.pre_shuffel_params[nr].split(',')
+        #        
+        #        self.number_of_particles = int(results_output.particle_number[nr])
+        #        self.number_of_shards = int(results_output.shards[nr])
+        #        self.number_of_predictors = int(results_output['p='][nr])
+        #        for i in range(len(dirty_list)):
+        #            single_particle_params = re.findall(r'-?\d+\.?\d*',dirty_list[i])
+        #            if len(single_particle_params)==0: 
+        #                continue
+        #            test_list = list(map(float, single_particle_params))[0] 
+        #            output.append(test_list)
+        #        f_Betas_in_columns.append(
+        #            np.array(output).reshape(
+        #                (self.number_of_particles*self.number_of_shards,self.number_of_predictors)
+        #            ).T
+        #        )
+        #if self.col == 'post_shuffel_params':
+        #    print("enter post_shuffel_params")
+        #    for nr in range(len(results_output.post_shuffel_params)):
+        #        print("for nr in range(len(results_output.post_shuffel_params)):")
+        #        output = list()
+        #        print("    A")
+        #        dirty_list = results_output.post_shuffel_params[nr].split(',')
+        #        print("    B")
+        #        self.number_of_particles = int(results_output.particle_number[nr])
+        #        print("self.number_of_particles=", self.number_of_particles)
+        #        self.number_of_shards = int(results_output.shards[nr])
+        #        print("self.number_of_shards=", self.number_of_shards)
+        #        self.number_of_predictors = int(results_output['p='][nr])
+        #        print("self.number_of_predictors=", self.number_of_predictors)
+        #        print("    C")
+        #        for i in range(len(dirty_list)):
+        #            print("for i in range(len(dirty_list)):")
+        #            single_particle_params = re.findall(r'-?\d+\.?\d*',dirty_list[i])
+        #            print("    D")
+        #            if len(single_particle_params)==0:
+        #                print("if len(single_particle_params)==0:")
+        #                continue
+        #            print("    E")
+        #            test_list = list(map(float, single_particle_params))[0] 
+        #            print("    F")
+        #            output.append(test_list)
+        #            print("    G")
+        #        f_Betas_in_columns.append(
+        #            np.array(output).reshape(
+        #                (self.number_of_particles*self.number_of_shards,self.number_of_predictors)
+        #            ).T
+        #        )
+        #        print("    H")
         #print("number of time epochs = " , len(f_Betas_in_columns))
         #print("number of predictors = ", len(f_Betas_in_columns[0]))
         #print("number of particles accorss allshards = ", len(f_Betas_in_columns[0][0]))
@@ -323,8 +356,8 @@ class analyze_run:
     
     
     def get_params_from_results_no_comm(self, path):
-        results_output = pd.read_csv(path)
-        results_output = results_output[:-1]
+        results_output = pd.read_csv(path).tail(1)
+        #results_output = results_output
         results_output = results_output[results_output.start_time==np.max(results_output.start_time)]
         results_output.reset_index(inplace=True)
         #print(results_output.shape)
@@ -356,10 +389,12 @@ class analyze_run:
     
     
     def get_beta_i_avg(self, f_Betas_in_columns):
+        #print("in get_beta_i_avg(self, f_Betas_in_columns)")
         #print("len(f_Betas_in_columns)", len(f_Betas_in_columns))
         #print("len(f_Betas_in_columns[0])", len(f_Betas_in_columns[0]))
         #print("len(f_Betas_in_columns[0][0])", len(f_Betas_in_columns[0][0]))
         p_num = len(f_Betas_in_columns[0])
+        #print("p_num=",p_num)
         all_bi_avg = list()
         for i in range(p_num):
             all_bi_avg.append(list())
@@ -385,24 +420,33 @@ class analyze_run:
     
     
     def get_plot_likelihoods(self, f_Beta_com, f_cols, f_beta_i_avg):
-        #print("In get_plot_likelihoods")
-        #print("f_Beta_com.shape=", f_Beta_com.shape)
-        #print("f_beta_i_avg.shape", f_beta_i_avg.shape)
+        #print("         In get_plot_likelihoods")
+        #print("         f_Beta_com.shape=", f_Beta_com.shape)
+        #print("         f_beta_i_avg.shape", f_beta_i_avg.shape)
         f_true_lik = list()
         f_esti_lik = list()
-        #print("type(f_Beta_com)=", type(f_Beta_com))
-        #print("type(f_beta_i_avg)=", type(f_beta_i_avg))
-        #print("f_Beta_com.shape=", f_Beta_com.shape)
-        #print("f_Beta_com=", f_Beta_com)
-        #print("f_beta_i_avg.shape=", f_beta_i_avg.shape)
-        for i in range(f_Beta_com.shape[0]):
-            Beta_t = f_Beta_com[f_cols].loc[i]
-            Beta_fit = f_beta_i_avg[:,i]
-    
-            X, y = self.generate_OOS_X_y(f_B_t=Beta_t)
-            f_true_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_t)))
-            f_esti_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_fit)))
-        #print("f_esti_lik=", f_esti_lik)   
+        #print("         type(f_Beta_com)=", type(f_Beta_com))
+        #print("         type(f_beta_i_avg)=", type(f_beta_i_avg))
+        #print("         f_Beta_com.shape=", f_Beta_com.shape)
+        #print("         f_Beta_com=", f_Beta_com)
+        #print("         f_beta_i_avg.shape=", f_beta_i_avg.shape)
+        #for i in range(f_Beta_com.shape[0]):
+        i=f_Beta_com.shape[0]-1
+        #print("for i in range(f_Beta_com.shape[0]):")
+        #print("f_Beta_com[f_cols] = ", f_Beta_com[f_cols])
+        #print("f_Beta_com[f_cols].loc[i, f_cols] = ", f_Beta_com.loc[i, f_cols])
+        Beta_t = np.array(f_Beta_com.loc[i, f_cols]).reshape((2, 1))
+        #print("Beta_t = ", Beta_t)
+        #print("Beta_t = f_Beta_com[f_cols].loc[i]=", Beta_t)
+        Beta_fit = f_beta_i_avg#[:,i]
+        #print("Beta_fit = f_beta_i_avg=", Beta_fit )
+        X, y = self.generate_OOS_X_y(f_B_t=Beta_t)
+        #print("self.generate_OOS_X_y(f_B_t=Beta_t)")
+        f_true_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_t)))
+        #print("f_true_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_t)))")
+        f_esti_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_fit)))
+        #print("f_esti_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_fit)))")
+        #print("     f_esti_lik=", f_esti_lik)   
         return f_true_lik, f_esti_lik
     
     
@@ -717,12 +761,13 @@ class analysis_obj:
             #print(self.no_comm_list)
             a = len(self.no_comm_list)
             b = len(self.no_comm_list[0].esti_lik)
-            self.lik_diffs = np.zeros((a, b))
-            
+            self.lik_diffs = np.zeros(a)#(a, b))
+            #print("self.lik_diffs.shape = ", self.lik_diffs.shape)
             for i in range(len(self.no_comm_list)):
-                #print("self.wi_comm_list[i].esti_lik = ", self.wi_comm_list[i].esti_lik)
-                #print("np.array(self.no_comm_list[i].esti_lik) = ", np.array(self.no_comm_list[i].esti_lik))
-                self.lik_diffs[i,:] = np.array(self.wi_comm_list[i].esti_lik - np.array(self.no_comm_list[i].esti_lik))
+                #print("self.wi_comm_list[",str(i),"].esti_lik = ", self.wi_comm_list[i].esti_lik)
+                #print("np.array(self.no_comm_list[",str(i),"].esti_lik) = ", np.array(self.no_comm_list[i].esti_lik))
+                self.lik_diffs[i] = np.array(self.wi_comm_list[i].esti_lik - np.array(self.no_comm_list[i].esti_lik))
+                #print("self.lik_diffs[",str(i),"] = ", self.lik_diffs[i])
             
             no_com_len=list()
             for i in range(len(self.no_comm_list)):
@@ -733,21 +778,28 @@ class analysis_obj:
                 wi_com_len.append(len(self.wi_comm_list[i].esti_lik))#-1)
                 
             #wi_com_len = [len(i) for i in self.wi_comm_list]
+            #print("wi_com_len =", wi_com_len)
+            #print("no_com_len =", no_com_len)
+
             if wi_com_len == no_com_len:
-               last_comm = max(max(no_com_len), max(wi_com_len))-1
+               last_comm = max(max(no_com_len), max(wi_com_len))#-1
             else:
                last_comm = 0
-               
+              
+            #print(" last_comm =", last_comm)
             if last_comm>0:
-                self.last_avg_lik_diff = np.nanmean(self.lik_diffs[:, last_comm])
-                self.last_std_err_lik_diff = np.nanstd(self.lik_diffs[:, last_comm])/math.sqrt(a)
-                #print("In compute_lik_diffs with list = ", self.lik_diffs[:, last_comm])
+                self.last_avg_lik_diff = np.nanmean(self.lik_diffs)#[:, last_comm])
+                #print("self.lik_diffs = ", self.lik_diffs)#[:, last_comm])
+                self.last_std_err_lik_diff = np.nanstd(self.lik_diffs)/math.sqrt(a)#[:, last_comm])/math.sqrt(a)
+                #print("In compute_lik_diffs with list = ", self.lik_diffs)#[:, last_comm])
                 #print("In compute_lik_diffs FULL  self.lik_diffs = ", self.lik_diffs)
-                #print("np.nanstd(self.lik_diffs[:, last_comm]) = ", np.nanstd(self.lik_diffs[:, last_comm]))
+                #print("np.nanstd(self.lik_diffs) = ", np.nanstd(self.lik_diffs))
             else:
+                #print("setting self.last_avg_lik_diff = None in FIRST else")
                 self.last_avg_lik_diff = None
                 self.last_std_err_lik_diff = None
         else:
+            #print("setting self.last_avg_lik_diff = None in SECOND else")
             self.lik_diffs = None
             self.last_avg_lik_diff = None
             self.last_std_err_lik_diff = None
@@ -814,7 +866,7 @@ class exp_file_path:
 
 
 def heat_map_data_prep_mean(pred_num, part_num, N_Epoch, shard_num, big_results_dict):#, version_count = 10):
-
+    #print(" in heat_map_data_prep_mean(pred_num, part_num, N_Epoch, shard_num, big_results_dict)")
     hm_plot_data = np.zeros((len(N_Epoch), len(part_num)))#, version_count))
 
     #compute individual run value
@@ -825,14 +877,19 @@ def heat_map_data_prep_mean(pred_num, part_num, N_Epoch, shard_num, big_results_
             
             for k in range(len(dict_keys)):
                 cond_1 = 'p='+str(pred_num) + '_' in dict_keys[k]
+                #print("cond_1=",cond_1)
                 cond_2 = 'part_num='+str(part_num[pn_index])+'_' in dict_keys[k]
+                #print("cond_2=",cond_2)
                 cond_3 = 'Epoch_N='+str(N_Epoch[ne_index])+'_' in dict_keys[k]
+                #print("cond_3=",cond_3)
                 cond_4 = 'shard_num=' + str(shard_num) + '_' in dict_keys[k]
+                #print("cond_4=",cond_4)
                 if (cond_1 and cond_2 and cond_3 and cond_4):
                     
                     hm_plot_data[ne_index, pn_index] = (
                         big_results_dict[dict_keys[k]].last_avg_lik_diff
                     )
+                    #print("big_results_dict[dict_keys[k]].last_avg_lik_diff =", big_results_dict[dict_keys[k]].last_avg_lik_diff )
 
     output_mean = pd.DataFrame(hm_plot_data, index=N_Epoch, columns=part_num)
     output_mean['index']=N_Epoch
@@ -841,7 +898,7 @@ def heat_map_data_prep_mean(pred_num, part_num, N_Epoch, shard_num, big_results_
 
 
 def heat_map_data_prep_std(pred_num, part_num, N_Epoch, shard_num, big_results_dict):#, version_count = 10):
-
+    print("in heat_map_data_prep_std")
     hm_plot_data_std = np.zeros((len(N_Epoch), len(part_num)))#, version_count))
 
     #compute individual run value
