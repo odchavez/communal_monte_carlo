@@ -225,7 +225,7 @@ predictors = ['B_0','B_1','B_2','B_3','B_4','B_5','B_6','B_7','B_8','B_9','B_10'
 ############################
 ##          p=16
 ############################
-#part_num = [1000]
+part_num = [1000]
 #
 #big_results_dict = af.prep_big_results_dict(
 #    f_shard_number = [3],
