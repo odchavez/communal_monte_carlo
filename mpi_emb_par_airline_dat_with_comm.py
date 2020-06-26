@@ -2,7 +2,7 @@
 ** fix seed to catch error
 ** keep track of time since last flight on pf to not allow too much drift between flights
 
-    RUN WITH:  python mpi_emb_par_airline_dat_with_comm.py --N_Node 4 --particles_per_shard 20 --experiment_number 0
+    RUN WITH:  python mpi_emb_par_airline_dat_with_comm.py --N_Node 4 --particles_per_shard 20 --experiment_number 0 --save_history 0
     
     for testing use --test_run 2
     
@@ -66,6 +66,11 @@ def get_args():
         '--test_run', type=int,
         help='number of files to process if running a test',
         required=False, default=999999999999
+    )
+    parser.add_argument(
+        '--save_history', type=int,
+        help='save history of particles at the end of each epoch if 0 else only save the last communication state',
+        required=False, default=1
     )
     return parser.parse_args()
 
@@ -210,7 +215,8 @@ for fn in tqdm(range(len(year_month_files))):
             parameter_history_obj = history.parameter_history()
             parameter_history_obj.write_stats_results(
                 f_stats_df=stats_results_file, 
-                f_other_stats_file=params_results_file_path
+                f_other_stats_file=params_results_file_path,
+                save_history=args.save_history,
             )
         else:
             shuffled_particles = None
@@ -253,11 +259,19 @@ if rank == 0:
             'start_time'                 : [start_time],
             'end_time'                   : [time.time()],
             'code'                       : [name_stem.code],
-            'final_params'               : [str(output_shuffled_particles)]
+            'final_params'               : [str(output_shuffled_particles)],
+            'run_number'                 : [run_number],
+            'pre_shuffel_params'         : [str(all_shard_params)],
+            'post_shuffel_params'        : ["place holder"],
+            'machine_history_ids'        : [str(all_shard_machine_history_ids)],
+            'post_machine_history_ids'   : ["place holder"],
+            'particle_history_ids'       : [str(all_shard_particle_history_ids)],
+            'post_particle_history_ids'  : ["place holder"],
         }
     )
     parameter_history_obj = history.parameter_history()
     parameter_history_obj.write_stats_results(
         f_stats_df=stats_results_file, 
-        f_other_stats_file=params_results_file_path
+        f_other_stats_file=params_results_file_path,
+        save_history=args.save_history,
     )

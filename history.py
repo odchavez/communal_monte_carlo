@@ -90,22 +90,28 @@ class parameter_history:
             
         
         
-    def write_stats_results(self,  f_stats_df, f_other_stats_file='experiment_results/results.csv'):
+    def write_stats_results(self,  f_stats_df, f_other_stats_file='experiment_results/results.csv', save_history=1):
         # add to existing csv results of 
         print("writing experimental run statistics to ", f_other_stats_file)
-        if os.path.exists(f_other_stats_file):
-            # open file and add row
-            f_stats_df.to_csv(
-                f_other_stats_file, 
-                index = False, 
-                mode = 'a', 
-                header=False
-            )
+        if save_history==1:
+            if os.path.exists(f_other_stats_file):
+                # open file and add row
+                f_stats_df.to_csv(
+                    f_other_stats_file, 
+                    index = False, 
+                    mode = 'a', 
+                    header=False
+                )
+            else:
+                #create file
+                f_stats_df.to_csv(
+                    f_other_stats_file, 
+                    index = False, 
+                    #mode = 'a'
+                )
         else:
-            #create file
             f_stats_df.to_csv(
                 f_other_stats_file, 
                 index = False, 
-                #mode = 'a'
             )
         

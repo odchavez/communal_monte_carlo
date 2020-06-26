@@ -1,9 +1,5 @@
 """
-** fix seed to catch error
-** post random walk step, intorduce division to makevariance = 1 (sqrt(1+ t*sigma^2)), ie. N(0,1) - DONE
-** add functionality to make epocks be more than every 'day' - NOT GOING TO DO
-** keep track of time since last flight on pf to not allow too much drift between flights
-** email anonio about his arrival
+mpirun -np 4 python mpi_emb_par_sim_dat_no_comm.py  --Xy_N 1000 --Epoch_N 100 --Nt 20 --p 2 --N_Node 4 --particles_per_shard 10 --experiment_number 0 --save_history 0 --GP_version 0
 """
 import os
 import sys
@@ -94,6 +90,11 @@ def get_args():
         '--plot_at_end', type=int,
         help='number of files to process if running a test',
         required=False, default=0
+    )
+    parser.add_argument(
+        '--save_history', type=int,
+        help='save history of particles at the end of each epoch if 0 else only save the last communication state',
+        required=False, default=1
     )
     return parser.parse_args()
 
@@ -240,7 +241,8 @@ for fn in tqdm(range(files_to_process)):
             parameter_history_obj = history.parameter_history()
             parameter_history_obj.write_stats_results(
                 f_stats_df=stats_results_file, 
-                f_other_stats_file=params_results_file_path
+                f_other_stats_file=params_results_file_path,
+                save_history=args.save_history,
             )
         else:
             shuffled_particles = None
@@ -288,7 +290,8 @@ if rank == 0:
     parameter_history_obj = history.parameter_history()
     parameter_history_obj.write_stats_results(
         f_stats_df=stats_results_file,
-        f_other_stats_file=params_results_file_path
+        f_other_stats_file=params_results_file_path,
+        save_history=args.save_history,
     )
 
     if args.plot_at_end:

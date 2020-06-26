@@ -1,9 +1,6 @@
 """
-** fix seed to catch error
-** post random walk step, intorduce division to makevariance = 1 (sqrt(1+ t*sigma^2)), ie. N(0,1) - DONE
-** add functionality to make epocks be more than every 'day' - NOT GOING TO DO
-** keep track of time since last flight on pf to not allow too much drift between flights
-** email anonio about his arrival
+RUN WITH:
+mpirun -np 4 python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 1000 --Epoch_N 100 --Nt 20 --p 2 --N_Node 4 --particles_per_shard 10 --experiment_number 0 --save_history 0 --GP_version 0
 """
 import os
 import sys
@@ -72,7 +69,7 @@ def get_args():
     )
     parser.add_argument(
         '--keep_history', type=int,
-        help='keep a record of sampled particles if 1.  If 0 do not track history.',
+        help='keep a full record of sampled particles if 1.  If 0 do not track history.',
         required=False,  default=0
     )
     parser.add_argument(
@@ -94,6 +91,11 @@ def get_args():
         '--plot_at_end', type=int,
         help='number of files to process if running a test',
         required=False, default=0
+    )
+    parser.add_argument(
+        '--save_history', type=int,
+        help='save history of particles at the end of each epoch if 0 else only save the last communication state',
+        required=False, default=1
     )
     return parser.parse_args()
 
@@ -243,7 +245,8 @@ for fn in tqdm(range(files_to_process)):
             parameter_history_obj = history.parameter_history()
             parameter_history_obj.write_stats_results(
                 f_stats_df=stats_results_file, 
-                f_other_stats_file=params_results_file_path
+                f_other_stats_file=params_results_file_path,
+                save_history=args.save_history,
             )
         else:
             shuffled_particles = None
@@ -286,32 +289,19 @@ if rank == 0:
             'start_time'                 : [start_time],
             'end_time'                   : [time.time()],
             'code'                       : [name_stem.code],
-            'final_params'               : [str(output_shuffled_particles)]
+            'final_params'               : [str(output_shuffled_particles)],
+            'run_number'                 : [run_number],
+            'pre_shuffel_params'         : [str(all_shard_params)],
+            'post_shuffel_params'        : ["place holder"],
+            'machine_history_ids'        : [str(all_shard_machine_history_ids)],
+            'post_machine_history_ids'   : ["place holder"],
+            'particle_history_ids'       : [str(all_shard_particle_history_ids)],
+            'post_particle_history_ids'  : ["place holder"],
         }
     )
     parameter_history_obj = history.parameter_history()
     parameter_history_obj.write_stats_results(
         f_stats_df=stats_results_file, 
-        f_other_stats_file=params_results_file_path
+        f_other_stats_file=params_results_file_path,
+        save_history=args.save_history,
     )
-
-    if args.plot_at_end:
-        parameter_history_obj.compile_bo_list_history(name_stem.code)
-
-        parmas_shape = parameter_history_obj.bo_list_history.shape
-        print("parmas_shape=",parmas_shape)
-        parmas_truth = pd.read_csv(
-            'synth_data/Xy_N=' + args.Xy_N +
-            '_Epoch_N=' + args.Epoch_N +
-            '_Nt=' + args.Nt +
-            '_p=' + args.p + '/Beta_t.csv',
-            index_col=0
-        ).iloc[:parmas_shape[0],:parmas_shape[1]]
-        print("parmas_truth.shape=", parmas_truth.shape)
-        print("type(shard_data['predictors'])=", type(shard_data['predictors']))
-        print("shard_data['predictors']=", shard_data['predictors'])
-        embarrassingly_parallel.plot_CMC_parameter_path_(
-            parameter_history_obj.bo_list_history,
-            shard_data['predictors'],
-            parmas_truth
-        )
