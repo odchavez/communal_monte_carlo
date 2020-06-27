@@ -2,7 +2,7 @@
 *.pyc
 *.DS_Store
 *.ipynb_checkpoints
-# *.csv
+*.csv
 
 Untitled Folder/
 temp/
