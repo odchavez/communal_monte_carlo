@@ -3,6 +3,7 @@
 *.DS_Store
 *.ipynb_checkpoints
 *.csv
+*.tar.gz
 
 Untitled Folder/
 temp/
