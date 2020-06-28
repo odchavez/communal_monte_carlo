@@ -2,7 +2,7 @@
 ** fix seed to catch error
 ** keep track of time since last flight on pf to not allow too much drift between flights
 
-    RUN WITH:  python mpi_emb_par_airline_dat_with_comm.py --N_Node 4 --particles_per_shard 20 --experiment_number 0 --save_history 0
+    RUN WITH:  python mpi_emb_par_airline_dat_with_comm.py --N_Node 4 --particles_per_shard 20 --experiment_number 0 --save_history 0 --randomize_shards 0
     
     for testing use --test_run 2
     

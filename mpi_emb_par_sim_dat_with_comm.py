@@ -1,6 +1,6 @@
 """
 RUN WITH:
-mpirun -np 4 python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 1000 --Epoch_N 100 --Nt 20 --p 2 --N_Node 4 --particles_per_shard 10 --experiment_number 0 --save_history 0 --GP_version 0
+mpirun -np 4 python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 1000 --Epoch_N 100 --Nt 20 --p 2 --N_Node 4 --particles_per_shard 10 --experiment_number 0 --save_history 0 --GP_version 0 --randomize_shards 0
 """
 import os
 import sys
