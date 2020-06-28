@@ -72,6 +72,11 @@ def get_args():
         help='save history of particles at the end of each epoch if 0 else only save the last communication state',
         required=False, default=1
     )
+    parser.add_argument(
+        '--randomize_shards', type=int,
+        help='Randomize which of the shards gets data at a particular time step. If 0 shard order is determined by mpi shard rank number.',
+        required=False, default=0
+    )
     return parser.parse_args()
 
 
@@ -84,7 +89,7 @@ size = comm.Get_size()
 ######################################################
 first_time = True
 run_number = -1
-params_obj = params.pf_params_synth_data( size, args.particles_per_shard, args.p_to_use )
+params_obj = params.pf_params_synth_data( size, args.particles_per_shard, args.p_to_use, args.randomize_shards)
 
 particle_filter_run_time   = 0
 comm_time_scatter_data     = 0

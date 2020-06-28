@@ -42,6 +42,7 @@ class prep_data:
             self.shards=params['shards']
             self.epoch_at=params['epoch_at']
             self.epoch_number=len(self.epoch_at)
+            self.randomize_shards = params['randomize_shards']
             self.Y=np.zeros(self.N)
             self.X_matrix=np.zeros(
                 (full_de_mat_X.shape[0],
@@ -83,7 +84,10 @@ class prep_data:
                 key=str(i)+":"+str(data_index)
                 all_key=str(i)+":"+str(i)
                 self.data_keys.append(all_key)
-                s="shard_"+str(i%self.shards)
+                if self.randomize_shards == 0:
+                    s="shard_"+str(i%self.shards)
+                else:
+                    s = "shard_"+str(np.random.randint(0,self.shards))
 
                 temp_X = np.array(full_de_mat_X.iloc[i]).astype(np.float64)
                 self.Y[i]           = np.zeros(self.N_batch)
