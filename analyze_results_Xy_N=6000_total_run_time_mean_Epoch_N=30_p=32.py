@@ -33,12 +33,12 @@ big_results_dict = af.prep_big_results_dict(
     f_part_num = part_num,
     f_predictors = predictors
 )
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_3 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_32_x_20_x_30_x_3 = af.heat_map_data_prep_total_run_time_mean(
     pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
 )
 
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_3.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_run_time_plot_data_32_x_20_1000_x_30_x_3.csv',
+Xy_N_6000_hm_plot_data_32_x_20_x_30_x_3.to_csv(
+    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_run_time_plot_data_32_x_20_x_30_x_3.csv',
     index = False,
 )
 
@@ -137,12 +137,12 @@ big_results_dict = af.prep_big_results_dict(
     f_part_num = part_num,
     f_predictors = predictors
 )
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_3 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_32_x_100_x_30_x_3 = af.heat_map_data_prep_total_run_time_mean(
     pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
 )
 
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_3.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_run_time_plot_data_32_x_20_1000_x_30_x_3.csv',
+Xy_N_6000_hm_plot_data_32_x_100_x_30_x_3.to_csv(
+    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_run_time_plot_data_32_x_100_x_30_x_3.csv',
     index = False,
 )
 
@@ -229,26 +229,26 @@ Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_3.to_csv(
 ######################################################
 #          p=32 AND PART_NUM = 1000
 ######################################################
-part_num = [1000]
-
-big_results_dict = af.prep_big_results_dict(
-    f_shard_number = [3],
-    f_Xy_N = Xy_N,
-    f_N_Epoch = N_Epoch,
-    f_Nt = Nt,
-    f_p = p ,
-    f_GP_version = GP_version,
-    f_part_num = part_num,
-    f_predictors = predictors
-)
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_3 = af.heat_map_data_prep_total_run_time_mean(
-    pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
-)
-
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_3.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_run_time_plot_data_32_x_20_1000_x_30_x_3.csv',
-    index = False,
-)
+##part_num = [1000]
+##
+##big_results_dict = af.prep_big_results_dict(
+##    f_shard_number = [3],
+##    f_Xy_N = Xy_N,
+##    f_N_Epoch = N_Epoch,
+##    f_Nt = Nt,
+##    f_p = p ,
+##    f_GP_version = GP_version,
+##    f_part_num = part_num,
+##    f_predictors = predictors
+##)
+##Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_3 = af.heat_map_data_prep_total_run_time_mean(
+##    pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
+##)
+##
+##Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_3.to_csv(
+##    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_run_time_plot_data_32_x_1000_x_30_x_3.csv',
+##    index = False,
+##)
 
 ######
 #big_results_dict = af.prep_big_results_dict(
@@ -291,44 +291,44 @@ Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_3.to_csv(
 #)
 #
 ######
-big_results_dict = af.prep_big_results_dict(
-    f_shard_number = [15],
-    f_Xy_N = Xy_N,
-    f_N_Epoch = N_Epoch,
-    f_Nt = Nt,
-    f_p = p ,
-    f_GP_version = GP_version,
-    f_part_num = [1000],
-    f_predictors = predictors
-)
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_15 = af.heat_map_data_prep_total_run_time_mean(
-    pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
-)
+##big_results_dict = af.prep_big_results_dict(
+##    f_shard_number = [15],
+##    f_Xy_N = Xy_N,
+##    f_N_Epoch = N_Epoch,
+##    f_Nt = Nt,
+##    f_p = p ,
+##    f_GP_version = GP_version,
+##    f_part_num = [1000],
+##    f_predictors = predictors
+##)
+##Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_15 = af.heat_map_data_prep_total_run_time_mean(
+##    pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
+##)
+##
+##Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_15.to_csv(
+##    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_run_time_plot_data_32_x_1000_x_30_x_15.csv',
+##    index = False,
+##)
 
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_15.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_run_time_plot_data_32_x_1000_x_30_x_15.csv',
-    index = False,
-)
-
-######
-big_results_dict = af.prep_big_results_dict(
-    f_shard_number = [30],
-    f_Xy_N = Xy_N,
-    f_N_Epoch = N_Epoch,
-    f_Nt = Nt,
-    f_p = p ,
-    f_GP_version = GP_version,
-    f_part_num = [1000],
-    f_predictors = predictors
-)
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_30 = af.heat_map_data_prep_total_run_time_mean(
-    pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
-)
-
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_30.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_run_time_plot_data_32_x_1000_x_30_x_30.csv',
-    index = False,
-)
-
-######
+########
+##big_results_dict = af.prep_big_results_dict(
+##    f_shard_number = [30],
+##    f_Xy_N = Xy_N,
+##    f_N_Epoch = N_Epoch,
+##    f_Nt = Nt,
+##    f_p = p ,
+##    f_GP_version = GP_version,
+##    f_part_num = [1000],
+##    f_predictors = predictors
+##)
+##Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_30 = af.heat_map_data_prep_total_run_time_mean(
+##    pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
+##)
+##
+##Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_x_30.to_csv(
+##    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_run_time_plot_data_32_x_1000_x_30_x_30.csv',
+##    index = False,
+##)
+##
+########
 
