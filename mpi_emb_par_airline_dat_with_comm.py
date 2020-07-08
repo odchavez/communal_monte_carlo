@@ -27,6 +27,8 @@ import history
 import params
 import pf_plots
 
+import airline_year_month_day_file_names  as aymdfn
+
 np.set_printoptions(suppress=True)
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -96,20 +98,7 @@ comm_time_scatter_data     = 0
 comm_time_gather_particles  = 0
 comm_time_scatter_particles = 0
 
-year_month_files = [
-     'X_2012_November'
-    ,'X_2012_December'
-    ,'X_2013_January'
-    ,'X_2013_February'
-    ,'X_2013_March'
-    ,'X_2013_April'
-    ,'X_2013_May'
-    ,'X_2013_June'
-    ,'X_2013_July'
-    ,'X_2013_August'
-    ,'X_2013_September'
-    ,'X_2013_October'
-]
+year_month_files = aymdfn.file_name_stems
 
 for fn in tqdm(range(len(year_month_files))):
     file_stem = year_month_files[fn]
