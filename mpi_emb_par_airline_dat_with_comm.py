@@ -104,9 +104,8 @@ for fn in tqdm(range(len(year_month_files))):
     file_stem = year_month_files[fn]
     data_path = 'data/' + file_stem + '.csv'
     params_results_file_path = (
-        'experiment_results/airline_with_comm' + 
+        'experiment_results/airline_data/airline_with_comm' + 
         '_shard_num=' + str(size) +
-        '_' + file_stem + 
         '_part_num=' + str(args.particles_per_shard) +
         '_exp_num=' + args.experiment_number + 
         '.csv'
@@ -235,34 +234,39 @@ comm_time_scatter_particles_all = str(comm.gather(comm_time_scatter_particles, r
 if rank == 0:
     #float_valued_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles, f_type = float)
     
-    stats_results_file = pd.DataFrame(
-        {
-            'shards'                     : [size],
-            #'Xy_N='                      : [args.Xy_N],
-            #'Epoch_N='                   : [args.Epoch_N],
-            'N_Node='                    : [args.N_Node],
-            #'Nt='                        : [args.Nt],
-            #'p='                         : [args.p],
-            'exp_number'                 : [args.experiment_number],
-            'data_type'                  : ["synthetic"],
-            'particle_number'            : params_obj.get_particles_per_shard(),
-            'particle_filter_run_time'   : [particle_filter_run_time_all],
-            'comm_time_scatter_data'     : [comm_time_scatter_data_all],
-            'comm_time_gather_particles' : [comm_time_gather_particles_all],
-            'comm_time_scatter_particles': [comm_time_scatter_particles_all],
-            'start_time'                 : [start_time],
-            'end_time'                   : [time.time()],
-            'code'                       : [name_stem.code],
-            'final_params'               : [str(output_shuffled_particles)],
-            'run_number'                 : [run_number],
-            'pre_shuffel_params'         : [str(all_shard_params)],
-            'post_shuffel_params'        : ["place holder"],
-            'machine_history_ids'        : [str(all_shard_machine_history_ids)],
-            'post_machine_history_ids'   : ["place holder"],
-            'particle_history_ids'       : [str(all_shard_particle_history_ids)],
-            'post_particle_history_ids'  : ["place holder"],
-        }
-    )
+    #stats_results_file = pd.DataFrame(
+    #    {
+    #        'shards'                     : [size],
+    #        #'Xy_N='                      : [args.Xy_N],
+    #        #'Epoch_N='                   : [args.Epoch_N],
+    #        'N_Node='                    : [args.N_Node],
+    #        #'Nt='                        : [args.Nt],
+    #        #'p='                         : [args.p],
+    #        'exp_number'                 : [args.experiment_number],
+    #        'data_type'                  : ["synthetic"],
+    #        'particle_number'            : params_obj.get_particles_per_shard(),
+    #        'particle_filter_run_time'   : [particle_filter_run_time_all],
+    #        'comm_time_scatter_data'     : [comm_time_scatter_data_all],
+    #        'comm_time_gather_particles' : [comm_time_gather_particles_all],
+    #        'comm_time_scatter_particles': [comm_time_scatter_particles_all],
+    #        'start_time'                 : [start_time],
+    #        'end_time'                   : [time.time()],
+    #        'code'                       : [name_stem.code],
+    #        'final_params'               : [str(output_shuffled_particles)],
+    #        'run_number'                 : [run_number],
+    #        'pre_shuffel_params'         : [str(all_shard_params)],
+    #        'post_shuffel_params'        : ["place holder"],
+    #        'machine_history_ids'        : [str(all_shard_machine_history_ids)],
+    #        'post_machine_history_ids'   : ["place holder"],
+    #        'particle_history_ids'       : [str(all_shard_particle_history_ids)],
+    #        'post_particle_history_ids'  : ["place holder"],
+    #    }
+    #)
+    stats_results_file.particle_filter_run_time = [particle_filter_run_time_all]
+    stats_results_file.comm_time_scatter_data = [comm_time_scatter_data_all]
+    stats_results_file.comm_time_gather_particles = [comm_time_gather_particles_all]
+    stats_results_file.comm_time_scatter_particles = [comm_time_scatter_particles_all]
+
     parameter_history_obj = history.parameter_history()
     parameter_history_obj.write_stats_results(
         f_stats_df=stats_results_file, 

@@ -104,9 +104,8 @@ for fn in tqdm(range(len(year_month_files))):
     file_stem = year_month_files[fn]
     data_path = 'data/' + file_stem + '.csv'
     params_results_file_path = (
-        'experiment_results/airline_no_comm' + 
+        'experiment_results/airline_data/airline_no_comm' + 
         '_shard_num=' + str(size) +
-        '_' + file_stem + 
         '_part_num=' + str(args.particles_per_shard) +
         '_exp_num=' + args.experiment_number + 
         '.csv'
