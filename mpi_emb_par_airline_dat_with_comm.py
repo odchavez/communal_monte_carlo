@@ -174,7 +174,7 @@ for fn in tqdm(range(len(year_month_files))):
                     #'Nt='                        : [args.Nt],
                     #'p='                         : [args.p],
                     'exp_number'                 : [args.experiment_number],
-                    'data_type'                  : ["synthetic"],
+                    'data_type'                  : ["airline"],
                     'particle_number'            : params_obj.get_particles_per_shard(),
                     'particle_filter_run_time'   : [999],
                     'comm_time_scatter_data'     : [999],
