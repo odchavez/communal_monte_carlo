@@ -4,7 +4,7 @@ file_name_stems = [
     "X_2012_November_3",
     "X_2012_November_4",
     "X_2012_November_5",
-]   "X_2012_November_6",
+    "X_2012_November_6",
     "X_2012_November_7",
     "X_2012_November_8",
     "X_2012_November_9",
