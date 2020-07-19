@@ -98,7 +98,7 @@ comm_time_scatter_data     = 0
 comm_time_gather_particles  = 0
 comm_time_scatter_particles = 0
 
-year_month_files = aymdfn.file_name_stems
+year_month_files = aymdfn.HENSMAN_file_name_stems
 
 for fn in tqdm(range(len(year_month_files))):
     file_stem = year_month_files[fn]
