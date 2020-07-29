@@ -9,7 +9,7 @@ shard_number = [60]
 Xy_N=6000
 N_Epoch = [30,150,300,600,1200]
 Nt = [30]
-p = [2, 8, 16]
+p = [8, 16] #p=2 is complete
 GP_version = list(range(10))
 part_num = [20, 100, 1000]
 predictors = [
@@ -38,22 +38,22 @@ big_results_dict = af.prep_big_results_dict(
 #    print(big_results_dict[k].last_avg_lik_diff -  big_results_dict[k].last_std_err_lik_diff)
 #    print("")
 
-###########################
-#          p=2
-###########################
-
-Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_1200_x_60 = af.heat_map_data_prep_mean(
-    pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=60, big_results_dict=big_results_dict
-)
-Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_1200_x_60.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_2_x_20_1000_x_30_1200_x_60.csv',
-    index = False,
-)
-
+############################
+##          p=2
+############################
+#
+#Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_1200_x_60 = af.heat_map_data_prep_mean(
+#    pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=60, big_results_dict=big_results_dict
+#)
+#Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_1200_x_60.to_csv(
+#    'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_2_x_20_1000_x_30_1200_x_60.csv',
+#    index = False,
+#)
+#
 ###########################
 #          p=8
 ###########################
-
+print(" WORKING p=8.....")
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_1200_x_60 = af.heat_map_data_prep_mean(
     pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=60, big_results_dict=big_results_dict
 )
@@ -61,7 +61,7 @@ Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_1200_x_60.to_csv(
     'experiment_results/heat_map_data/Xy_N_6000_hm_mean_plot_data_8_x_20_1000_x_30_1200_x_60.csv',
     index = False,
 )
-
+print(" WORKING p=16.....")
 ###########################
 #          p=16
 ###########################
@@ -77,6 +77,7 @@ Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_1200_x_60.to_csv(
 ###########################
 #          p=32
 ###########################
+print(" WORKING p=32.....")
 
 shard_number = [3,6, 10,15,30,60]
 Xy_N=6000

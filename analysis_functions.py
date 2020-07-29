@@ -116,7 +116,7 @@ def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_ver
                                         comm = False, 
                                     )
                                     #print("analyze run no comm complete")
-                                    #print("SUCCESS WITH ", path_obj_instance.exp_key, " GP_version_item = ", GP_version_item)
+                                    print("SUCCESS WITH ", path_obj_instance.exp_key, " GP_version_item = ", GP_version_item)
                                     
                                     temp_ao.wi_comm_list.append(w_run)
                                     temp_ao.no_comm_list.append(n_run)
@@ -186,20 +186,24 @@ class analyze_run:
         #)
         #print(6)
         self.true_lik, self.esti_lik = self.get_plot_likelihoods(self.Beta_com, self.true_cols, self.beta_i_avg)
-
+        #print(7)
         _, self.comm_time_gather_particles, _ = self.time_cleaner(
             path=f_path, column_name = "comm_time_gather_particles"
         )
+        #print(8)
         _, self.comm_time_scatter_particles, self.run_time =  self.time_cleaner(
             path=f_path, column_name = "comm_time_scatter_particles"
         )
-        
+        #print(9)
         
         self.particle_history_ids = self.id_cleaner(path=f_path, column_name='particle_history_ids')
+        #print(10)
         self.machine_history_ids = self.id_cleaner(path=f_path, column_name='machine_history_ids')
+        #print(11)
         if comm:
             self.post_particle_history_ids = self.id_cleaner(path=f_path, column_name='post_particle_history_ids')
             self.post_machine_history_ids = self.id_cleaner(path=f_path, column_name='post_machine_history_ids')
+        #print("Exit analyze_run __init__ ")
         
     def get_particle_id_counts(self):
         flat_particle_history_ids = self.particle_history_ids.flatten()
@@ -425,6 +429,7 @@ class analyze_run:
         #print("         f_beta_i_avg.shape", f_beta_i_avg.shape)
         f_true_lik = list()
         f_esti_lik = list()
+        #print(1)
         #print("         type(f_Beta_com)=", type(f_Beta_com))
         #print("         type(f_beta_i_avg)=", type(f_beta_i_avg))
         #print("         f_Beta_com.shape=", f_Beta_com.shape)
@@ -432,19 +437,26 @@ class analyze_run:
         #print("         f_beta_i_avg.shape=", f_beta_i_avg.shape)
         #for i in range(f_Beta_com.shape[0]):
         i=f_Beta_com.shape[0]-1
+        #print(2)
         #print("for i in range(f_Beta_com.shape[0]):")
         #print("f_Beta_com[f_cols] = ", f_Beta_com[f_cols])
-        #print("f_Beta_com[f_cols].loc[i, f_cols] = ", f_Beta_com.loc[i, f_cols])
-        Beta_t = np.array(f_Beta_com.loc[i, f_cols]).reshape((2, 1))
+        #print("len(f_cols) = ",len(f_cols))
+        #print("f_Beta_com.loc[i, f_cols] = ", f_Beta_com.loc[i, f_cols])
+        Beta_t = np.array(f_Beta_com.loc[i, f_cols]).reshape((len(f_cols), 1))
+        #print(3)
         #print("Beta_t = ", Beta_t)
         #print("Beta_t = f_Beta_com[f_cols].loc[i]=", Beta_t)
         Beta_fit = f_beta_i_avg#[:,i]
+        #print(4)
         #print("Beta_fit = f_beta_i_avg=", Beta_fit )
         X, y = self.generate_OOS_X_y(f_B_t=Beta_t)
+        #print(5)
         #print("self.generate_OOS_X_y(f_B_t=Beta_t)")
         f_true_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_t)))
+        #print(6)
         #print("f_true_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_t)))")
         f_esti_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_fit)))
+        #print(7)
         #print("f_esti_lik.append(np.mean(self.compute_lik(f_X=X, f_Y=y, f_B=Beta_fit)))")
         #print("     f_esti_lik=", f_esti_lik)   
         return f_true_lik, f_esti_lik
