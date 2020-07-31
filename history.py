@@ -90,7 +90,7 @@ class parameter_history:
             
         
         
-    def write_stats_results(self,  f_stats_df, f_other_stats_file='experiment_results/results.csv', save_history=1):
+    def write_stats_results(self,  f_stats_df, f_other_stats_file='experiment_results/results.csv', save_history=0):
         # add to existing csv results of 
         print("writing experimental run statistics to ", f_other_stats_file)
         if save_history==1:

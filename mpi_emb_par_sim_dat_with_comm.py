@@ -94,8 +94,8 @@ def get_args():
     )
     parser.add_argument(
         '--save_history', type=int,
-        help='save history of particles at the end of each epoch if 0 else only save the last communication state',
-        required=False, default=1
+        help='save history of particles at the end of each epoch if 1 else if 0 only save the last communication state',
+        required=False, default=0
     )
     parser.add_argument(
         '--randomize_shards', type=int,
