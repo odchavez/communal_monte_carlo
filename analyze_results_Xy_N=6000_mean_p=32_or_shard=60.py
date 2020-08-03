@@ -9,7 +9,7 @@ shard_number = [60]
 Xy_N=6000
 N_Epoch = [30,150,300,600,1200]
 Nt = [30]
-p = [8, 16] #p=2 is complete
+p = [8]#, 16] #p=2 is complete
 GP_version = list(range(10))
 part_num = [20, 100, 1000]
 predictors = [
