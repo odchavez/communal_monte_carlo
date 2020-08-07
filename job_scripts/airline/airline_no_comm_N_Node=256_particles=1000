@@ -23,12 +23,12 @@
 #
 #----------------------------------------------------
 
-#SBATCH -J         airline_no_comm_N_Node=32_particles=1000_expn=0     # Job name
-#SBATCH -o exp_out/airline_no_comm_N_Node=32_particles=1000_expn=0.o%j # Name of stdout output file
-#SBATCH -e exp_err/airline_no_comm_N_Node=32_particles=1000_expn=0.e%j # Name of stderr error file
+#SBATCH -J         airline_no_comm_N_Node=256_particles=1000_expn=0     # Job name
+#SBATCH -o exp_out/airline_no_comm_N_Node=256_particles=1000_expn=0.o%j # Name of stdout output file
+#SBATCH -e exp_err/airline_no_comm_N_Node=256_particles=1000_expn=0.e%j # Name of stderr error file
 #SBATCH -p normal                                                # Queue (partition) name
-#SBATCH -N 1                                                     # Total # of nodes
-#SBATCH -n 32                                                    # Total # of mpi tasks
+#SBATCH -N 4                                                     # Total # of nodes
+#SBATCH -n 256                                                   # Total # of mpi tasks
 #SBATCH -t 48:00:00                                              # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
 #SBATCH --mail-type=all                                          # Send email at begin and end of job
@@ -41,4 +41,4 @@
 
 # Launch MPI code...
 # Use ibrun instead of mpirun or mpiexec
-ibrun python mpi_emb_par_airline_dat_no_comm.py --N_Node 32 --particles_per_shard 1000 --experiment_number 0
+ibrun python mpi_emb_par_airline_dat_no_comm.py --N_Node 256 --particles_per_shard 1000 --experiment_number 0 --randomize_shards 1 
