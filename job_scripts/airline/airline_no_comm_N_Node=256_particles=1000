@@ -27,7 +27,7 @@
 #SBATCH -o exp_out/airline_no_comm_N_Node=256_particles=1000_expn=0.o%j # Name of stdout output file
 #SBATCH -e exp_err/airline_no_comm_N_Node=256_particles=1000_expn=0.e%j # Name of stderr error file
 #SBATCH -p normal                                                # Queue (partition) name
-#SBATCH -N 4                                                     # Total # of nodes
+#SBATCH -N 8                                                     # Total # of nodes
 #SBATCH -n 256                                                   # Total # of mpi tasks
 #SBATCH -t 48:00:00                                              # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
