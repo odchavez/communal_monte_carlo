@@ -2,7 +2,7 @@
 ** fix seed to catch error
 ** keep track of time since last flight on pf to not allow too much drift between flights
 
-    RUN WITH:  python mpi_emb_par_airline_dat_no_comm.py --N_Node 4 --particles_per_shard 20 --experiment_number 0 --save_history 0 --randomize_shards 0
+    RUN WITH:  python mpi_emb_par_airline_dat_no_comm.py --N_Node 4 --particles_per_shard 20 --experiment_number 0 --save_history 0 --randomize_shards 0 --test_run 2
     
     for testing use --test_run 2
     
@@ -22,7 +22,7 @@ from  code_maker import randomString
 
 import particle_filter
 import embarrassingly_parallel
-import prep_simulation_data
+import prep_airline_data
 import history
 import params
 import pf_plots
@@ -98,11 +98,11 @@ comm_time_scatter_data     = 0
 comm_time_gather_particles  = 0
 comm_time_scatter_particles = 0
 
-year_month_files = aymdfn.HENSMAN_file_name_stems
+year_month_files = aymdfn.HENSMAN_file_name_stems[:args.test_run]
 
 for fn in tqdm(range(len(year_month_files))):
     file_stem = year_month_files[fn]
-    data_path = 'data/' + file_stem + '.csv'
+    data_path = 'data/' + file_stem + '.h5'
     params_results_file_path = (
         'experiment_results/airline_data/airline_no_comm' + 
         '_shard_num=' + str(size) +
@@ -112,21 +112,23 @@ for fn in tqdm(range(len(year_month_files))):
     )
 
     exists = os.path.isfile(data_path)
-    if rank == 0:
-
-        if exists:
-            data_obj = prep_simulation_data.prep_data(params_obj.get_params(), data_path)
-            to_scatter = data_obj.format_for_scatter(epoch=0)
-
-        else:
-            to_scatter = None
-            next
-    else:
-        to_scatter = None
-    #print("#SCATTER DATA")
+    #if rank == 0:
+#
+    #    if exists:
+    #        data_obj = prep_airline_data.prep_data(params_obj.get_params(), data_path)
+    #        to_scatter = data_obj.format_for_scatter(epoch=0)
+#
+    #    else:
+    #        to_scatter = None
+    #        next
+    #else:
+    #    to_scatter = None
+    ##print("#SCATTER DATA")
     if exists:
         comm_time_scatter_data -= time.time()
-        shard_data = comm.scatter(to_scatter, root=0)
+        #shard_data = comm.scatter(to_scatter, root=0)
+        data_obj = prep_airline_data.prep_data(params_obj.get_params(), data_path, rank)
+        shard_data =  data_obj.format_for_scatter(epoch=0, f_rank=rank)
         comm_time_scatter_data += time.time()
 
     #print("#INITIALIZE PARTICLES IN FIRST PASS WITH DATA")

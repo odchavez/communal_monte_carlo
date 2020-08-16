@@ -16,7 +16,7 @@ class particle_filter:
         self.sample_method      = params_obj.get_sample_method()
         #print("self.sample_method = ", self.sample_method)
         self.dat                = dat
-        self.data_keys          = dat['data_keys']
+        #self.data_keys          = dat['data_keys']
         self.time_values        = [0]#dat['time_value']
         self.unique_time_values = np.unique(self.time_values)
         self.rank               = pf_rank
@@ -60,8 +60,8 @@ class particle_filter:
                 self.particle_list[pn].update_particle(self.X, self.Y)
                 self.not_norm_wts[pn]=particle_list[pn].evaluate_likelihood(self.X, self.Y)
         if self.model=="probit_sin_wave":
-            x_keys = self.data_keys
-            y_keys = self.data_keys
+            #x_keys = self.data_keys
+            #y_keys = self.data_keys
 
             #print("range(len(self.unique_time_values))=",range(len(self.unique_time_values)))
             #print("self.unique_time_values = ", self.unique_time_values)
@@ -96,7 +96,7 @@ class particle_filter:
                             XtX,
                             self.X[row_index,:],
                             self.Y[row_index],
-                            int(x_keys[n].split(":")[0]),
+                            #int(x_keys[n].split(":")[0]),
                             self.unique_time_values[n]
                         )
                         self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[row_index,:], self.Y[row_index])
@@ -168,7 +168,7 @@ class particle_filter:
         self.run_number = run_number
         self.X = dat['X_matrix']
         self.Y = dat['Y']
-        self.data_keys=dat['data_keys']
+        #self.data_keys=dat['data_keys']
 
         self.time_values = dat['time_value']
         self.unique_time_values = np.unique(self.time_values)

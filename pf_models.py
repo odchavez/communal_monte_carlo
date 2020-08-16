@@ -32,7 +32,7 @@ class probit_sin_wave_particle:
         return_value = np.max([log_lik, self.log_lik])
         return(return_value)
 
-    def update_particle_importance(self,XtX, X, Y, j, time_value = None):
+    def update_particle_importance(self,XtX, X, Y, time_value = None):
         if time_value != None:
             self.time_delta = time_value - self.this_time
             self.this_time  += self.time_delta
