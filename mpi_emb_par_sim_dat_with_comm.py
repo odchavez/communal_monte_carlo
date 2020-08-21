@@ -198,8 +198,8 @@ for fn in tqdm(range(files_to_process)):
         if args.keep_history:
             shard_pfo.write_bo_list(name_stem.code)
         
-        shard_pfo.collect_params()
-        shard_pfo.collect_history_ids()
+        shard_pfo.collect_params() # logging should be outside of timing
+        shard_pfo.collect_history_ids() # logging should be outside of timing
         comm_time_gather_particles-=time.time()
         all_shard_params = comm.gather(shard_pfo.params_to_ship, root=0)
         all_shard_particle_history_ids = comm.gather(shard_pfo.particle_history_ids_to_ship, root=0)
@@ -237,11 +237,14 @@ for fn in tqdm(range(files_to_process)):
             )
             
             #record particles from all shards rather than shuffle to assess fit
-            shuffled_particles , shuffled_mach_hist_ids, shuffled_part_hist_ids = embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
-                all_shard_params, 
-                all_shard_machine_history_ids, 
-                all_shard_particle_history_ids
+            shuffled_particles , shuffled_mach_hist_ids, shuffled_part_hist_ids = (
+                    embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
+                    all_shard_params, 
+                    all_shard_machine_history_ids, 
+                    all_shard_particle_history_ids
+                )
             )
+            
             output_shuffled_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles)
             stats_results_file.post_shuffel_params=[str(output_shuffled_particles)]
             stats_results_file.post_machine_history_ids=[str(shuffled_mach_hist_ids)]

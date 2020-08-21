@@ -36,6 +36,7 @@ class probit_sin_wave_particle:
         if time_value != None:
             self.time_delta = time_value - self.this_time
             self.this_time  += self.time_delta
+            #print("this_time = ", self.this_time)
             self.sudo_epoch_time += self.time_delta
         else:
             self.this_time=1.0
