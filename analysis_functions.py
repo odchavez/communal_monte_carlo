@@ -66,7 +66,7 @@ def make_like_path_plots_by_shard(no_comm, with_comm):
             label="True - Estimate, mead diff = " + str(np.mean(diff))
         )
         plt.show()
-        #print("********************************")
+        #print("*******************************")
 
 
 def prep_big_results_dict(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_version, f_part_num, f_predictors):
