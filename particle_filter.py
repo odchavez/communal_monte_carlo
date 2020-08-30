@@ -1,6 +1,7 @@
 import pf_models as pf
 import numpy as np
 import pandas as pd
+import time
 
 from matplotlib import pyplot as plt
 
@@ -9,43 +10,22 @@ class particle_filter:
     def __init__(self, dat, params_obj, pf_rank = 0, run_number = 0):
 
         self.PART_NUM           = params_obj.get_particles_per_shard()
-        #print("self.PART_NUM = ", self.PART_NUM)
         self.particle_list      = list()
         self.model              = params_obj.get_model()
-        #print("self.model = ", self.model)
         self.sample_method      = params_obj.get_sample_method()
-        #print("self.sample_method = ", self.sample_method)
-        self.dat                = dat
-        #self.data_keys          = dat['data_keys']
-        self.time_values        = [0]#dat['time_value']
+        self.time_values        = [0]
         self.unique_time_values = np.unique(self.time_values)
         self.rank               = pf_rank
         self.run_number         = run_number
-        #print(self.unique_time_values)
-        #if self.model=="probit":
-        #    #create particles
-        #    self.X=dat.X
-        #    self.Y=dat.Y
-        #    self.p=dat.p
-        #    for pn in range(self.PART_NUM):
-        #        temp_particle=pf.probit_particle(np.zeros((1,p)),np.identity(p)*1000.0, pn)
-        #        self.particle_list.append(temp_particle)
 
         if self.model== "probit_sin_wave":
-            self.X=dat['X_matrix']
-            self.Y=dat['Y']
             self.p=dat['p']
-            self.N=dat['N']
-            #self.Tau=dat['Tau']
-            #print(dat.keys())
-            #self.time_values = dat['time_value']
 
             self.shards=dat['shards']
             for pn in range(self.PART_NUM):
                 temp_particle=pf.probit_sin_wave_particle( 
                     np.array(dat['b'][0]), dat['B'], dat['Tau_inv_std'], (self.rank, pn)
                 )
-                temp_particle.set_N(self.N)
                 temp_particle.set_shard_number(self.shards)
                 self.particle_list.append(temp_particle)
         else:
@@ -53,57 +33,26 @@ class particle_filter:
 
     def run_particle_filter(self):
         #single interation of P particles
+        
         self.not_norm_wts=np.ones(self.PART_NUM)
-        if self.model=="probit":
+                
+        for n in range(len(self.unique_time_values)):
+            
             for pn in range(self.PART_NUM):
-                #update particle
-                self.particle_list[pn].update_particle(self.X, self.Y)
-                self.not_norm_wts[pn]=particle_list[pn].evaluate_likelihood(self.X, self.Y)
-        if self.model=="probit_sin_wave":
-            #x_keys = self.data_keys
-            #y_keys = self.data_keys
 
-            #print("range(len(self.unique_time_values))=",range(len(self.unique_time_values)))
-            #print("self.unique_time_values = ", self.unique_time_values)
-            for n in range(len(self.unique_time_values)):
-                #n_check_point = np.floor(len(self.unique_time_values)*0.10)
-                #if n % n_check_point ==0:
-                #    print("n=",n, "     ", "self.N=", self.N)
-                #    print(str(100*n/self.N)+"% of total file complete...")
-                #    print(str(100*n/len(self.unique_time_values))+"% of shard complete...")
+                row_index = self.time_values == self.unique_time_values[n]
+                
+                XtXpre = self.X[row_index,:]
+                XtX = XtXpre.transpose().dot(XtXpre)
+                self.particle_list[pn].update_particle_importance(
+                    XtX,
+                    self.X[row_index,:],
+                    self.Y[row_index],
+                    self.unique_time_values[n]
+                )
+                self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[row_index,:], self.Y[row_index])
 
-                for pn in range(self.PART_NUM):
-                    if self.sample_method=='importance':
-                        row_index = self.time_values == self.unique_time_values[n]
-                        #print("in particle filter")
-                        #print("row_index=",row_index)
-                        #print("len(self.time_values) = ", len(self.time_values))
-                        #print("self.unique_time_values[n] = ", self.unique_time_values[n])
-                        #print("self.X.shape = ", self.X.shape)
-                        #print("len(row_index)=", len(row_index) )
-                        #print("self.X[:5,:] = ", self.X[:5,:])
-                        
-                        #print("self.X[row_index,:].head()=", self.X[row_index,:].head())
-                        #print("self.Y[row_index]=",self.Y[row_index])
-                        #print("x_keys", x_keys)
-                        #print("n=", n)
-
-                        #print("x_keys[n]=", x_keys[n])
-                        #print(int(x_keys[n].split(":")[0]))
-                        XtXpre = self.X[row_index,:]
-                        XtX = XtXpre.transpose().dot(XtXpre)
-                        self.particle_list[pn].update_particle_importance(
-                            XtX,
-                            self.X[row_index,:],
-                            self.Y[row_index],
-                            #int(x_keys[n].split(":")[0]),
-                            self.unique_time_values[n]
-                        )
-                        self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[row_index,:], self.Y[row_index])
-                    else:
-                        self.particle_list[pn].update_particle(self.X[n,:], self.Y[n], n)
-                        self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[n,:], self.Y[n])
-                self.shuffle_particles()
+            self.shuffle_particles()
         return
 
     def shuffle_particles(self):
@@ -168,17 +117,13 @@ class particle_filter:
         self.run_number = run_number
         self.X = dat['X_matrix']
         self.Y = dat['Y']
-        #self.data_keys=dat['data_keys']
 
         self.time_values = dat['time_value']
         self.unique_time_values = np.unique(self.time_values)
         self.all_shard_unique_time_values = dat['all_shard_unique_time_values']
-        #bo_list_row_size = int(1+max(self.time_values)) - int(min(self.time_values))
-        #print("MAX = ", int(1+max(self.time_values)))
-        #print("MIN = ", int(min(self.time_values)))
 
         for pn in range(self.PART_NUM):
-            self.particle_list[pn].set_bo_list(self.all_shard_unique_time_values)#self.unique_time_values)
+            self.particle_list[pn].set_bo_list(self.all_shard_unique_time_values)
             self.particle_list[pn].this_time = 0
 
     def update_params(self, updated_params):
@@ -268,9 +213,10 @@ class particle_filter:
         return temp_all_parts
 
     def collect_params(self):
-        self.params_to_ship = np.zeros((self.PART_NUM, self.p))
-        for pn in range(self.PART_NUM):
-            self.params_to_ship[pn,:] = self.particle_list[pn].bo
+        #list comprehention form: new_list = [expression for member in iterable]
+        output = [particle.bo for particle in self.particle_list]
+        self.params_to_ship = np.reshape(output, (self.PART_NUM, self.p))
+        
 
     def collect_history_ids(self):
         self.machine_history_ids_to_ship = np.zeros((self.PART_NUM))

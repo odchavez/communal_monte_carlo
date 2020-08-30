@@ -1,3 +1,6 @@
+"""
+run with: python run_simulate_data.py --N_total 6000 --Epoch_N 1200 --predictor_N 2 --N_per_tic 30 --GP 1 --GP_version 0
+"""
 import argparse
 import simulate_data as sd
 

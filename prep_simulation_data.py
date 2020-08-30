@@ -3,13 +3,21 @@ import numpy as np
 
 
 class prep_data:
-    def __init__(self, params, path):
-
+    def __init__(self):
+        self.starting_index = 0
+        return
+    
+    def load_new_data(self, params, path, shard_subset=None):
         self.model=params['model']
 
         if self.model== "probit_sin_wave":
-            loaded_df = pd.read_csv(path, low_memory=False, index_col=0)
-            #print("loaded_df.shape = ", loaded_df.shape)
+            if shard_subset is not None:
+                loaded_df = pd.read_csv(path, low_memory=False, index_col=0).iloc[shard_subset, :]
+            else:
+                loaded_df = pd.read_csv(path, low_memory=False, index_col=0)
+                
+            loaded_df = loaded_df.reset_index(drop=True)
+            #print(loaded_df.shape)
             #print("loaded_df.head() = ", loaded_df.head())
             test_cols = loaded_df.columns
             full_de_mat = loaded_df.loc[:,test_cols[-params['p_to_use']:]]
@@ -56,134 +64,129 @@ class prep_data:
             self.B=full_de_mat.Bo_std.iloc[0]
             self.Tau_inv_std = full_de_mat.Tau_inv_std.iloc[0]
 
-            output = {}
-            for m in range(self.shards):
-                output["shard_"+str(m)]     ={}
-                output["shard_"+str(m)]['Y']=np.zeros(self.N)#{}
-                output["shard_"+str(m)]['data_keys']=list()
-                output["shard_"+str(m)]['time_value']=list()
-
-            epoch_output = {}
-            for ep in range(self.epoch_number):
-                epoch_output["epoch"+str(ep)]={}
-                for m in range(self.shards):
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]     ={}
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y']=np.zeros(self.N)
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['data_keys']=list()
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['time_value']=list()
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X_matrix']=np.zeros(
-                        (
-                            full_de_mat_X.shape[0],
-                            len(self.predictor_names)
-                        )
-                    )
-
-            data_index=0
-            epoch_counter=0
-            for i in range(self.N):
-                key=str(i)+":"+str(data_index)
-                all_key=str(i)+":"+str(i)
-                self.data_keys.append(all_key)
-                if self.randomize_shards == 0:
-                    s="shard_"+str(i%self.shards)
-                else:
-                    s = "shard_"+str(np.random.randint(0,self.shards))
-
-                temp_X = np.array(full_de_mat_X.iloc[i]).astype(np.float64)
-                self.Y[i]           = np.zeros(self.N_batch)
-                self.X_matrix[i,:] = temp_X
-                output[s]['Y'][i] = np.zeros(self.N_batch)
-                output[s]['data_keys'].append(key)
-                output[s]['time_value'].append(float(full_de_mat['time'].iloc[i]))
-
-                output[s]['Y'][i] = self.Y[i] = np.float(full_de_mat['y'].iloc[i])#1
-
-                if i not in self.epoch_at:
-                    epoch_output["epoch"+str(epoch_counter)][s]['X_matrix'][i,:] = temp_X
-                    epoch_output["epoch"+str(epoch_counter)][s]['Y'][i]=self.Y[i]
-                    epoch_output["epoch"+str(epoch_counter)][s]['data_keys'].append(key)
-                    epoch_output["epoch"+str(epoch_counter)][s]['time_value'].append(float(full_de_mat['time'].iloc[i]))
-                else:
-                    for m in range(self.shards):
-                        epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['Y'][i] = self.Y[i]
-                        epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['data_keys'].append(all_key)
-                        epoch_output["epoch"+str(epoch_counter)]["shard_"+str(m)]['time_value'].append(float(full_de_mat['time'].iloc[i]))
-
-                    epoch_counter+=1
-
-                if i%self.shards == self.shards-1:
-                    data_index+=1
-
-            tttemp=np.max([100,self.N_batch])
-            self.X_oos=np.random.uniform(-1,1,self.p*tttemp).reshape((tttemp,self.p))
-
-            for m in range(self.shards):
-                output["shard_"+str(m)]['N'] = self.N
-                output["shard_"+str(m)]['b'] = self.b
-                output["shard_"+str(m)]['B'] = self.B
-                output["shard_"+str(m)]['p'] = self.p
-                output["shard_"+str(m)]['Tau_inv_std'] = self.Tau_inv_std
-                output["shard_"+str(m)]['model'] = self.model
-                output["shard_"+str(m)]['shards']=self.shards
-
-            for ep in range(self.epoch_number):
-                epoch_output["epoch"+str(ep)]['parallel_shards']    = self.shards
-                epoch_output["epoch"+str(ep)]['b']                  = self.b
-                epoch_output["epoch"+str(ep)]['B']                  = self.B
-                epoch_output["epoch"+str(ep)]['Tau_inv_std']            = self.Tau_inv_std
-                epoch_output["epoch"+str(ep)]['all_shard_unique_time_values'] = all_shard_unique_time_values
-
-                for m in range(self.shards):
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['N']      = self.N
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['b']      = self.b
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['B']      = self.B
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Tau_inv_std']      = self.Tau_inv_std
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['model']  = self.model
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['shards'] =self.shards
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['all_shard_unique_time_values'] = all_shard_unique_time_values
-
-                    keep_rows_index = np.sum(epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X_matrix'], axis=1)!=0
-
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['predictors'] = self.predictor_names
-                    if 'time' in self.predictor_names:
-
-                        epoch_output["epoch"+str(ep)]["shard_"+str(m)]['time'] = (
-                            epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X_matrix'][keep_rows_index,-1]
-                        )
-
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['p'] = self.p
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X_matrix'] = (
-                        epoch_output["epoch"+str(ep)]["shard_"+str(m)]['X_matrix'][keep_rows_index,:]
-                    )
-                    epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y'] = (
-                        epoch_output["epoch"+str(ep)]["shard_"+str(m)]['Y'][keep_rows_index]
-                    )
-                    
-            #print("self.X_matrix.shape = ", self.X_matrix.shape)
-            self.output=output
-            self.output['epoch_data']=epoch_output
-            self.output['X_matrix']=self.X_matrix
-            self.output['Y']=self.Y
-            self.output['N']=self.N
-            self.output['b']=self.b
-            self.output['B']=self.B
-            self.output['p']=self.p
-            self.output['Tau_inv_std']=self.Tau_inv_std
-            self.output['b_oos']=self.b_oos
-            self.output['X_oos']=self.X_oos
-            self.output['batch_number']=self.N_batch
-            self.output['model']=self.model
-            self.output['shards']=1
-            self.output['parallel_shards']=self.shards
-            self.output['data_keys']=self.data_keys
-            self.output['predictors']=self.predictor_names
-            self.output['all_shard_unique_time_values'] = all_shard_unique_time_values
-
+            self.shard_output = {}
+            self.shard_output['Y'] = self.Y
+            self.shard_output['time_value'] = full_de_mat['time'].astype(float)
+            self.shard_output['X_matrix'] = full_de_mat[self.predictor_names].values
+            self.shard_output['N'] = self.N
+            self.shard_output['b'] = self.b
+            self.shard_output['B'] = self.B
+            self.shard_output['Tau_inv_std'] = self.Tau_inv_std
+            self.shard_output['model'] = self.model
+            self.shard_output['shards'] = self.shards
+            self.shard_output['all_shard_unique_time_values'] = all_shard_unique_time_values
+            self.shard_output['predictors'] = self.predictor_names
+            self.shard_output['p'] = self.p
+    
     def get_data(self):
-        return(self.output)
+        
+        return(self.shard_output)
+    
+    def format_for_scatter(self, epoch, f_rank):
+        return(self.shard_output)
 
-    def format_for_scatter(self, epoch):
-        output = []
-        for m in range(self.shards):
-            output.append(self.output['epoch_data']["epoch"+str(epoch)]["shard_"+str(m)])
-        return(output)
+    def determin_shard_subsets(self, data_path, size ):
+    
+        loaded_df = pd.read_csv(data_path, low_memory=False, index_col=0)
+        loaded_df = loaded_df.reset_index(drop=True)
+        #loaded_df = loaded_df.set_index(loaded_df.index.values + self.starting_index, drop= True)
+        #self.starting_index = max(loaded_df.index.values)
+        print("loaded_df.shape",loaded_df.shape) 
+        subsets_list = []
+        for i in range(size):
+            subsets_list.append(list(range(i, loaded_df.shape[0], size)))
+                                
+        return(subsets_list)
+    
+    def partition_index(self):
+        """
+        get the indecies for each shard to be used in epoch
+        """
+        shard_indecies = list()
+        if self.randomize_shards==0:
+            print("sending every ", self.shards, " observation to each shard")
+            print("data size:", self.shard_output['X_matrix'].shape)
+            for rank_i in range(self.shards):
+                shard_indecies.append(list(range(rank_i, self.N, self.shards)))
+            
+        else:
+            print("randomizing data to each shard...but don't worry it will stay in order of time")
+            
+        return shard_indecies
+            
+            
+            
+            
+def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
+
+    """
+    args:
+        files_to_process list of file names where files are data for model
+        file stem (str): path stem for writing results
+        Epoch_N int : how many observations to process accross all shards before communicating.
+        
+    returns epoch_files_to_process which is a list of strings where each string is a path to a file containing data for one epoch each containing Epoch_N observations.  It's possible there is "leftover data" at the end in which case there will be another epoach < Epoch_N  
+    
+    create the files needed from files_to_process that are of size Epoch_N
+    """
+
+    epoch_files_to_process = list()
+    
+    
+    epoch_counter = 0
+    left_over_data = None
+    for ftp in range(len(files_to_process)):
+        #load data
+        file_data = pd.read_csv(files_to_process[ftp], index_col=0)
+        if left_over_data is not None:
+            file_data = left_over_data.append(file_data)
+        file_data = file_data.reset_index(drop=True)
+        #check how many epochs will fit in file
+        epochs_in_file = int(np.floor(file_data.shape[0]/Epoch_N))
+        if epochs_in_file >=1:
+            start = 0
+            end = Epoch_N
+            for eif in range(epochs_in_file):
+                
+                if 'time' in file_data.columns:
+                    temp_index = np.max(file_data.iloc[:end].index.values)
+                    current_time = file_data.time[temp_index]
+                    df_temp=file_data[file_data.time == current_time]
+                    max_index = np.max(df_temp.index.values)
+
+                    if max_index > end:
+                        end = max_index+1
+    
+                data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter)+ '_'+ code + '.csv'
+                output = file_data.iloc[start:end, :]
+                output = output.reset_index(drop=True)
+                if output.shape[0] >= Epoch_N:
+                    output.to_csv(data_path)
+                    print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape)
+                    epoch_files_to_process.append(data_path)
+                    epoch_counter+=1
+                start=end
+                end=end+Epoch_N
+                
+                if (end > file_data.shape[0]) and (start < file_data.shape[0]):
+                    left_over_data = file_data.iloc[start:end, :]
+                else:
+                    left_over_data = None
+                    
+        elif epochs_in_file == 0:
+            left_over_data = file_data
+
+    if left_over_data is not None:
+        data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter)+ '_'+ code + '.csv'
+        output = left_over_data
+        output = output.reset_index(drop=True)
+        output.to_csv(data_path)
+        print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape)
+        epoch_files_to_process.append(data_path)
+        
+    return epoch_files_to_process
+            
+            
+            
+            
+            

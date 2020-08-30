@@ -90,7 +90,7 @@ class probit_sin_wave_particle:
     def copy_particle_values(self, not_this_particle):
         self.bo=not_this_particle.bo.copy()
         self.particle_id_history=not_this_particle.particle_id_history #[0]
-        self.N=not_this_particle.N
+        #self.N=not_this_particle.N
 
     def print_vals(self):
         print(self.bo)
@@ -99,7 +99,7 @@ class probit_sin_wave_particle:
         print("particle_id_history=",self.particle_id_history)
         print(self.Bo_inv)
         print(self.B_cov)
-        print(self.N)
+        #print(self.N)
         print("self.bo_list=",self.bo_list)
 
     def print_max(self):
@@ -112,7 +112,7 @@ class probit_sin_wave_particle:
                 ,(np.amax( self.XtX ))
                 ,(np.amax( self.B_cov ))
                 ,(np.amax( self.Bo_inv))
-                ,(np.amax( self.N ))
+                #,(np.amax( self.N ))
                 ,(np.amax( self.bo_list ))
                 ,(np.amax( self.Bo_suf_stat ))
                 ,(np.amax( self.log_lik ))

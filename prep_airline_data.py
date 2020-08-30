@@ -8,7 +8,8 @@ class prep_data:
         self.model=params['model']
 
         if self.model== "probit_sin_wave":
-            loaded_df = pd.read_hdf(path)[f_rank::params['shards']]
+            print("working: ", path)
+            loaded_df = pd.read_csv(path)[f_rank::params['shards']]
             loaded_df = loaded_df.reset_index(drop=True)
             #print("loaded_df.shape = ", loaded_df.shape)
             #print("loaded_df.head() = ", loaded_df.head())
