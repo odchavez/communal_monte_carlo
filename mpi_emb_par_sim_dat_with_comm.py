@@ -21,7 +21,7 @@ import prep_simulation_data
 import history
 import params
 import pf_plots
-from files_to_process.files_to_process import files_to_process
+from files_to_process import files_to_process
 
 np.set_printoptions(suppress=True)
 np.set_printoptions(threshold=sys.maxsize)
