@@ -9,7 +9,7 @@ shard_number = [60]
 Xy_N=6000
 N_Epoch = [30,150,300,600,1200]
 Nt = [30]
-p = [8, 16] #p=2 is complete
+p = [2, 8, 16] 
 GP_version = list(range(10))
 part_num = [20, 100, 1000]
 predictors = [
@@ -27,16 +27,6 @@ big_results_dict = af.prep_big_results_dict(
     f_part_num = part_num,
     f_predictors = predictors
 )
-
-#print("number of entries in prep_big_results_dict = ", len(big_results_dict))
-#keys = big_results_dict.keys()
-#for k in keys:
-#    print(k)
-#    if len(big_results_dict[k].wi_comm_list)==0:continue
-#    print(big_results_dict[k].last_avg_lik_diff +  big_results_dict[k].last_std_err_lik_diff)
-#    print(big_results_dict[k].last_avg_lik_diff )
-#    print(big_results_dict[k].last_avg_lik_diff -  big_results_dict[k].last_std_err_lik_diff)
-#    print("")
 
 ###########################
 #          p=2
