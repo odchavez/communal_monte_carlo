@@ -28,15 +28,6 @@ big_results_dict = af.prep_big_results_dict(
     f_predictors = predictors
 )
 
-#print("number of entries in prep_big_results_dict = ", len(big_results_dict))
-#keys = big_results_dict.keys()
-#for k in keys:
-#    print(k)
-#    if len(big_results_dict[k].wi_comm_list)==0:continue
-#    print(big_results_dict[k].last_avg_lik_diff +  big_results_dict[k].last_std_err_lik_diff)
-#    print(big_results_dict[k].last_avg_lik_diff )
-#    print(big_results_dict[k].last_avg_lik_diff -  big_results_dict[k].last_std_err_lik_diff)
-#    print("")
 
 ###########################
 #          p=2
