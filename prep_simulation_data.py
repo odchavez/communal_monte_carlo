@@ -104,8 +104,8 @@ class prep_data:
         """
         shard_indecies = list()
         if self.randomize_shards==0:
-            print("sending every ", self.shards, " observation to each shard")
-            print("data size:", self.shard_output['X_matrix'].shape)
+            #print("sending every ", self.shards, " observation to each shard")
+            #print("data size:", self.shard_output['X_matrix'].shape)
             for rank_i in range(self.shards):
                 shard_indecies.append(list(range(rank_i, self.N, self.shards)))
             

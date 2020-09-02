@@ -124,6 +124,13 @@ def get_args():
         default=""
 
     )
+    parser.add_argument(
+        '--communicate', type=int,
+        help='communicate and end of each epoch if 1 else 0 (embarrasingly parrallel).',
+        required=False,
+        default=1
+
+    )
     return parser.parse_args()
 
 
@@ -184,6 +191,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         '_' + output_stem + 
         '_part_num=' + str(args.particles_per_shard) +
         '_exp_num=' + args.experiment_number + 
+        '_communicate=' + str(True if args.communicate == 1 else False) +
         '.csv')
     
     data_path = epoch_files_to_process[fn]
@@ -232,6 +240,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         run_number+=1
         shard_pfo.update_data(shard_data, run_number)
 
+        print("Epoch: ", run_number, "at rank:", rank)
         particle_filter_run_time -= time.time()
         shard_pfo.run_particle_filter()
         particle_filter_run_time +=time.time()
@@ -239,9 +248,10 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         if args.keep_history:
             shard_pfo.write_bo_list(name_stem.code)
 
-        #  IF COMMUNICATE == TRUE: RUN THE CODE BELOW
-        communicate = True #  this can be set to a function if smarter communication strategies are implemented.
-        if communicate == True:
+        #  IF COMMUNICATE == TRUE (1): RUN THE CODE BELOW
+        #print("len(epoch_files_to_process)=", len(epoch_files_to_process))
+        if (args.communicate == 1) or (fn == len(epoch_files_to_process)-1):
+            print("communicating...")
             comm_time_gather_particles-=time.time()
             shard_pfo.collect_params() # logging should be outside of timing
             all_shard_params = comm.gather(shard_pfo.params_to_ship, root=0)
@@ -306,6 +316,7 @@ comm_time_gather_particles_all  = str(comm.gather(comm_time_gather_particles, ro
 comm_time_scatter_particles_all = str(comm.gather(comm_time_scatter_particles, root=0))
     
 if rank == 0:
+    shuffled_particles = (embarrassingly_parallel.shuffel_embarrassingly_parallel_params(all_shard_params))
     output_shuffled_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles)
     stats_results_file = pd.DataFrame(
         {
