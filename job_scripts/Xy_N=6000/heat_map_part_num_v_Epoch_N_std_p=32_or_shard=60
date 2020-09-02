@@ -42,5 +42,6 @@
 # Launch MPI code...
 # Use ibrun instead of mpirun or mpiexec
 ibrun python analyze_results_Xy_N=6000_std_p=32_or_shard=60.py
+
 # ---------------------------------------------------
 
