@@ -160,6 +160,7 @@ class analyze_run:
         else:
             self.Betas_in_columns = self.get_params_from_results_no_comm(f_path)
         #print(3)
+        #print("self.Betas_in_columns = ", self.Betas_in_columns)
         self.beta_i_avg = self.get_beta_i_avg(self.Betas_in_columns)
         #print(3.1)
         self.beta_i_var = self.get_beta_i_var(self.Betas_in_columns)
@@ -269,14 +270,25 @@ class analyze_run:
     
     def get_params_from_results_with_comm(self, path):
         #print("in get_params_from_results_with_comm")
+        #print("path = ", path)
+        results_output_top = pd.read_csv(path).tail(2).head(1)
         results_output = pd.read_csv(path).tail(1)
+        #print("results_output = ", results_output)
         #print("A")
-        results_output = results_output[results_output.start_time==np.max(results_output.start_time)]
+        #results_output = results_output[results_output.start_time==np.max(results_output.start_time)]
         #print("B")
         results_output.reset_index(inplace=True)
         #print("C")
         #print(results_output.shape)
         #print("results_output=", results_output)
+        
+        self.number_of_particles = int(results_output_top.particle_number[0])
+        self.number_of_shards = int(results_output_top['N_Node='][0])
+        self.number_of_predictors = int(results_output_top['p='][0])
+        
+        #print("self.number_of_particles =", self.number_of_particles)
+        #print("self.number_of_shards =",    self.number_of_shards  )
+        #print("self.number_of_predictors =",self.number_of_predictors )
         
         f_Betas_in_columns = list()
         if self.col == 'final_params':
@@ -285,9 +297,7 @@ class analyze_run:
                 output = list()
                 dirty_list = results_output.final_params[nr].split(',')
                 
-                self.number_of_particles = int(results_output.particle_number[nr])
-                self.number_of_shards = int(results_output.shards[nr])
-                self.number_of_predictors = int(results_output['p='][nr])
+                
                 for i in range(len(dirty_list)):
                     single_particle_params = re.findall(r'-?\d+\.?\d*',dirty_list[i])
                     if len(single_particle_params)==0: 
@@ -299,63 +309,11 @@ class analyze_run:
                         (self.number_of_particles*self.number_of_shards,self.number_of_predictors)
                     ).T
                 )
-        #if self.col == 'pre_shuffel_params':
-        #    print("enter pre_shuffel_params")
-        #    for nr in range(len(results_output.pre_shuffel_params)):
-        #        output = list()
-        #        dirty_list = results_output.pre_shuffel_params[nr].split(',')
-        #        
-        #        self.number_of_particles = int(results_output.particle_number[nr])
-        #        self.number_of_shards = int(results_output.shards[nr])
-        #        self.number_of_predictors = int(results_output['p='][nr])
-        #        for i in range(len(dirty_list)):
-        #            single_particle_params = re.findall(r'-?\d+\.?\d*',dirty_list[i])
-        #            if len(single_particle_params)==0: 
-        #                continue
-        #            test_list = list(map(float, single_particle_params))[0] 
-        #            output.append(test_list)
-        #        f_Betas_in_columns.append(
-        #            np.array(output).reshape(
-        #                (self.number_of_particles*self.number_of_shards,self.number_of_predictors)
-        #            ).T
-        #        )
-        #if self.col == 'post_shuffel_params':
-        #    print("enter post_shuffel_params")
-        #    for nr in range(len(results_output.post_shuffel_params)):
-        #        print("for nr in range(len(results_output.post_shuffel_params)):")
-        #        output = list()
-        #        print("    A")
-        #        dirty_list = results_output.post_shuffel_params[nr].split(',')
-        #        print("    B")
-        #        self.number_of_particles = int(results_output.particle_number[nr])
-        #        print("self.number_of_particles=", self.number_of_particles)
-        #        self.number_of_shards = int(results_output.shards[nr])
-        #        print("self.number_of_shards=", self.number_of_shards)
-        #        self.number_of_predictors = int(results_output['p='][nr])
-        #        print("self.number_of_predictors=", self.number_of_predictors)
-        #        print("    C")
-        #        for i in range(len(dirty_list)):
-        #            print("for i in range(len(dirty_list)):")
-        #            single_particle_params = re.findall(r'-?\d+\.?\d*',dirty_list[i])
-        #            print("    D")
-        #            if len(single_particle_params)==0:
-        #                print("if len(single_particle_params)==0:")
-        #                continue
-        #            print("    E")
-        #            test_list = list(map(float, single_particle_params))[0] 
-        #            print("    F")
-        #            output.append(test_list)
-        #            print("    G")
-        #        f_Betas_in_columns.append(
-        #            np.array(output).reshape(
-        #                (self.number_of_particles*self.number_of_shards,self.number_of_predictors)
-        #            ).T
-        #        )
-        #        print("    H")
         #print("number of time epochs = " , len(f_Betas_in_columns))
         #print("number of predictors = ", len(f_Betas_in_columns[0]))
         #print("number of particles accorss allshards = ", len(f_Betas_in_columns[0][0]))
         #print(f_Betas_in_columns[0].shape)
+        #print("exit get_params_from_results_with_comm")
         return f_Betas_in_columns
     
     
@@ -394,6 +352,7 @@ class analyze_run:
     
     def get_beta_i_avg(self, f_Betas_in_columns):
         #print("in get_beta_i_avg(self, f_Betas_in_columns)")
+        #print("f_Betas_in_columns:, ", f_Betas_in_columns)
         #print("len(f_Betas_in_columns)", len(f_Betas_in_columns))
         #print("len(f_Betas_in_columns[0])", len(f_Betas_in_columns[0]))
         #print("len(f_Betas_in_columns[0][0])", len(f_Betas_in_columns[0][0]))
