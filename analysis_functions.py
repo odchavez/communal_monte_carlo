@@ -195,6 +195,9 @@ class analyze_run:
         _, self.comm_time_scatter_particles, self.run_time =  self.time_cleaner(
             path=f_path, column_name = "comm_time_scatter_particles"
         )
+        _, self.comm_time_scatter_data, self.run_time =  self.time_cleaner(
+            path=f_path, column_name = "comm_time_scatter_data"
+        )
         #print(9)
         
         self.particle_history_ids = self.id_cleaner(path=f_path, column_name='particle_history_ids')
@@ -785,7 +788,8 @@ class analysis_obj:
             self.adjusted_run_time_array[i] = (
                 self.wi_comm_list[i].run_time - 
                 self.wi_comm_list[i].comm_time_gather_particles - 
-                self.wi_comm_list[i].comm_time_scatter_particles
+                self.wi_comm_list[i].comm_time_scatter_particles - 
+                self.wi_comm_list[i].comm_time_scatter_data
             )
         
         self.mean_run_time = np.mean(self.run_time_array)
