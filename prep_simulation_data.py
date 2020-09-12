@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import random
 
 
 class prep_data:
@@ -110,8 +111,15 @@ class prep_data:
                 shard_indecies.append(list(range(rank_i, self.N, self.shards)))
             
         else:
-            print("randomizing data to each shard...but don't worry it will stay in order of time")
-            
+            print("randomizing data to each shard...but don't worry shard data will stay in order of time")
+            list_in = list(range(self.N))
+            random.shuffle(list_in)
+            for rank_i in range(self.shards):
+                index_list = list(range(rank_i, self.N, self.shards))
+                subset = [list_in[il] for il in index_list]
+                subset.sort()
+                shard_indecies.append(subset)
+                print("Rank: ", rank_i, " gets:", subset)
         return shard_indecies
             
             
