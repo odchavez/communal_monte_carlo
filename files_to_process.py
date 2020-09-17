@@ -650,4 +650,11 @@ files_to_process = {
         "data/HENSMAN_X_2013_October_30.csv",
         #"HENSMAN_X_2013_October_31",
     ],
+    "synth_data/Xy_N=6000_Epoch_N=1200_Nt=2_p=2/GP_version=0": [
+        "synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=32/GP_version=0/fn=0.csv",
+        "synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=32/GP_version=0/fn=1.csv",
+        "synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=32/GP_version=0/fn=2.csv",
+        "synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=32/GP_version=0/fn=3.csv",
+        "synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=32/GP_version=0/fn=4.csv",
+    ],
 }

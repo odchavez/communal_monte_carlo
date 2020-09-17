@@ -220,7 +220,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         comm_time_scatter_data += time.time()
         #print("rank ", rank, "running...")
 
-    if first_time and exists:
+    if first_time and exists and (len(shard_data_indices)>0):
         first_time = False
 
         shard_pfo = particle_filter.particle_filter(
@@ -236,7 +236,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
             name_stem_orig = None
         name_stem = comm.bcast(name_stem_orig, root=0)
 
-    if exists:
+    if exists and (len(shard_data_indices)>0):
         run_number+=1
         shard_pfo.update_data(shard_data, run_number)
 

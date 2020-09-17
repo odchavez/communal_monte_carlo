@@ -111,14 +111,20 @@ class prep_data:
                 shard_indecies.append(list(range(rank_i, self.N, self.shards)))
             
         else:
+            for rank_i in range(self.shards):
+                shard_indecies.append(list())
             print("randomizing data to each shard...but don't worry shard data will stay in order of time")
             list_in = list(range(self.N))
             random.shuffle(list_in)
-            for rank_i in range(self.shards):
+            shards_list = list(range(1,self.shards))
+            
+            random.shuffle(shards_list)
+            shards_list.insert(0,0)
+            for rank_i in shards_list:
                 index_list = list(range(rank_i, self.N, self.shards))
                 subset = [list_in[il] for il in index_list]
                 subset.sort()
-                shard_indecies.append(subset)
+                shard_indecies[rank_i] = subset
                 print("Rank: ", rank_i, " gets:", subset)
         return shard_indecies
             
