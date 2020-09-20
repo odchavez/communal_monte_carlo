@@ -62,7 +62,7 @@ class prep_data:
 
             self.b=np.zeros((self.N,self.p))
             self.b_oos=np.zeros((1,self.p))
-            print("############################### LOOK HERE ################################ prep_simulation_data.py line 65
+            print("############################### LOOK HERE ################################ prep_simulation_data.py line 65")
             print("full_de_mat.Bo_std = ", full_de_mat.Bo_std)
             print("full_de_mat.Tau_inv_std = " full_de_mat.Tau_inv_std)
             self.B=full_de_mat.Bo_std.iloc[0]
