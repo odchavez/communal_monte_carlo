@@ -1,5 +1,12 @@
 files_to_process = {
     # p=2
+    "synth_data/Xy_N=6000_Epoch_N=1200_Nt=1_p=2/GP_version=0": [
+        "synth_data/Xy_N=6000_Epoch_N=1200_Nt=1_p=2/GP_version=0/fn=0.csv",
+        "synth_data/Xy_N=6000_Epoch_N=1200_Nt=1_p=2/GP_version=0/fn=1.csv",
+        "synth_data/Xy_N=6000_Epoch_N=1200_Nt=1_p=2/GP_version=0/fn=2.csv",
+        "synth_data/Xy_N=6000_Epoch_N=1200_Nt=1_p=2/GP_version=0/fn=3.csv",
+        "synth_data/Xy_N=6000_Epoch_N=1200_Nt=1_p=2/GP_version=0/fn=4.csv",
+    ],
     "synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=2/GP_version=0": [
         "synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=2/GP_version=0/fn=0.csv",
         "synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=2/GP_version=0/fn=1.csv",

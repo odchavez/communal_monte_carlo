@@ -12,10 +12,10 @@ class prep_data:
         self.model=params['model']
 
         if self.model== "probit_sin_wave":
-            if shard_subset is not None:
-                loaded_df = pd.read_csv(path, low_memory=False, index_col=0).iloc[shard_subset, :]
-            else:
-                loaded_df = pd.read_csv(path, low_memory=False, index_col=0)
+            #if shard_subset is not None:
+            #    loaded_df = pd.read_csv(path, low_memory=False, index_col=0).iloc[shard_subset, :]
+            #else:
+            loaded_df = pd.read_csv(path, low_memory=False, index_col=0)
                 
             loaded_df = loaded_df.reset_index(drop=True)
             #print(loaded_df.shape)
@@ -52,7 +52,7 @@ class prep_data:
             self.epoch_at=params['epoch_at']
             self.epoch_number=len(self.epoch_at)
             self.randomize_shards = params['randomize_shards']
-            self.Y=np.zeros(self.N)
+            #self.Y=np.zeros(self.N)
             self.X_matrix=np.zeros(
                 (full_de_mat_X.shape[0],
                  len(self.predictor_names)
@@ -69,9 +69,9 @@ class prep_data:
             self.Tau_inv_std = full_de_mat.Tau_inv_std.iloc[0]
 
             self.shard_output = {}
-            self.shard_output['Y'] = self.Y
+            #self.shard_output['Y'] = self.Y
             self.shard_output['time_value'] = full_de_mat['time'].astype(float)
-            self.shard_output['X_matrix'] = full_de_mat[self.predictor_names].values
+            #self.shard_output['X_matrix'] = full_de_mat[self.predictor_names].values
             self.shard_output['N'] = self.N
             self.shard_output['b'] = self.b
             self.shard_output['B'] = self.B
@@ -81,7 +81,12 @@ class prep_data:
             self.shard_output['all_shard_unique_time_values'] = all_shard_unique_time_values
             self.shard_output['predictors'] = self.predictor_names
             self.shard_output['p'] = self.p
-    
+            if shard_subset is not None:
+                self.shard_output['X_matrix'] = full_de_mat.loc[shard_subset, self.predictor_names].values
+                self.shard_output['Y'] = full_de_mat.loc[shard_subset, "y"].values
+            else:
+                self.shard_output['X_matrix'] = full_de_mat.loc[:, self.predictor_names].values
+                self.shard_output['Y'] = full_de_mat.loc[:, "y"].values
     def get_data(self):
         
         return(self.shard_output)

@@ -220,7 +220,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         comm_time_scatter_data += time.time()
         #print("rank ", rank, "running...")
 
-    if first_time and exists and (len(shard_data_indices)>0):
+    if first_time and exists:# and (len(shard_data_indices)>0):
         first_time = False
 
         shard_pfo = particle_filter.particle_filter(
@@ -236,7 +236,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
             name_stem_orig = None
         name_stem = comm.bcast(name_stem_orig, root=0)
 
-    if exists and (len(shard_data_indices)>0):
+    if exists:# and (len(shard_data_indices)>0):
         run_number+=1
         shard_pfo.update_data(shard_data, run_number)
 
@@ -251,19 +251,26 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         #  IF COMMUNICATE == TRUE (1): RUN THE CODE BELOW
         #print("len(epoch_files_to_process)=", len(epoch_files_to_process))
         if (args.communicate == 1) or (fn == len(epoch_files_to_process)-1):
-            print("communicating...")
+            print("communicating 111...")
             comm_time_gather_particles-=time.time()
+            print("A")
             shard_pfo.collect_params() # logging should be outside of timing
+            print("B")
             all_shard_params = comm.gather(shard_pfo.params_to_ship, root=0)
+            print("C")
             if rank == 0:
+                print("D")
                 shuffled_particles = (embarrassingly_parallel.shuffel_embarrassingly_parallel_params(all_shard_params))
             else:
+                print("E")
                 shuffled_particles = None
+            print("F")
             comm_time_gather_particles+=time.time()
             
             #  IF RECORD KEEPING AND NOT JUST FITTING: RUN THIS CODE
             record_keeping = False #  record_keeping can be set to true via args to track particles, etc.
             if record_keeping == True:
+                print("G")
                 shard_pfo.collect_history_ids() # logging should be outside of timing
                 all_shard_particle_history_ids = comm.gather(shard_pfo.particle_history_ids_to_ship, root=0)
                 all_shard_machine_history_ids  = comm.gather(shard_pfo.machine_history_ids_to_ship, root=0)

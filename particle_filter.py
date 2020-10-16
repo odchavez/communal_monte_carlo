@@ -215,7 +215,10 @@ class particle_filter:
     def collect_params(self):
         #list comprehention form: new_list = [expression for member in iterable]
         output = [particle.bo for particle in self.particle_list]
-        self.params_to_ship = np.reshape(output, (self.PART_NUM, self.p))
+        if len(output)>0:
+            self.params_to_ship = np.reshape(output, (self.PART_NUM, self.p))
+        else:
+            self.params_to_ship = []
         
 
     def collect_history_ids(self):
