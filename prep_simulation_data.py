@@ -88,7 +88,7 @@ class prep_data:
     
         loaded_df = pd.read_csv(data_path, low_memory=False, index_col=0)
         loaded_df = loaded_df.reset_index(drop=True)
-        print("loaded_df.shape",loaded_df.shape) 
+        #print("loaded_df.shape",loaded_df.shape) 
         subsets_list = []
         for i in range(size):
             subsets_list.append(list(range(i, loaded_df.shape[0], size)))
@@ -108,7 +108,7 @@ class prep_data:
             
         else:
             for rank_i in range(self.shards):
-                print("rank ", str(rank_i))
+                #print("rank ", str(rank_i))
                 shard_indecies.append(list())
             print("randomizing data to each shard...but don't worry shard data will stay in order of time")
             list_in = list(range(self.N))
@@ -159,31 +159,45 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
             start = 0
             end = Epoch_N
             for eif in range(epochs_in_file):
-                
+                #print("################################## LOOP ITERATION BEGIN ##################################")
+                #print("iteration:"+str(eif)+"out of"+str(range(epochs_in_file)))
                 if 'time' in file_data.columns:
-                    temp_index = np.max(file_data.iloc[:end].index.values)
+                    #print("file_data.iloc[start:end]=", file_data.iloc[start:end])
+                    print("file_data.shape"+str(file_data.shape))
+                    print("start:end=", str(start)+":"+str(end))
+                    temp_index = np.max(file_data.iloc[start:end].index.values)
+                    #print("temp_index = ",str(temp_index))
                     current_time = file_data.time[temp_index]
+                    #print("current_time=",str(current_time))
                     df_temp=file_data[file_data.time == current_time]
+                    #print(df_temp)
                     max_index = np.max(df_temp.index.values)
+                    #print("max_index=",str(max_index))
 
                     if max_index > end:
+                        #print("end set in if max_index > end:")
                         end = max_index+1
     
                 data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter)+ '_'+ code + '.csv'
                 output = file_data.iloc[start:end, :]
                 output = output.reset_index(drop=True)
                 if output.shape[0] >= Epoch_N:
-                    print("in if output.shape[0] >= Epoch_N:")
-                    print(output)
+                    #print("in if output.shape[0] >= Epoch_N:")
+                    #print(output)
                     output.to_csv(data_path)
                     print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape)
                     epoch_files_to_process.append(data_path)
                     epoch_counter+=1
                 start=end
                 end=end+Epoch_N
-                
+                #print("End of Loop end:"+str(end)+"start:"+str(start))
                 if (end > file_data.shape[0]) and (start < file_data.shape[0]):
-                    left_over_data = file_data.iloc[start:end, :]
+                    #print("################################## there is left over data")
+                    left_over_data = file_data.iloc[start:, :]
+                    #print(left_over_data)
+                elif (start >= file_data.shape[0]):
+                    #print("in elif (start >= file_data.shape[0]):")
+                    break
                 else:
                     left_over_data = None
                     
@@ -194,8 +208,8 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
         data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter)+ '_'+ code + '.csv'
         output = left_over_data
         output = output.reset_index(drop=True)
-        print("in if left_over_data is not None:")
-        print(output)
+        #print("in if left_over_data is not None:")
+        #print(output)
         output.to_csv(data_path)
         print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape)
         epoch_files_to_process.append(data_path)

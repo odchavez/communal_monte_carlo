@@ -221,7 +221,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         #print("rank ", rank, "running...")
 
     if first_time and exists:# and (len(shard_data_indices)>0):
-        print("I am rank:" +str(rank))
+        #print("I am rank:" +str(rank))
         first_time = False
 
         shard_pfo = particle_filter.particle_filter(
@@ -241,7 +241,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         run_number+=1
         shard_pfo.update_data(shard_data, run_number)
 
-        print("Epoch: ", run_number, "at rank:", rank)
+        #print("Epoch: ", run_number, "at rank:", rank)
         particle_filter_run_time -= time.time()
         shard_pfo.run_particle_filter()
         particle_filter_run_time +=time.time()
@@ -252,26 +252,26 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         #  IF COMMUNICATE == TRUE (1): RUN THE CODE BELOW
         #print("len(epoch_files_to_process)=", len(epoch_files_to_process))
         if (args.communicate == 1) or (fn == len(epoch_files_to_process)-1):
-            print("communicating...")
+            #print("communicating...")
             comm_time_gather_particles-=time.time()
-            print("A")
+            #print("A")
             shard_pfo.collect_params() # logging should be outside of timing
-            print("B")
+            #print("B")
             all_shard_params = comm.gather(shard_pfo.params_to_ship, root=0)
-            print("C")
+            #print("C")
             if rank == 0:
-                print("D")
+                #print("D")
                 shuffled_particles = (embarrassingly_parallel.shuffel_embarrassingly_parallel_params(all_shard_params))
             else:
-                print("E")
+                #print("E")
                 shuffled_particles = None
-            print("F")
+            #print("F")
             comm_time_gather_particles+=time.time()
             
             #  IF RECORD KEEPING AND NOT JUST FITTING: RUN THIS CODE
             record_keeping = False #  record_keeping can be set to true via args to track particles, etc.
             if record_keeping == True:
-                print("G")
+                #print("G")
                 shard_pfo.collect_history_ids() # logging should be outside of timing
                 all_shard_particle_history_ids = comm.gather(shard_pfo.particle_history_ids_to_ship, root=0)
                 all_shard_machine_history_ids  = comm.gather(shard_pfo.machine_history_ids_to_ship, root=0)
@@ -354,7 +354,7 @@ if rank == 0:
         f_other_stats_file=params_results_file_path,
         save_history=args.save_history,
     )
-    print(epoch_files_to_process)
+    #print(epoch_files_to_process)
     for file in epoch_files_to_process:
         print("deleting: ", file)
         os.remove(file)
