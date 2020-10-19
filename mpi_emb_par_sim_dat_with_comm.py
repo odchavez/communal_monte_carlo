@@ -221,6 +221,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         #print("rank ", rank, "running...")
 
     if first_time and exists:# and (len(shard_data_indices)>0):
+        print("I am rank:" +str(rank))
         first_time = False
 
         shard_pfo = particle_filter.particle_filter(
@@ -251,7 +252,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         #  IF COMMUNICATE == TRUE (1): RUN THE CODE BELOW
         #print("len(epoch_files_to_process)=", len(epoch_files_to_process))
         if (args.communicate == 1) or (fn == len(epoch_files_to_process)-1):
-            print("communicating 111...")
+            print("communicating...")
             comm_time_gather_particles-=time.time()
             print("A")
             shard_pfo.collect_params() # logging should be outside of timing

@@ -15,34 +15,31 @@ class prep_data:
 
             loaded_df = pd.read_csv(path, low_memory=False, index_col=0)
             loaded_df = loaded_df.reset_index(drop=True)
-            #print(loaded_df.shape)
-            #print("loaded_df.head() = ", loaded_df.head())
             test_cols = loaded_df.columns
             full_de_mat = loaded_df.loc[:,test_cols[-params['p_to_use']:]]
             
             full_de_mat.time = full_de_mat.time+1
 
-            full_de_mat_X = full_de_mat.copy()###########################
+            full_de_mat_X = full_de_mat.copy()
             drop_these=[
                 "y", 'time', 'Tau_inv_std', 'Bo_std'
             ]
             self.predictor_names = [x for x in full_de_mat.columns if x not in drop_these]
-            #print("self.predictor_names = ", self.predictor_names)
-            full_de_mat_X = full_de_mat[self.predictor_names]()###########################
+            full_de_mat_X = full_de_mat[self.predictor_names]
 
             p=len(self.predictor_names)
 
-            N=full_de_mat_X.shape[0]()###########################
+            N=full_de_mat_X.shape[0]
             temp_params={
                 'p': p,
                 'b': np.zeros(p),
-                'N': N,########################
-                'epoch_at':[N],########################
+                'N': N,
+                'epoch_at':[N],
             }
 
             params.update(temp_params)
             self.p=params['p']
-            self.N=params['N']#########################
+            self.N=params['N']
             self.N_batch = params['N_batch']
             self.shards=params['shards']
             self.epoch_at=params['epoch_at']
@@ -51,17 +48,14 @@ class prep_data:
             
             self.data_keys=list()
 
-            self.b=np.zeros((self.N,self.p))################################
+            self.b=np.zeros((self.N,self.p))
             self.b_oos=np.zeros((1,self.p))
-            print("############################### LOOK HERE ################################ prep_simulation_data.py line 65")
-            print("full_de_mat.Bo_std = ", full_de_mat.Bo_std)
-            print("full_de_mat.Tau_inv_std = ", full_de_mat.Tau_inv_std)
             self.B=full_de_mat.Bo_std.iloc[0]
             self.Tau_inv_std = full_de_mat.Tau_inv_std.iloc[0]
 
             self.shard_output = {}
             self.shard_output['time_value'] = full_de_mat['time'].astype(float)
-            self.shard_output['N'] = self.N#################################
+            self.shard_output['N'] = self.N
             self.shard_output['b'] = self.b
             self.shard_output['B'] = self.B
             self.shard_output['Tau_inv_std'] = self.Tau_inv_std
@@ -75,11 +69,13 @@ class prep_data:
                 self.shard_output['Y'] = full_de_mat.loc[shard_subset, "y"].values
                 self.shard_output['all_shard_unique_time_values'] = (
                     full_de_mat.loc[shard_subset,'time'].unique())
+                self.shard_output['time_value'] = full_de_mat.loc[shard_subset,'time'].astype(float)
             else:
                 self.shard_output['X_matrix'] = full_de_mat.loc[:, self.predictor_names].values
                 self.shard_output['Y'] = full_de_mat.loc[:, "y"].values
                 self.shard_output['all_shard_unique_time_values'] = (
                     full_de_mat.loc[:,'time'].unique())
+                self.shard_output['time_value'] = full_de_mat.loc[:,'time'].astype(float)
                 
     def get_data(self):
         
@@ -112,20 +108,22 @@ class prep_data:
             
         else:
             for rank_i in range(self.shards):
+                print("rank ", str(rank_i))
                 shard_indecies.append(list())
             print("randomizing data to each shard...but don't worry shard data will stay in order of time")
             list_in = list(range(self.N))
             random.shuffle(list_in)
-            shards_list = list(range(1,self.shards))
+            #shards_list = list(range(1,self.shards))
+            unordered_shards_rank_list = list(range(0,self.shards))
+            #shards_list.insert(0,0)
+            random.shuffle(unordered_shards_rank_list)
             
-            random.shuffle(shards_list)
-            shards_list.insert(0,0)
-            for rank_i in shards_list:
-                index_list = list(range(rank_i, self.N, self.shards))
+            for i in range(len(unordered_shards_rank_list)):
+                index_list = list(range(i, self.N, self.shards))
                 subset = [list_in[il] for il in index_list]
                 subset.sort()
-                shard_indecies[rank_i] = subset
-                print("Rank: ", rank_i, " gets:", subset)
+                shard_indecies[unordered_shards_rank_list[i]] = subset
+                print("Rank: ", unordered_shards_rank_list[i], " gets:", subset)
         return shard_indecies
             
             
@@ -175,6 +173,8 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
                 output = file_data.iloc[start:end, :]
                 output = output.reset_index(drop=True)
                 if output.shape[0] >= Epoch_N:
+                    print("in if output.shape[0] >= Epoch_N:")
+                    print(output)
                     output.to_csv(data_path)
                     print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape)
                     epoch_files_to_process.append(data_path)
@@ -194,6 +194,8 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
         data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter)+ '_'+ code + '.csv'
         output = left_over_data
         output = output.reset_index(drop=True)
+        print("in if left_over_data is not None:")
+        print(output)
         output.to_csv(data_path)
         print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape)
         epoch_files_to_process.append(data_path)
