@@ -177,7 +177,7 @@ def prep_big_results_dict_v2(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_
                             path_obj_no_comm_instance = exp_file_path(
                                 shard_number_item, 
                                 f_Xy_N, 
-                                N_Epoch_item, 
+                                6000, #f_N_Epoch[-1], 
                                 Nt_item, 
                                 p_item, 
                                 GP_version_item, 
@@ -210,7 +210,7 @@ def prep_big_results_dict_v2(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_
                                     #print("analyze run with comm complete")
                                     #print("analyze run no comm begin")
                                     n_run = analyze_run_v2(
-                                        f_path = path_obj_no_comm_instance.v2_results_no_comm_file,
+                                        f_path = path_obj_no_comm_instance.v2_results_file,
                                         f_beta_file_path = path_obj_with_comm_instance.v2_beta_file,
                                         f_step_size = step_size,
                                         true_cols = f_predictors[:p_item], 
@@ -879,11 +879,11 @@ class analyze_run_v2:
         #    f_shard_num = self.number_of_shards, 
         #    f_epoch_num = self.epoch_number
         #)
-        print(6)
+        #print(6)
         self.true_lik, self.esti_lik = self.get_plot_likelihoods(self.Beta_com, self.true_cols, self.beta_i_avg)
-        print("self.true_lik=", self.true_lik)
-        print("self.esti_lik=", self.esti_lik)
-        print(7)
+        #print("self.true_lik=", self.true_lik)
+        #print("self.esti_lik=", self.esti_lik)
+        #print(7)
         _, self.comm_time_gather_particles, _ = self.time_cleaner(
             path=f_path, column_name = "comm_time_gather_particles"
         )
@@ -1577,7 +1577,7 @@ class exp_file_path:
             '_GP_version=' + str(GP_version_item) + 
             '_part_num=' + str(part_num_item) + 
             '_exp_num=' + str(exp_num) + 
-            '_communicate=False.csv'
+            '_communicate=True.csv'
         )
         self.v2_beta_file = (
             'synth_data/Xy_N='+str(Xy_N)+'_Epoch_N=1200'+#str(N_Epoch_item)+
