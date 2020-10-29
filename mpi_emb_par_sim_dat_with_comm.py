@@ -168,6 +168,7 @@ if rank == 0:
         Epoch_N = int(args.Epoch_N),
         code = name_stem_orig.code
     )
+    print(file_stem)
     
 else:
     epoch_files_to_process = None
