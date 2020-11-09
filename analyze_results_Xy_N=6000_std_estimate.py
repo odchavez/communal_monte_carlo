@@ -4,7 +4,8 @@ import numpy as np
 import re
 import pickle
 
-###################################################################################################################################
+
+####################################################################################################################################
 #
 #                                                 shard_num = [3] 
 #
@@ -37,40 +38,42 @@ big_results_dict = af.prep_big_results_dict_v2(
     f_comm=True
 )
 
-Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_3 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_3 = af.heat_map_data_prep_std_estimate(
     pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_3)
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_3.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_2_x_20_1000_x_30_6000_x_3.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_2_x_20_1000_x_30_6000_x_3.csv',
     index = False,
 ) 
-Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_3 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_3 = af.heat_map_data_prep_std_estimate(
     pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_3)
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_3.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_8_x_20_1000_x_30_6000_x_3.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_8_x_20_1000_x_30_6000_x_3.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_3 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_3 = af.heat_map_data_prep_std_estimate(
     pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_3)
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_3.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_16_x_20_1000_x_30_6000_x_3.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_16_x_20_1000_x_30_6000_x_3.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_3 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_3 = af.heat_map_data_prep_std_estimate(
     pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=3, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_3)
 Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_3.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_32_x_20_1000_x_30_6000_x_3.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_32_x_20_1000_x_30_6000_x_3.csv',
     index = False,
 )
 
-###################################################################################################################################
+
+
+####################################################################################################################################
 #
 #                                                 shard_num = [6] 
 #
@@ -103,40 +106,42 @@ big_results_dict = af.prep_big_results_dict_v2(
     f_comm=True
 )
 
-Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_6 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_6 = af.heat_map_data_prep_std_estimate(
     pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=6, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_6)
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_6.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_2_x_20_1000_x_30_6000_x_6.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_2_x_20_1000_x_30_6000_x_6.csv',
     index = False,
 ) 
-Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_6 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_6 = af.heat_map_data_prep_std_estimate(
     pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=6, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_6)
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_6.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_8_x_20_1000_x_30_6000_x_6.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_8_x_20_1000_x_30_6000_x_6.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_6 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_6 = af.heat_map_data_prep_std_estimate(
     pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=6, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_6)
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_6.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_16_x_20_1000_x_30_6000_x_6.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_16_x_20_1000_x_30_6000_x_6.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_6 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_6 = af.heat_map_data_prep_std_estimate(
     pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=6, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_6)
 Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_6.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_32_x_20_1000_x_30_6000_x_6.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_32_x_20_1000_x_30_6000_x_6.csv',
     index = False,
 )
 
-##################################################################################################################################
+
+
+###################################################################################################################################
 #
 #                                                 shard_num = [10] 
 #
@@ -169,40 +174,40 @@ big_results_dict = af.prep_big_results_dict_v2(
     f_comm=True
 )
 
-Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_10 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_10 = af.heat_map_data_prep_std_estimate(
     pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=10, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_10)
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_10.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_2_x_20_1000_x_30_6000_x_10.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_2_x_20_1000_x_30_6000_x_10.csv',
     index = False,
 ) 
-Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_10 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_10 = af.heat_map_data_prep_std_estimate(
     pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=10, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_10)
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_10.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_8_x_20_1000_x_30_6000_x_10.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_8_x_20_1000_x_30_6000_x_10.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_10 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_10 = af.heat_map_data_prep_std_estimate(
     pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=10, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_10)
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_10.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_16_x_20_1000_x_30_6000_x_10.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_16_x_20_1000_x_30_6000_x_10.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_10 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_10 = af.heat_map_data_prep_std_estimate(
     pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=10, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_10)
 Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_10.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_32_x_20_1000_x_30_6000_x_10.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_32_x_20_1000_x_30_6000_x_10.csv',
     index = False,
 )
 
-#################################################################################################################################
+##################################################################################################################################
 #
 #                                                 shard_num = [15] 
 #
@@ -235,40 +240,42 @@ big_results_dict = af.prep_big_results_dict_v2(
     f_comm=True
 )
 
-Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_15 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_15 = af.heat_map_data_prep_std_estimate(
     pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_15)
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_15.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_2_x_20_1000_x_30_6000_x_15.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_2_x_20_1000_x_30_6000_x_15.csv',
     index = False,
 ) 
-Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_15 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_15 = af.heat_map_data_prep_std_estimate(
     pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_15)
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_15.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_8_x_20_1000_x_30_6000_x_15.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_8_x_20_1000_x_30_6000_x_15.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_15 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_15 = af.heat_map_data_prep_std_estimate(
     pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_15)
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_15.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_16_x_20_1000_x_30_6000_x_15.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_16_x_20_1000_x_30_6000_x_15.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_15 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_15 = af.heat_map_data_prep_std_estimate(
     pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=15, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_15)
 Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_15.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_32_x_20_1000_x_30_6000_x_15.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_32_x_20_1000_x_30_6000_x_15.csv',
     index = False,
 )
 
-#################################################################################################################################
+
+
+##################################################################################################################################
 #
 #                                                 shard_num = [30] 
 #
@@ -301,44 +308,45 @@ big_results_dict = af.prep_big_results_dict_v2(
     f_comm=True
 )
 
-Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_30 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_30 = af.heat_map_data_prep_std_estimate(
     pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_30)
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_30.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_2_x_20_1000_x_30_6000_x_30.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_2_x_20_1000_x_30_6000_x_30.csv',
     index = False,
 ) 
-Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_30 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_30 = af.heat_map_data_prep_std_estimate(
     pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_30)
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_30.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_8_x_20_1000_x_30_6000_x_30.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_8_x_20_1000_x_30_6000_x_30.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_30 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_30 = af.heat_map_data_prep_std_estimate(
     pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_30)
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_30.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_16_x_20_1000_x_30_6000_x_30.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_16_x_20_1000_x_30_6000_x_30.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_30 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_30 = af.heat_map_data_prep_std_estimate(
     pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=30, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_30)
 Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_30.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_32_x_20_1000_x_30_6000_x_30.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_32_x_20_1000_x_30_6000_x_30.csv',
     index = False,
 )
 
-#################################################################################################################################
+
+##################################################################################################################################
 #
 #                                                 shard_num = [45] 
 #
-#################################################################################################################################
+##################################################################################################################################
 
 shard_number = [45]
 Xy_N=6000
@@ -367,40 +375,42 @@ big_results_dict = af.prep_big_results_dict_v2(
     f_comm=True
 )
 
-Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_45 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_45 = af.heat_map_data_prep_std_estimate(
     pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=45, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_45)
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_45.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_2_x_20_1000_x_30_6000_x_45.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_2_x_20_1000_x_30_6000_x_45.csv',
     index = False,
 ) 
-Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_45 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_45 = af.heat_map_data_prep_std_estimate(
     pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=45, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_45)
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_45.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_8_x_20_1000_x_30_6000_x_45.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_8_x_20_1000_x_30_6000_x_45.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_45 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_45 = af.heat_map_data_prep_std_estimate(
     pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=45, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_45)
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_45.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_16_x_20_1000_x_30_6000_x_45.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_16_x_20_1000_x_30_6000_x_45.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_45 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_45 = af.heat_map_data_prep_std_estimate(
     pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=45, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_45)
 Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_45.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_32_x_20_1000_x_30_6000_x_45.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_32_x_20_1000_x_30_6000_x_45.csv',
     index = False,
 )
 
-#################################################################################################################################
+
+
+##################################################################################################################################
 #
 #                                                 shard_num = [60] 
 #
@@ -433,38 +443,39 @@ big_results_dict = af.prep_big_results_dict_v2(
     f_comm=True
 )
 
-Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_60 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_60 = af.heat_map_data_prep_std_estimate(
     pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=60, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_60)
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_60.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_2_x_20_1000_x_30_6000_x_60.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_2_x_20_1000_x_30_6000_x_60.csv',
     index = False,
 ) 
-Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_60 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_60 = af.heat_map_data_prep_std_estimate(
     pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=60, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_60)
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_60.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_8_x_20_1000_x_30_6000_x_60.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_8_x_20_1000_x_30_6000_x_60.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_60 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_60 = af.heat_map_data_prep_std_estimate(
     pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=60, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_60)
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_60.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_16_x_20_1000_x_30_6000_x_60.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_16_x_20_1000_x_30_6000_x_60.csv',
     index = False,
 )    
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_60 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_60 = af.heat_map_data_prep_std_estimate(
     pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=60, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_60)
 Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_60.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_32_x_20_1000_x_30_6000_x_60.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_32_x_20_1000_x_30_6000_x_60.csv',
     index = False,
 )
+
 
 ##################################################################################################################################
 #
@@ -497,41 +508,41 @@ big_results_dict = af.prep_big_results_dict_v2(
     f_exp_num=0, 
     f_comm=True
 )
-Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_120 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_120 = af.heat_map_data_prep_std_estimate(
     pred_num=2, part_num=part_num, N_Epoch = N_Epoch, shard_num=120, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_120)
 Xy_N_6000_hm_plot_data_2_x_20_1000_x_30_6000_x_120.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_2_x_20_1000_x_30_6000_x_120.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_2_x_20_1000_x_30_6000_x_120.csv',
     index = False,
 )
 
       
-Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_120 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_120 = af.heat_map_data_prep_std_estimate(
     pred_num=8, part_num=part_num, N_Epoch = N_Epoch, shard_num=120, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_120)
 Xy_N_6000_hm_plot_data_8_x_20_1000_x_30_6000_x_120.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_8_x_20_1000_x_30_6000_x_120.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_8_x_20_1000_x_30_6000_x_120.csv',
     index = False,
 )
 
       
-Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_120 = af.heat_map_data_prep_total_run_time_mean(
+Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_120 = af.heat_map_data_prep_std_estimate(
     pred_num=16, part_num=part_num, N_Epoch = N_Epoch, shard_num=120, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_120)
 Xy_N_6000_hm_plot_data_16_x_20_1000_x_30_6000_x_120.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_16_x_20_1000_x_30_6000_x_120.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_16_x_20_1000_x_30_6000_x_120.csv',
     index = False,
 )
 
-     
-Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_120 = af.heat_map_data_prep_total_run_time_mean(
+      
+Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_120 = af.heat_map_data_prep_std_estimate(
     pred_num=32, part_num=part_num, N_Epoch = N_Epoch, shard_num=120, big_results_dict=big_results_dict
 )
 print(Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_120)
 Xy_N_6000_hm_plot_data_32_x_20_1000_x_30_6000_x_120.to_csv(
-    'experiment_results/heat_map_data/Xy_N_6000_hm_particle_total_run_time_mean_plot_data_32_x_20_1000_x_30_6000_x_120.csv',
+    'experiment_results/heat_map_data/Xy_N_6000_hm_std_estimate_plot_data_32_x_20_1000_x_30_6000_x_120.csv',
     index = False,
 )

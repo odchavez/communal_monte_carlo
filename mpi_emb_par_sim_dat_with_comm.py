@@ -26,7 +26,7 @@ from files_to_process import files_to_process
 np.set_printoptions(suppress=True)
 np.set_printoptions(threshold=sys.maxsize)
 
-start_time=time.time()
+start_time=time.process_time()
 
 
 def get_args():
@@ -212,13 +212,13 @@ for fn in tqdm(range(len(epoch_files_to_process))):
 
     #print("#SCATTER DATA")
     if exists:
-        comm_time_scatter_data -= time.time()
+        comm_time_scatter_data -= time.process_time()
         shard_data_indices = comm.scatter(indices_to_scatter, root=0)
         data_obj = prep_simulation_data.prep_data()
         data_obj.load_new_data(params_obj.get_params(), data_path, shard_data_indices)
         shard_data =  data_obj.get_data()
         #print(shard_data['X_matrix'].shape)
-        comm_time_scatter_data += time.time()
+        comm_time_scatter_data += time.process_time()
         #print("rank ", rank, "running...")
 
     if first_time and exists:# and (len(shard_data_indices)>0):
@@ -243,9 +243,9 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         shard_pfo.update_data(shard_data, run_number)
 
         #print("Epoch: ", run_number, "at rank:", rank)
-        particle_filter_run_time -= time.time()
+        particle_filter_run_time -= time.process_time()
         shard_pfo.run_particle_filter()
-        particle_filter_run_time +=time.time()
+        particle_filter_run_time +=time.process_time()
         
         if args.keep_history:
             shard_pfo.write_bo_list(name_stem.code)
@@ -254,7 +254,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         #print("len(epoch_files_to_process)=", len(epoch_files_to_process))
         if (args.communicate == 1) or (fn == len(epoch_files_to_process)-1):
             #print("communicating...")
-            comm_time_gather_particles-=time.time()
+            comm_time_gather_particles-=time.process_time()
             #print("A")
             shard_pfo.collect_params() # logging should be outside of timing
             #print("B")
@@ -267,7 +267,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
                 #print("E")
                 shuffled_particles = None
             #print("F")
-            comm_time_gather_particles+=time.time()
+            comm_time_gather_particles+=time.process_time()
             
             #  IF RECORD KEEPING AND NOT JUST FITTING: RUN THIS CODE
             record_keeping = False #  record_keeping can be set to true via args to track particles, etc.
@@ -306,7 +306,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
             
                 
             #  scatter particles and update
-            comm_time_scatter_particles-=time.time()
+            comm_time_scatter_particles-=time.process_time()
             post_shuffle_params = comm.scatter(shuffled_particles, root=0)
             shard_pfo.update_params(post_shuffle_params)
             
@@ -315,7 +315,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
                 post_shuffle_particle_ids = comm.scatter(shuffled_part_hist_ids, root=0)
                 shard_pfo.update_particle_id_history(post_shuffle_machine_ids, post_shuffle_particle_ids)
                 
-            comm_time_scatter_particles+=time.time()
+            comm_time_scatter_particles+=time.process_time()
 
 
 # preparing output
@@ -343,7 +343,7 @@ if rank == 0:
             'comm_time_gather_particles' : [comm_time_gather_particles_all],
             'comm_time_scatter_particles': [comm_time_scatter_particles_all],
             'start_time'                 : [start_time],
-            'end_time'                   : [time.time()],
+            'end_time'                   : [time.process_time()],
             'code'                       : [name_stem.code],
             'final_params'               : [str(output_shuffled_particles)],
             'run_number'                 : [run_number],
