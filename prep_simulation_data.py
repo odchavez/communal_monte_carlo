@@ -152,6 +152,7 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
         file_data = pd.read_csv(files_to_process[ftp], index_col=0)
         if left_over_data is not None:
             file_data = left_over_data.append(file_data)
+            left_over_data=None
         file_data = file_data.reset_index(drop=True)
         #check how many epochs will fit in file
         epochs_in_file = int(np.floor(file_data.shape[0]/Epoch_N))
@@ -185,7 +186,8 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
                     #print("in if output.shape[0] >= Epoch_N:")
                     #print(output)
                     output.to_csv(data_path)
-                    print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape)
+                    print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape,
+                          " in epochs_in_file >=1:")
                     epoch_files_to_process.append(data_path)
                     epoch_counter+=1
                 start=end
@@ -211,7 +213,7 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
         #print("in if left_over_data is not None:")
         #print(output)
         output.to_csv(data_path)
-        print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape)
+        print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape, " in left_over_data")
         epoch_files_to_process.append(data_path)
         
     return epoch_files_to_process
