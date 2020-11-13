@@ -1,6 +1,6 @@
 """
 RUN WITH:
-mpirun -np 6 python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 6000 --Epoch_N 100 --Nt 30 --p 2 --N_Node 4 --particles_per_shard 10 --experiment_number 0 --save_history 0 --GP_version 0 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=2/GP_version=0 --results_sub_folder synth_data --source_folder synth_data --communicate 1
+mpirun -np 3 python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 6000 --Epoch_N 6000 --Nt 30 --p 2 --N_Node 3 --particles_per_shard 20 --experiment_number 999 --save_history 0 --GP_version 0 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=2/GP_version=0 --results_sub_folder synth_data --source_folder synth_data --communicate 1
 """
 import os
 import sys
