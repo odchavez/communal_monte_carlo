@@ -160,7 +160,8 @@ if rank == 0:
         file_stem = string.format(args.Xy_N, args.Epoch_N, args.Nt, args.p, '_',args.GP_version)
     else:
         file_stem = args.source_folder
-        
+    print("file_stem = ", file_stem)
+    
     epoch_files_to_process = prep_simulation_data.make_epoch_files(
         files_to_process = files_to_process[args.files_to_process_path][:args.test_run],
         data_type = args.source_folder,
@@ -168,7 +169,7 @@ if rank == 0:
         Epoch_N = int(args.Epoch_N),
         code = name_stem_orig.code
     )
-    print(file_stem)
+    
     
 else:
     epoch_files_to_process = None
@@ -176,7 +177,7 @@ else:
 epoch_files_to_process = comm.bcast(epoch_files_to_process, root=0)
 
 for fn in tqdm(range(len(epoch_files_to_process))):
-
+    
     #prep file names needed for loading data and writing results
     if args.results_sub_folder == "synth_data":
         string = "Xy_N={}_Epoch_N={}_Nt={}_p={}{}GP_version={}"
@@ -200,6 +201,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
     #. determine which indices to keep in each shard
     if rank == 0:
         if exists:
+            print("processing file ", data_path, " out of ", str(list(range(len(epoch_files_to_process)))))
             data_obj = prep_simulation_data.prep_data()
             data_obj.load_new_data(params_obj.get_params(), data_path, shard_subset=None)
             indices_to_scatter = data_obj.partition_index()
@@ -253,7 +255,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         #  IF COMMUNICATE == TRUE (1): RUN THE CODE BELOW
         #print("len(epoch_files_to_process)=", len(epoch_files_to_process))
         if (args.communicate == 1) or (fn == len(epoch_files_to_process)-1):
-            #print("communicating...")
+            print("COMMUNICATING BETWEEN SHARDS FROM RANK: ", str(rank), "...")
             comm_time_gather_particles-=time.clock()
             #print("A")
             shard_pfo.collect_params() # logging should be outside of timing
