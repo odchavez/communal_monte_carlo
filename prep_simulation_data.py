@@ -12,12 +12,12 @@ class prep_data:
         self.model=params['model']
 
         if self.model== "probit_sin_wave":
-
+            
             loaded_df = pd.read_csv(path, low_memory=False, index_col=0)
+                
             loaded_df = loaded_df.reset_index(drop=True)
             test_cols = loaded_df.columns
             full_de_mat = loaded_df.loc[:,test_cols[-params['p_to_use']:]]
-            
             full_de_mat.time = full_de_mat.time+1
 
             full_de_mat_X = full_de_mat.copy()
@@ -26,7 +26,7 @@ class prep_data:
             ]
             self.predictor_names = [x for x in full_de_mat.columns if x not in drop_these]
             full_de_mat_X = full_de_mat[self.predictor_names]
-
+            
             p=len(self.predictor_names)
 
             N=full_de_mat_X.shape[0]
@@ -149,7 +149,10 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
     left_over_data = None
     for ftp in range(len(files_to_process)):
         #load data
-        file_data = pd.read_csv(files_to_process[ftp], index_col=0)
+        if data_type == "synth_data":
+            file_data = pd.read_csv(files_to_process[ftp], index_col=0)
+        else:
+            file_data = pd.read_csv(files_to_process[ftp])
         if left_over_data is not None:
             file_data = left_over_data.append(file_data)
             left_over_data=None

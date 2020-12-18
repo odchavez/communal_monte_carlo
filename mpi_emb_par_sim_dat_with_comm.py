@@ -26,7 +26,14 @@ from files_to_process import files_to_process
 np.set_printoptions(suppress=True)
 np.set_printoptions(threshold=sys.maxsize)
 
+# Check which version of python is running and make changes accordingly
+if (sys.version_info > (3, 0)):
+     # Python 3 code in this block
+     time.clock = time.process_time
+
 start_time=time.clock()
+
+
 
 
 def get_args():
@@ -143,7 +150,7 @@ size = comm.Get_size()
 ######################################################
 first_time = True
 run_number = -1
-params_obj = params.pf_params_synth_data( size, args.particles_per_shard, args.p_to_use, args.randomize_shards)
+params_obj = params.pf_params_synth_data( size, args)
 
 particle_filter_run_time    = 0
 comm_time_scatter_data      = 0
