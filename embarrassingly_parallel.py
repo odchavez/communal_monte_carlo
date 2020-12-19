@@ -190,6 +190,8 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
         """
             this will determin the mean and covariance of the model estimated parameters and weight 
             particles according to a gaussian density for resampling purposes.
+            
+            THE NEXT 5 LINES OF CODE REALLY SHOULD LIVE IN THE pf_model.py FILE.
         """
         kernel_weights = multivariate_normal.pdf(unlisted, mean=np.mean(unlisted, axis=0), cov=np.cov(unlisted.T))
         normalized_kernel_weights = kernel_weights/np.sum(kernel_weights)

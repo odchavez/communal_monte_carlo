@@ -2,6 +2,7 @@ import pf_models as pf
 import numpy as np
 import pandas as pd
 import time
+from scipy.stats import multivariate_normal
 
 from matplotlib import pyplot as plt
 
@@ -55,6 +56,10 @@ class particle_filter:
             self.shuffle_particles()
         return
 
+    def resample_locally(weights):
+        print("resample_locally(weights) Not Implemented...")
+        return
+    
     def shuffle_particles(self):
         
         self.not_norm_wts[np.isnan(self.not_norm_wts)] = -100.0
@@ -227,3 +232,11 @@ class particle_filter:
         for pn in range(self.PART_NUM):
             self.machine_history_ids_to_ship[pn] = self.particle_list[pn].particle_id_history[0]
             self.particle_history_ids_to_ship[pn] = self.particle_list[pn].particle_id_history[1]
+    
+    def get_pf_parameter_means(self):
+        self.params_to_ship_mean = np.mean(self.params_to_ship, axis=0)
+         
+    def compute_particle_kernel_weights(self, params):
+        params_s_by_p = np.reshape(params, (len(params), self.p))
+        self.not_norm_wts = multivariate_normal.pdf(
+            self.params_to_ship, mean=np.mean(params_s_by_p, axis=0), cov=np.cov(params_s_by_p.T))
