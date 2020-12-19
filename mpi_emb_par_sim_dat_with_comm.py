@@ -1,6 +1,6 @@
 """
 RUN WITH:
-mpirun -np 3 python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 6000 --Epoch_N 6000 --Nt 30 --p 2 --N_Node 3 --particles_per_shard 20 --experiment_number 999 --save_history 0 --GP_version 0 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=2/GP_version=0 --results_sub_folder synth_data --source_folder synth_data --communicate 1
+mpirun -np 3 python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 6000 --Epoch_N 6000 --Nt 30 --p 2 --N_Node 3 --particles_per_shard 20 --experiment_number 999 --save_history 0 --GP_version 0 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=2/GP_version=0 --results_sub_folder synth_data --communicate 1 --source_folder synth_data --global_weighting uniform_weighting
 """
 import os
 import sys
@@ -138,6 +138,13 @@ def get_args():
         default=1
 
     )
+    parser.add_argument(
+        '--global_weighting', type=str,
+        help='the type of weighting in resampling to use at a global communication.',
+        required=False,
+        default="uniform_weighting"
+
+    )
     return parser.parse_args()
 
 
@@ -271,7 +278,11 @@ for fn in tqdm(range(len(epoch_files_to_process))):
             #print("C")
             if rank == 0:
                 #print("D")
-                shuffled_particles = (embarrassingly_parallel.shuffel_embarrassingly_parallel_params(all_shard_params))
+                print("args.global_weighting=",args.global_weighting)
+                shuffled_particles = (
+                    embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
+                        all_shard_params=all_shard_params, 
+                        weighting_type=args.global_weighting))
             else:
                 #print("E")
                 shuffled_particles = None
@@ -281,7 +292,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
             #  IF RECORD KEEPING AND NOT JUST FITTING: RUN THIS CODE
             record_keeping = False #  record_keeping can be set to true via args to track particles, etc.
             if record_keeping == True:
-                #print("G")
+                print("record_keeping == True")
                 shard_pfo.collect_history_ids() # logging should be outside of timing
                 all_shard_particle_history_ids = comm.gather(shard_pfo.particle_history_ids_to_ship, root=0)
                 all_shard_machine_history_ids  = comm.gather(shard_pfo.machine_history_ids_to_ship, root=0)
@@ -334,7 +345,9 @@ comm_time_gather_particles_all  = str(comm.gather(comm_time_gather_particles, ro
 comm_time_scatter_particles_all = str(comm.gather(comm_time_scatter_particles, root=0))
     
 if rank == 0:
-    shuffled_particles = (embarrassingly_parallel.shuffel_embarrassingly_parallel_params(all_shard_params))
+    shuffled_particles = (
+        embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
+            all_shard_params, weighting_type=args.global_weighting))
     output_shuffled_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles)
     stats_results_file = pd.DataFrame(
         {

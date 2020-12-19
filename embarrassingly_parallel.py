@@ -6,6 +6,8 @@ import pf_models as pfm
 import math as m
 import random
 from scipy.optimize import linprog
+from scipy.stats import multivariate_normal
+
 #import seaborn as sns
 
 #from joblib import Parallel, delayed
@@ -168,16 +170,33 @@ def shuffel_embarrassingly_parallel_particles(data,
 
     return pf_obj
 
-def shuffel_embarrassingly_parallel_params(all_shard_params, machine_id_history=False, particle_id_history=False):
-
+def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uniform_weighting", machine_id_history=False, particle_id_history=False,):
+    print("in embarrassingly_parallel.py")
+    print("in shuffel_embarrassingly_parallel_params function")
+    print("weighting_type comes in as:", weighting_type)
     unlisted = list()
     for m in range(len(all_shard_params)):
         for p in range(len(all_shard_params[0])):
             unlisted.append(all_shard_params[m][p])
     unlisted = np.array(unlisted)
-    rows = np.random.randint(len(unlisted), size = len(unlisted))
-    sampled_unlisted = unlisted[rows,:]
     
+    #use appropriate weighting scheme
+    if weighting_type == "uniform_weighting":
+        print("if weighting_type == uniform_weighting")
+        rows = np.random.randint(len(unlisted), size = len(unlisted))
+        sampled_unlisted = unlisted[rows,:]
+    if weighting_type == "kernel_weighting":
+        print("if weighting_type == kernel_weighting")
+        """
+            this will determin the mean and covariance of the model estimated parameters and weight 
+            particles according to a gaussian density for resampling purposes.
+        """
+        kernel_weights = multivariate_normal.pdf(unlisted, mean=np.mean(unlisted, axis=0), cov=np.cov(unlisted.T))
+        normalized_kernel_weights = kernel_weights/np.sum(kernel_weights)
+        idx=list(range(len(unlisted)))
+        rows = np.random.choice(idx, size = len(idx), p=normalized_kernel_weights)
+        sampled_unlisted = unlisted[rows,:]
+        
     if machine_id_history:
         unlisted_machine = list()
         unlisted_partilce_id = list()
