@@ -1,0 +1,50 @@
+#!/bin/bash
+#----------------------------------------------------
+# Sample Slurm job script
+#   for TACC Stampede2 KNL nodes
+#
+#   *** MPI Job on Normal Queue ***
+#
+# Last revised: 20 Oct 2017
+#
+# Notes:
+#
+#   -- Launch this script by executing
+#      "sbatch file_name.slurm" on Stampede2 login node.
+#
+#   -- Use ibrun to launch MPI codes on TACC systems.
+#      Do not use mpirun or mpiexec.
+#
+#   -- Max recommended MPI tasks per KNL node: 64-68
+#      (start small, increase gradually).
+#
+#   -- If you're running out of memory, try running
+#      fewer tasks per node to give each task more memory.
+#
+#----------------------------------------------------
+
+#SBATCH -J         Xy_N=6000_Epoch_N=1200_N_Node=15_p=2_particles=1000_expn=2     # Job name
+#SBATCH -o exp_out/Xy_N=6000_Epoch_N=1200_N_Node=15_p=2_particles=1000_expn=2.o%j # Name of stdout output file
+#SBATCH -e exp_err/Xy_N=6000_Epoch_N=1200_N_Node=15_p=2_particles=1000_expn=2.e%j # Name of stderr error file
+#SBATCH -p normal                                                # Queue (partition) name
+#SBATCH -N 1                                                     # Total # of nodes
+#SBATCH -n 15                                                    # Total # of mpi tasks
+#SBATCH -t 48:00:00                                              # Run time (hh:mm:ss)
+#SBATCH --mail-user=ochavez@utexas.edu
+#SBATCH --mail-type=all                                          # Send email at begin and end of job
+
+# Other commands must follow all #SBATCH directives...
+
+#module list
+#pwd
+#date
+
+# Launch MPI code...
+# Use ibrun instead of mpirun or mpiexec
+
+ibrun python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 6000 --Epoch_N 1200 --Nt 30 --p 2 --N_Node 15 --particles_per_shard 1000 --experiment_number 2 --save_history 0 --GP_version 0 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=2/GP_version=0 --results_sub_folder synth_data --source_folder synth_data --global_weighting kernel_weighting
+
+ibrun python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 6000 --Epoch_N 1200 --Nt 30 --p 2 --N_Node 15 --particles_per_shard 1000 --experiment_number 2 --save_history 0 --GP_version 1 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=6000_Epoch_N=1200_Nt=30_p=2/GP_version=1 --results_sub_folder synth_data --source_folder synth_data --global_weighting kernel_weighting
+
+
+# ---------------------------------------------------
