@@ -6,6 +6,10 @@ from scipy.stats import multivariate_normal
 
 from matplotlib import pyplot as plt
 
+def is_invertible(a):
+    return a.shape[0] == a.shape[1] and np.linalg.matrix_rank(a) == a.shape[0]
+
+
 class particle_filter:
 #particle filter class
     def __init__(self, dat, params_obj, pf_rank = 0, run_number = 0):
@@ -238,5 +242,16 @@ class particle_filter:
          
     def compute_particle_kernel_weights(self, params):
         params_s_by_p = np.reshape(params, (len(params), self.p))
+        #print("params_s_by_p.shape=", params_s_by_p.shape)
+        #print("params_s_by_p=",params_s_by_p)
+        #print("np.cov(params_s_by_p.T)=", np.cov(params_s_by_p.T))
+        #print("is_invertible(np.cov(params_s_by_p.T))",is_invertible(np.cov(params_s_by_p.T)))
+        if is_invertible(params_s_by_p.T):
+            #print("COVARIANCE MATRIX INVERTABLE")
+            covariance_matrix = np.cov(params_s_by_p.T)
+        else:
+            #print("COVARIANCE MATRIX SINGULAR")
+            covariance_matrix = np.identity(self.p)*np.mean(np.mean(np.absolute(params_s_by_p), axis=0))
+        #print(covariance_matrix)    
         self.not_norm_wts = multivariate_normal.pdf(
-            self.params_to_ship, mean=np.mean(params_s_by_p, axis=0), cov=np.cov(params_s_by_p.T))
+            self.params_to_ship, mean=np.mean(params_s_by_p, axis=0), cov=covariance_matrix)

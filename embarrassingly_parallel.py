@@ -175,8 +175,10 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
     print("in shuffel_embarrassingly_parallel_params function")
     print("weighting_type comes in as:", weighting_type)
     unlisted = list()
-    for m in range(len(all_shard_params)):
-        for p in range(len(all_shard_params[0])):
+    particle_count = len(all_shard_params[0])
+    shard_count = len(all_shard_params)
+    for m in range(shard_count):
+        for p in range(particle_count):
             unlisted.append(all_shard_params[m][p])
     unlisted = np.array(unlisted)
     
@@ -198,7 +200,38 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
         idx=list(range(len(unlisted)))
         rows = np.random.choice(idx, size = len(idx), p=normalized_kernel_weights)
         sampled_unlisted = unlisted[rows,:]
+    
+    if weighting_type == "normal_consensus_weighting":
+        all_shard_cov = list()
+        all_shard_cov_inv = list()
+        unlisted_numerators=list()
+        unsummed_denominator = list()
+        # Compute the each shard's covariance and inverse covariance
+        # Compute the each shard's inverse covariance
+        # Compute Cov_shard^(-1) * particle
+        for m in range(shard_count):
+            shard_unlisted = list()
+            for p in range(particle_count):
+                shard_unlisted.append(all_shard_params[m][p])
+
+            shard_unlisted = np.array(shard_unlisted)
+            shard_cov=np.cov(shard_unlisted.T)
+            shard_cov_inv = np.linalg.inv(shard_cov)
+            unsummed_denominator.append(shard_cov_inv)
+
+            for p in range(particle_count):
+                temp_param = all_shard_params[m][p]
+                temp_numerator = np.matmul(shard_cov_inv, temp_param)
+                unlisted_numerators.append(temp_numerator)
+                
+        summed_denominator = sum(unsummed_denominator)*particle_count
+        combinded_covariance = np.linalg.inv(summed_denominator)
+        combined_mean = np.matmul(combinded_covariance, sum(unlisted_numerators))
+        sampled_unlisted = np.random.multivariate_normal(
+            combined_mean, combinded_covariance, size=particle_count*shard_count, check_valid='warn', tol=1e-8)
         
+
+                
     if machine_id_history:
         unlisted_machine = list()
         unlisted_partilce_id = list()
