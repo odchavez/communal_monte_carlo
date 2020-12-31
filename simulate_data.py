@@ -132,7 +132,7 @@ class simulated_data2:
         if self.GP==1:
             beta_cnames = list(range(self.pred_number))
             Beta_vals={}
-            for pn in range(self.pred_number):
+            for pn in tqdm(range(self.pred_number)):
                 Beta_vals['B_'+str(pn)] = self.make_GP_trajectory(f_time_tic= self.time_tics)
                 beta_cnames[pn] = 'B_'+str(pn)
             self.Beta_vals_df = pd.DataFrame(Beta_vals)[beta_cnames]

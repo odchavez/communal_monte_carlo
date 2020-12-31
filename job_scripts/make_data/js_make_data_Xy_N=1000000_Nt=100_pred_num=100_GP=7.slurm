@@ -41,13 +41,4 @@
 
 # Launch MPI code...
 
-sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 0
-sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 1
-sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 2
-sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 3
-sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 4
-sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 5
-sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 6
 sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 7
-sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 8
-sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 9
