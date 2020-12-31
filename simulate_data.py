@@ -202,3 +202,128 @@ class simulated_data2:
                 X_i_all = pd.DataFrame()
 
         print("data generation complete...")
+        
+        
+class simulated_data_Dynamic_Gaussian_Mixture:
+    """
+    Generate a 2-D Dynamic Gausian Mixture with a fixed covariance I*sig^2.  means and sigma are 
+    stored in the output file.  Generate data with the following code:
+    
+    DGM_obj = simulated_data_Dynamic_Gaussian_Mixture (
+    n_per_file=1000, N_total = 10000, n_per_tic = 100, dimension = 2, mix_comp_num=5, seed = 0, GP_version=0)
+    
+    """
+    def __init__(
+        self, n_per_file, N_total = 10000, n_per_tic = 100, dimension = 2, mix_comp_num=5, 
+        seed = 0, GP_version=0):
+
+        self.time_tics = np.array(range(int(N_total/n_per_tic)))
+        self.row = len(self.time_tics) * n_per_tic
+        self.n_per_file = n_per_file/n_per_tic
+        self.dimension = dimension 
+        self.mix_comp_num = mix_comp_num
+        self.N_total = N_total
+        self.n_per_tic = n_per_tic
+        self.n_per_epoch = n_per_file
+        self.seed = seed
+        self.GP_version = GP_version
+        
+        self.output_folder_name = (
+            "synth_data/DGM/"
+            "Xy_N=" + str(self.N_total) +
+            "_Epoch_N=" + str(self.n_per_epoch) +
+            "_Nt=" + str(self.n_per_tic) +
+            "_p=" + str(self.dimension) +
+            "_mix_comp_num=" + str(self.mix_comp_num) +
+            "/GP_version=" + str(self.GP_version) +
+            "/"
+        )
+                
+        if not os.path.exists(self.output_folder_name):
+            os.makedirs(self.output_folder_name)
+            
+        self.make_dynamic_GM_path()
+        self.generate_DGM_data()
+            
+    def make_K(self, x, h, lam):
+        """
+        Make covariance matrix from covariance kernel
+        """
+        # for a data array of length x, make a covariance matrix x*x:
+        K = np.zeros((len(x),len(x)))
+        for i in range(0,len(x)):
+            for j in range(0,len(x)):
+                # calculate value of K for each separation:
+                K[i,j] = self.cov_kernel(x[i],x[j],h,lam)
+    
+        return K
+
+    def cov_kernel(self, x1,x2,h,lam):
+        """
+        Squared-Exponential covariance kernel
+        """
+        k12 = h**2*np.exp(-1.*(x1 - x2)**2/lam**2)
+        return k12
+    
+    def make_GP_trajectory(self, f_time_tic):
+        #t = np.arange(0, f_time_tic)
+        h=1.0
+        lam=len(f_time_tic)/2 #100
+        K = self.make_K(f_time_tic,h,lam)
+        y = np.random.multivariate_normal(np.zeros(len(f_time_tic)),K)
+        return y-y[0]
+    
+    def make_dynamic_GM_path(self):
+        #initialize path containers
+        x1_vec = np.zeros((len(self.time_tics), self.mix_comp_num))
+        x2_vec = np.zeros((len(self.time_tics), self.mix_comp_num))
+        
+        #add starting points
+        starting_points = np.random.uniform(low = -1, high = 1, size = (2,self.mix_comp_num))
+        
+        #generate path
+        for i in range(self.mix_comp_num):
+            x1_vec[:,i] = self.make_GP_trajectory(self.time_tics) + starting_points[0,i]
+            x2_vec[:,i] = self.make_GP_trajectory(self.time_tics) + starting_points[1,i]
+        
+        self.x1 = x1_vec
+        self.x2 = x2_vec
+        #return x1_vec, x2_vec
+    
+    def get_mixture_component_weights(self):
+        #known mixture weights
+        return np.array([.1,.1,.2,.25,.35])
+
+    def allocate_data_to_components(self):
+        time_tic_allocation_counts = (
+            np.random.multinomial(self.n_per_tic,self.get_mixture_component_weights()))
+        return time_tic_allocation_counts
+    
+    def generate_DGM_data(self):
+        initial=True
+        all_component_scale = np.random.uniform(low=.05,high=0.6)
+        for tt in range(len(self.time_tics)):
+            # get component data allocation
+            comp_aloc = self.allocate_data_to_components()
+            # sample data for each component
+            location = np.array([self.x1[tt], self.x2[tt]])
+            
+            for mc in range(self.mix_comp_num):
+                data = np.random.normal(loc=location[:,mc], scale=all_component_scale, size=(comp_aloc[mc],2))
+                if initial:
+                    output = pd.DataFrame(data)
+                    output['time'] = tt
+                    output['mu_0'] = location[0,mc]
+                    output['mu_1'] = location[1,mc]
+                    output['scale'] = all_component_scale
+                    
+                    initial=False
+                else:
+                    temp_df = pd.DataFrame(data)
+                    temp_df['time'] = tt
+                    temp_df['mu_0'] = location[0,mc]
+                    temp_df['mu_1'] = location[1,mc]
+                    temp_df['scale'] = all_component_scale
+                    output = output.append(temp_df)
+        self.data = output.reset_index(drop=True)
+        self.data.to_csv(self.output_folder_name + "fn=0.csv" )
