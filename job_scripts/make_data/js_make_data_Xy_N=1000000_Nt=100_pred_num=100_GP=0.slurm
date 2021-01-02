@@ -41,4 +41,4 @@
 
 # Launch MPI code...
 
-sbatch python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 0
+ibrun python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 100 --N_per_tic 100 --GP 1 --GP_version 0
