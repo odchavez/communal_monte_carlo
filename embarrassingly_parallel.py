@@ -225,7 +225,7 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
                 unlisted_numerators.append(temp_numerator)
                 
         summed_denominator = sum(unsummed_denominator)*particle_count
-        combinded_covariance = np.linalg.inv(summed_denominator)
+        combinded_covariance = np.linalg.inv(summed_denominator)/shard_count
         combined_mean = np.matmul(combinded_covariance, sum(unlisted_numerators))
         sampled_unlisted = np.random.multivariate_normal(
             combined_mean, combinded_covariance, size=particle_count*shard_count, check_valid='warn', tol=1e-8)
