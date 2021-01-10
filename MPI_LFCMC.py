@@ -279,14 +279,17 @@ for fn in tqdm(range(len(epoch_files_to_process))):
             post_shuffle_params = shard_pfo.resample_particles_by_weights(kern_wts)
             """
             shard_pfo.get_pf_parameter_means()
+            shard_pfo.get_pf_parameter_cov()
             particle_filter_run_time +=time.clock()
             
             comm_time_gather_particles-=time.clock()
             params_means_from_all_shards = comm.allgather(shard_pfo.params_to_ship_mean)
+            params_cov_from_all_shards = comm.allgather(shard_pfo.params_to_ship_cov)
             comm_time_gather_particles+=time.clock()
             
             particle_filter_run_time -=time.clock()
-            shard_pfo.compute_particle_kernel_weights(params_means_from_all_shards)
+            shard_pfo.compute_particle_kernel_weights(
+                params_means_from_all_shards, params_cov_from_all_shards)
             post_shuffle_params = shard_pfo.shuffle_particles()
             particle_filter_run_time +=time.clock()
 

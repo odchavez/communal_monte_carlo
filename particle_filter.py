@@ -239,19 +239,28 @@ class particle_filter:
     
     def get_pf_parameter_means(self):
         self.params_to_ship_mean = np.mean(self.params_to_ship, axis=0)
+        
+    def get_pf_parameter_cov(self):
+        self.params_to_ship_cov = np.cov(self.params_to_ship.T)
          
-    def compute_particle_kernel_weights(self, params):
-        params_s_by_p = np.reshape(params, (len(params), self.p))
-        #print("params_s_by_p.shape=", params_s_by_p.shape)
-        #print("params_s_by_p=",params_s_by_p)
-        #print("np.cov(params_s_by_p.T)=", np.cov(params_s_by_p.T))
-        #print("is_invertible(np.cov(params_s_by_p.T))",is_invertible(np.cov(params_s_by_p.T)))
-        if is_invertible(params_s_by_p.T):
-            #print("COVARIANCE MATRIX INVERTABLE")
-            covariance_matrix = np.cov(params_s_by_p.T)
-        else:
-            #print("COVARIANCE MATRIX SINGULAR")
-            covariance_matrix = np.identity(self.p)*np.mean(np.mean(np.absolute(params_s_by_p), axis=0))
-        #print(covariance_matrix)    
+    def compute_particle_kernel_weights(self, mean_params, cov_parmas):
+
+        # get shard inverse covariances * shard count
+        shard_cov_inv_list = [np.linalg.inv(V_s*self.shards) for V_s in cov_parmas]
+        # get Global covariance
+        V_inv = np.zeros(shard_cov_inv_list[0].shape)
+        for s in range(len(shard_cov_inv_list)):
+            V_inv = np.add(V_inv,shard_cov_inv_list[s])
+        V = np.linalg.inv(V_inv) 
+        # multiply shard covariances and shard mean and then sum
+        S_inv_x_shard_mean = [np.matmul(S_inv, shard_mean) for S_inv, shard_mean in zip(shard_cov_inv_list, mean_params)]
+        S_inv_x_shard_mean_sum = np.zeros(np.matmul(shard_cov_inv_list[s],mean_params[s]).shape)
+        for s in range(len(shard_cov_inv_list)):
+            temp = np.matmul(shard_cov_inv_list[s],mean_params[s])
+            S_inv_x_shard_mean_sum = np.add(S_inv_x_shard_mean_sum, temp)
+            
+        global_mean = np.matmul(V, S_inv_x_shard_mean_sum)
+        
+        #particles are in self.params_to_ship
         self.not_norm_wts = multivariate_normal.pdf(
-            self.params_to_ship, mean=np.mean(params_s_by_p, axis=0), cov=covariance_matrix)
+            self.params_to_ship, mean=global_mean, cov=V)
