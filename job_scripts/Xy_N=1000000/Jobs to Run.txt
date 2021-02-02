@@ -16,160 +16,671 @@ rm *.bak
 #############                                                                 #############
 #############                                                                 #############
 #############         EXPERIMENTS NUMBER 0 (uniform weight resampling)        #############
-#############                                                                 #############
+#############         1000000 observations                                    #############
 #############                                                                 #############
 ###########################################################################################
 ###########################################################################################
 
 # 10 Shard Jobs
 
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=0_GPv_8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=0_GPv=8_9
 
 
 # 50 Shard Jobs
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=0_GPv_8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=0_GPv=8_9
+
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=0_GPv=8_9
 
 # 100 Shard Jobs
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=0_GPv_8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=0_GPv=8_9
 
 # 500 Shard Jobs
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=0_GPv_8_9
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=0_GPv_6_7
-sbatch job_scripts/Xy_N=1000000/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=0_GPv_8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=0_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=0_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=0_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=0_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=0_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=0_GPv=8_9
+
+
+###########################################################################################
+###########################################################################################
+#############                                                                 #############
+#############                                                                 #############
+#############         EXPERIMENTS NUMBER 1 (uniform weight resampling)        #############
+#############         1000000 observations                                    #############
+#############                                                                 #############
+###########################################################################################
+###########################################################################################
+
+navigate directories with cd ../../shard=10/Epoch_N=1000
+
+for f in *expn=0*; do mv -i -- "$f" "${f//expn=0/expn=1}"; done
+sed -i '.bak' 's/expn=0/expn=1/g' *
+sed -i '.bak' 's/experiment_number 0/experiment_number 1/g' *
+sed -i '.bak' 's/--source_folder synth_data/--source_folder synth_data --global_weighting kernel_weighting/g' *
+rm *.bak
+
+# 10 Shard Jobs
+
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=1_GPv=8_9
+
+
+# 50 Shard Jobs
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=1_GPv=8_9
+
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=1_GPv=8_9
+
+# 100 Shard Jobs
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=1_GPv=8_9
+
+# 500 Shard Jobs
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=1_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=1_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=1_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=1_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=1_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=1_GPv=8_9
+
+
+###########################################################################################
+###########################################################################################
+#############                                                                 #############
+#############                                                                 #############
+#############         EXPERIMENTS NUMBER 2 (uniform weight resampling)        #############
+#############         1000000 observations                                    #############
+#############                                                                 #############
+###########################################################################################
+###########################################################################################
+
+navigate directories with cd ../../shard=10/Epoch_N=1000
+
+for f in *expn=0*; do mv -i -- "$f" "${f//expn=0/expn=2}"; done
+sed -i '.bak' 's/expn=0/expn=2/g' *
+sed -i '.bak' 's/experiment_number 0/experiment_number 2/g' *
+sed -i '.bak' 's/mpi_emb_par_sim_dat_with_comm.py/MPI_LFCMC.py/g' *
+rm *.bak
+
+# 10 Shard Jobs
+
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=2_GPv=8_9
+
+
+# 50 Shard Jobs
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=2_GPv=8_9
+
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=2_GPv=8_9
+
+# 100 Shard Jobs
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=2_GPv=8_9
+
+# 500 Shard Jobs
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=2_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=2_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=2_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=2_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=2_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=2_GPv=8_9
+
+
+
+###########################################################################################
+###########################################################################################
+#############                                                                 #############
+#############                                                                 #############
+#############         EXPERIMENTS NUMBER 3 (uniform weight resampling)        #############
+#############         1000000 observations                                    #############
+#############                                                                 #############
+###########################################################################################
+###########################################################################################
+
+for f in *expn=0*; do mv -i -- "$f" "${f//expn=0/expn=3}"; done
+sed -i '.bak' 's/expn=0/expn=3/g' *
+sed -i '.bak' 's/experiment_number 0/experiment_number 3/g' *
+sed -i '.bak' 's/--source_folder synth_data/--source_folder synth_data --global_weighting normal_consensus_weighting/g' *
+rm *.bak
+
+# 10 Shard Jobs
+
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=5000/shard=10_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=10000/shard=10_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=50000/shard=10_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=100000/shard=10_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=500000/shard=10_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000000/shard=10_p=100_part=1000_js_expn=3_GPv=8_9
+
+
+# 50 Shard Jobs
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=5000/shard=50_p=100_part=1000_js_expn=3_GPv=8_9
+
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=10000/shard=50_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=50000/shard=50_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=100000/shard=50_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=500000/shard=50_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000000/shard=50_p=100_part=1000_js_expn=3_GPv=8_9
+
+# 100 Shard Jobs
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=5000/shard=100_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=10000/shard=100_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=50000/shard=100_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=100000/shard=100_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=500000/shard=100_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000000/shard=100_p=100_part=1000_js_expn=3_GPv=8_9
+
+# 500 Shard Jobs
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=5000/shard=500_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=10000/shard=500_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=50000/shard=500_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=100000/shard=500_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=500000/shard=500_p=100_part=1000_js_expn=3_GPv=8_9
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=3_GPv=0_1
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=3_GPv=2_3
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=3_GPv=4_5
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=3_GPv=6_7
+sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000000/shard=500_p=100_part=1000_js_expn=3_GPv=8_9
+
 
 ###########################################################################################
 ###########################################################################################
@@ -908,3 +1419,9 @@ sbatch job_scripts/Xy_N=6000/scott_variance_weight/shard=120/Epoch_N=6000/shard=
 sbatch job_scripts/Xy_N=6000/scott_variance_weight/shard=120/Epoch_N=6000/shard=120_p=32_part=1000_js_expn=3_GPv=4_5
 sbatch job_scripts/Xy_N=6000/scott_variance_weight/shard=120/Epoch_N=6000/shard=120_p=32_part=1000_js_expn=3_GPv_6_7
 sbatch job_scripts/Xy_N=6000/scott_variance_weight/shard=120/Epoch_N=6000/shard=120_p=32_part=1000_js_expn=3_GPv_8_9
+
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################

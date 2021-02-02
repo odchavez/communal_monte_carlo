@@ -173,7 +173,7 @@ def prep_big_results_dict_v2(f_shard_number, f_Xy_N, f_N_Epoch, f_Nt, f_p, f_GP_
                                 f_exp_num,
                                 f_comm
                             )
-                            #print("path_obj_with_comm_instance=", path_obj_with_comm_instance.v2_results_file)
+                            print("path_obj_with_comm_instance=", path_obj_with_comm_instance.v2_results_file)
                             path_obj_no_comm_instance = exp_file_path(
                                 shard_number_item, 
                                 f_Xy_N, 
@@ -855,6 +855,8 @@ class analyze_run_v2:
         #print(3)
         #print("self.Betas_in_columns = ", self.Betas_in_columns)
         self.beta_i_avg = self.get_beta_i_avg(self.Betas_in_columns)
+        print()
+        print("Estimated Average Beta:", self.beta_i_avg)
         #print(3.1)
         self.beta_i_var = self.get_beta_i_var(self.Betas_in_columns)
         #print(3.2)

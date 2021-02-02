@@ -170,6 +170,44 @@ def shuffel_embarrassingly_parallel_particles(data,
 
     return pf_obj
 
+def get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_count):
+    #print("in shuffel_embarrassingly_parallel_params with normal_consensus_weighting")
+    all_shard_cov = list()
+    all_shard_cov_inv = list()
+    unlisted_numerators=list()
+    unsummed_denominator = list()
+
+    for m in range(shard_count):
+        shard_unlisted = list()
+        for p in range(particle_count):
+            shard_unlisted.append(all_shard_params[m][p])
+
+        shard_unlisted = np.array(shard_unlisted)
+        shard_cov=np.cov(shard_unlisted.T)*shard_count
+        shard_cov_inv = np.linalg.inv(shard_cov)
+        unsummed_denominator.append(shard_cov_inv)
+
+        for p in range(particle_count):
+            temp_param = all_shard_params[m][p]
+            temp_numerator = np.matmul(shard_cov_inv, temp_param)
+            unlisted_numerators.append(temp_numerator)
+    
+    summed_Sig_i_inv_x_mu_i = np.zeros(unlisted_numerators[0].shape)
+    for i in range(len(unlisted_numerators)):
+        summed_Sig_i_inv_x_mu_i = np.add(summed_Sig_i_inv_x_mu_i, unlisted_numerators[i])
+    
+    V_inv = np.zeros(unsummed_denominator[0].shape)
+    for i in range(len(unsummed_denominator)):
+        V_inv = np.add(V_inv,unsummed_denominator[i]*particle_count)        
+    V = np.linalg.inv(V_inv)
+    
+    print("len(unlisted_numerators)=",len(unlisted_numerators))
+    print("unlisted_numerators[0].shape=",unlisted_numerators[0].shape)
+    print("unlisted_numerators[0]=",unlisted_numerators[0])
+    combined_mean = np.matmul(V, summed_Sig_i_inv_x_mu_i)
+    print("combined_mean=",combined_mean)
+    return combined_mean, V
+
 def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uniform_weighting", machine_id_history=False, particle_id_history=False,):
     print("in embarrassingly_parallel.py")
     print("in shuffel_embarrassingly_parallel_params function")
@@ -187,6 +225,7 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
         print("if weighting_type == uniform_weighting")
         rows = np.random.randint(len(unlisted), size = len(unlisted))
         sampled_unlisted = unlisted[rows,:]
+        
     if weighting_type == "kernel_weighting":
         print("if weighting_type == kernel_weighting")
         """
@@ -195,40 +234,22 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
             
             THE NEXT 5 LINES OF CODE REALLY SHOULD LIVE IN THE pf_model.py FILE.
         """
-        kernel_weights = multivariate_normal.pdf(unlisted, mean=np.mean(unlisted, axis=0), cov=np.cov(unlisted.T))
+        
+        mu, Sigma = get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_count)
+        
+        kernel_weights = multivariate_normal.pdf(unlisted, mean=mu, cov=Sigma)
+        print("kernel_weights=", kernel_weights)
         normalized_kernel_weights = kernel_weights/np.sum(kernel_weights)
         idx=list(range(len(unlisted)))
         rows = np.random.choice(idx, size = len(idx), p=normalized_kernel_weights)
         sampled_unlisted = unlisted[rows,:]
     
     if weighting_type == "normal_consensus_weighting":
-        all_shard_cov = list()
-        all_shard_cov_inv = list()
-        unlisted_numerators=list()
-        unsummed_denominator = list()
-        # Compute the each shard's covariance and inverse covariance
-        # Compute the each shard's inverse covariance
-        # Compute Cov_shard^(-1) * particle
-        for m in range(shard_count):
-            shard_unlisted = list()
-            for p in range(particle_count):
-                shard_unlisted.append(all_shard_params[m][p])
-
-            shard_unlisted = np.array(shard_unlisted)
-            shard_cov=np.cov(shard_unlisted.T)
-            shard_cov_inv = np.linalg.inv(shard_cov)
-            unsummed_denominator.append(shard_cov_inv)
-
-            for p in range(particle_count):
-                temp_param = all_shard_params[m][p]
-                temp_numerator = np.matmul(shard_cov_inv, temp_param)
-                unlisted_numerators.append(temp_numerator)
-                
-        summed_denominator = sum(unsummed_denominator)*particle_count
-        combinded_covariance = np.linalg.inv(summed_denominator)/shard_count
-        combined_mean = np.matmul(combinded_covariance, sum(unlisted_numerators))
+        
+        combined_mean, V = get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_count)
+        
         sampled_unlisted = np.random.multivariate_normal(
-            combined_mean, combinded_covariance, size=particle_count*shard_count, check_valid='warn', tol=1e-8)
+            combined_mean, V, size=particle_count*shard_count, check_valid='warn', tol=1e-8)
         
 
                 
