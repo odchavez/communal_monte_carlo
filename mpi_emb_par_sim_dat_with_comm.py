@@ -168,7 +168,7 @@ record_keeping_time         = 0
 
 
 if rank == 0:
-    name_stem_orig = randomString(20)
+    #name_stem_orig = randomString(20)
     
     if args.source_folder == "synth_data":
         string = "Xy_N={}_Epoch_N={}_Nt={}_p={}{}GP_version={}"
@@ -182,7 +182,7 @@ if rank == 0:
         data_type = args.source_folder,
         file_stem = file_stem, 
         Epoch_N = int(args.Epoch_N),
-        code = name_stem_orig.code
+        #code = name_stem_orig.code
     )
     
     
@@ -249,11 +249,11 @@ for fn in tqdm(range(len(epoch_files_to_process))):
             run_number
         )
 
-        if rank == 0:
-            name_stem_orig = randomString(20)
-        else:
-            name_stem_orig = None
-        name_stem = comm.bcast(name_stem_orig, root=0)
+        #if rank == 0:
+        #    name_stem_orig = randomString(20)
+        #else:
+        #    name_stem_orig = None
+        #name_stem = comm.bcast(name_stem_orig, root=0)
 
     if exists:# and (len(shard_data_indices)>0):
         run_number+=1
@@ -265,7 +265,8 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         particle_filter_run_time +=time.clock()
         
         if args.keep_history:
-            shard_pfo.write_bo_list(name_stem.code)
+            print("...UNABLE TO KEEP HISTORY...")
+            #shard_pfo.write_bo_list(name_stem.code)
 
         #  IF COMMUNICATE == TRUE (1): RUN THE CODE BELOW
         #print("len(epoch_files_to_process)=", len(epoch_files_to_process))
@@ -368,7 +369,7 @@ if rank == 0:
             'comm_time_scatter_particles': [comm_time_scatter_particles_all],
             'start_time'                 : [start_time],
             'end_time'                   : [time.clock()],
-            'code'                       : [name_stem.code],
+            #'code'                       : [name_stem.code],
             'final_params'               : [str(output_shuffled_particles)],
             'run_number'                 : [run_number],
         }
@@ -381,6 +382,6 @@ if rank == 0:
         save_history=args.save_history,
     )
     #print(epoch_files_to_process)
-    for file in epoch_files_to_process:
-        print("deleting: ", file)
-        os.remove(file)
+    #for file in epoch_files_to_process:
+    #    print("deleting: ", file)
+    #    os.remove(file)

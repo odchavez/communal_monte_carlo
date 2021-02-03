@@ -81,7 +81,7 @@ class particle_filter:
             norm_wts = top/bottom
         else:
             norm_wts=top/bottom
-        
+        #print("Class: particle_filter, function: shuffle_particles -  norm_wts:", norm_wts)
         particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
         temp_index=np.zeros(self.PART_NUM)
         temp_index.astype(int)
@@ -228,7 +228,7 @@ class particle_filter:
             self.params_to_ship = np.reshape(output, (self.PART_NUM, self.p))
         else:
             self.params_to_ship = []
-        
+        #print("self.params_to_ship=",self.params_to_ship)
 
     def collect_history_ids(self):
         self.machine_history_ids_to_ship = np.zeros((self.PART_NUM))
@@ -246,6 +246,8 @@ class particle_filter:
     def compute_particle_kernel_weights(self, mean_params, cov_parmas):
 
         # get shard inverse covariances * shard count
+        
+        print("rank of cov_parmas",[np.linalg.matrix_rank(V_s) for V_s in cov_parmas])
         shard_cov_inv_list = [np.linalg.inv(V_s*self.shards) for V_s in cov_parmas]
         # get Global covariance
         V_inv = np.zeros(shard_cov_inv_list[0].shape)

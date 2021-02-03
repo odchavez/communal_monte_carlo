@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import random
-
+import os
 
 class prep_data:
     def __init__(self):
@@ -129,7 +129,7 @@ class prep_data:
             
             
             
-def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
+def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code=None):
 
     """
     args:
@@ -181,16 +181,28 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
                     if max_index > end:
                         #print("end set in if max_index > end:")
                         end = max_index+1
-    
-                data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter)+ '_'+ code + '.csv'
+                if code == None:
+                    data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter) + '.csv'
+                else:
+                    data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter)+ '_'+ code + '.csv'
                 output = file_data.iloc[start:end, :]
                 output = output.reset_index(drop=True)
                 if output.shape[0] >= Epoch_N:
                     #print("in if output.shape[0] >= Epoch_N:")
                     #print(output)
-                    output.to_csv(data_path)
-                    print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape,
+                    print("NOT:",not os.path.exists(data_path))
+                    print("affirmative:", os.path.exists(data_path))
+                    if not os.path.exists(data_path):
+                        output.to_csv(data_path)
+                        print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape,
                           " in epochs_in_file >=1:")
+                    else:
+                        print(
+                            "file exists - NOT writing epoch ", epoch_counter, 
+                            " with t=", current_time," and shape:", output.shape, 
+                            " in left_over_data"
+                        )
+                        
                     epoch_files_to_process.append(data_path)
                     epoch_counter+=1
                 start=end
@@ -210,13 +222,25 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code):
             left_over_data = file_data
 
     if left_over_data is not None:
-        data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter)+ '_'+ code + '.csv'
+        if code == None:
+            data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter)+ '.csv'
+        else:
+            data_path = data_type + '/temp/' + file_stem + '_epoch='+ str(epoch_counter)+ '_'+ code + '.csv'
         output = left_over_data
         output = output.reset_index(drop=True)
         #print("in if left_over_data is not None:")
         #print(output)
-        output.to_csv(data_path)
-        print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape, " in left_over_data")
+        print("NOT:",not os.path.exists(data_path))
+        print("affirmative:", os.path.exists(data_path))
+        if not os.path.exists(data_path):
+            output.to_csv(data_path)
+            print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape, " in left_over_data")
+        else:
+            print(
+                "file exists - NOT writing epoch ", epoch_counter, 
+                " with t=", current_time," and shape:", output.shape, 
+                " in left_over_data"
+            )
         epoch_files_to_process.append(data_path)
         
     return epoch_files_to_process
