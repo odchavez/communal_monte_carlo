@@ -247,7 +247,7 @@ class particle_filter:
 
         # get shard inverse covariances * shard count
         
-        print("rank of cov_parmas",[np.linalg.matrix_rank(V_s) for V_s in cov_parmas])
+        #print("rank of cov_parmas",[np.linalg.matrix_rank(V_s) for V_s in cov_parmas])
         shard_cov_inv_list = [np.linalg.inv(V_s*self.shards) for V_s in cov_parmas]
         # get Global covariance
         V_inv = np.zeros(shard_cov_inv_list[0].shape)

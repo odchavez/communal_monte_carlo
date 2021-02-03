@@ -201,17 +201,17 @@ def get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_co
         V_inv = np.add(V_inv,unsummed_denominator[i]*particle_count)        
     V = np.linalg.inv(V_inv)
     
-    print("len(unlisted_numerators)=",len(unlisted_numerators))
-    print("unlisted_numerators[0].shape=",unlisted_numerators[0].shape)
-    print("unlisted_numerators[0]=",unlisted_numerators[0])
+    #print("len(unlisted_numerators)=",len(unlisted_numerators))
+    #print("unlisted_numerators[0].shape=",unlisted_numerators[0].shape)
+    #print("unlisted_numerators[0]=",unlisted_numerators[0])
     combined_mean = np.matmul(V, summed_Sig_i_inv_x_mu_i)
-    print("combined_mean=",combined_mean)
+    #print("combined_mean=",combined_mean)
     return combined_mean, V
 
 def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uniform_weighting", machine_id_history=False, particle_id_history=False,):
-    print("in embarrassingly_parallel.py")
-    print("in shuffel_embarrassingly_parallel_params function")
-    print("weighting_type comes in as:", weighting_type)
+    #print("in embarrassingly_parallel.py")
+    #print("in shuffel_embarrassingly_parallel_params function")
+    #print("weighting_type comes in as:", weighting_type)
     unlisted = list()
     particle_count = len(all_shard_params[0])
     shard_count = len(all_shard_params)
@@ -222,12 +222,12 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
     
     #use appropriate weighting scheme
     if weighting_type == "uniform_weighting":
-        print("if weighting_type == uniform_weighting")
+        #print("if weighting_type == uniform_weighting")
         rows = np.random.randint(len(unlisted), size = len(unlisted))
         sampled_unlisted = unlisted[rows,:]
         
     if weighting_type == "kernel_weighting":
-        print("if weighting_type == kernel_weighting")
+        #print("if weighting_type == kernel_weighting")
         """
             this will determin the mean and covariance of the model estimated parameters and weight 
             particles according to a gaussian density for resampling purposes.
@@ -238,7 +238,7 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
         mu, Sigma = get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_count)
         
         kernel_weights = multivariate_normal.pdf(unlisted, mean=mu, cov=Sigma)
-        print("kernel_weights=", kernel_weights)
+        #print("kernel_weights=", kernel_weights)
         normalized_kernel_weights = kernel_weights/np.sum(kernel_weights)
         idx=list(range(len(unlisted)))
         rows = np.random.choice(idx, size = len(idx), p=normalized_kernel_weights)

@@ -276,12 +276,12 @@ for fn in tqdm(range(len(epoch_files_to_process))):
             #print("A")
             shard_pfo.collect_params() # logging should be outside of timing
             #print("B")
-            print("PARAMS TO SHIP:", shard_pfo.params_to_ship)
+            #print("PARAMS TO SHIP:", shard_pfo.params_to_ship)
             all_shard_params = comm.gather(shard_pfo.params_to_ship, root=0)
             #print("C")
             if rank == 0:
                 #print("D")
-                print("args.global_weighting=",args.global_weighting)
+                #print("args.global_weighting=",args.global_weighting)
                 shuffled_particles = (
                     embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
                         all_shard_params=all_shard_params, 
@@ -374,7 +374,7 @@ if rank == 0:
             'run_number'                 : [run_number],
         }
     )
-    print("str(output_shuffled_particles)=",str(output_shuffled_particles))
+    #print("str(output_shuffled_particles)=",str(output_shuffled_particles))
     parameter_history_obj = history.parameter_history()
     parameter_history_obj.write_stats_results(
         f_stats_df=stats_results_file, 
