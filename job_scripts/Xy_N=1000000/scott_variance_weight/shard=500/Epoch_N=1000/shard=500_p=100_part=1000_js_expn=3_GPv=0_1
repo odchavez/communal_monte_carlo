@@ -27,7 +27,7 @@
 #SBATCH -o exp_out/Xy_N=1000000_Epoch_N=1000_N_Node=500_p=100_particles=1000_expn=3.o%j # Name of stdout output file
 #SBATCH -e exp_err/Xy_N=1000000_Epoch_N=1000_N_Node=500_p=100_particles=1000_expn=3.e%j # Name of stderr error file
 #SBATCH -p normal                                                # Queue (partition) name
-#SBATCH -N 8                                                     # Total # of nodes
+#SBATCH -N 16                                                     # Total # of nodes
 #SBATCH -n 500                                                    # Total # of mpi tasks
 #SBATCH -t 48:00:00                                              # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
