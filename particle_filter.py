@@ -79,9 +79,11 @@ class particle_filter:
             top      = np.exp(self.not_norm_wts - max_val)
             bottom   = np.sum(top)
             norm_wts = top/bottom
+        elif np.isinf(bottom):
+            norm_wts = np.ones(len(top))/len(top)
         else:
             norm_wts=top/bottom
-        #print("Class: particle_filter, function: shuffle_particles -  norm_wts:", norm_wts)
+
         particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
         temp_index=np.zeros(self.PART_NUM)
         temp_index.astype(int)
@@ -245,10 +247,17 @@ class particle_filter:
          
     def compute_particle_kernel_weights(self, mean_params, cov_parmas):
 
-        # get shard inverse covariances * shard count
+        # get shard inverse covariances * shard count        
+        shard_cov_inv_list=[]
+        for V_s in range(len(cov_parmas)):
+            if np.linalg.matrix_rank(cov_parmas[V_s]) == self.p:
+                shard_cov_inv_list.append(np.linalg.inv(cov_parmas[V_s]*self.shards))
+            else:
+                S = np.identity(self.p)
+                diag_values = cov_parmas[V_s].diagonal()
+                max_var = max(max(diag_values), self.particle_list[0].Tau_inv)
+                shard_cov_inv_list.append(np.linalg.inv(S*max_var*self.shards))
         
-        #print("rank of cov_parmas",[np.linalg.matrix_rank(V_s) for V_s in cov_parmas])
-        shard_cov_inv_list = [np.linalg.inv(V_s*self.shards) for V_s in cov_parmas]
         # get Global covariance
         V_inv = np.zeros(shard_cov_inv_list[0].shape)
         for s in range(len(shard_cov_inv_list)):

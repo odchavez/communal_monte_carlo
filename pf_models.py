@@ -27,7 +27,12 @@ class probit_sin_wave_particle:
         x_j_tB          = X.dot(self.bo)
         p_of_x_i = 1.0/(1.0+np.exp(-x_j_tB))
         A = np.dot(Y, np.log(p_of_x_i))
-        B = np.dot(1.0-Y, np.log(1-p_of_x_i))
+        # get rid of -inf likelihood with a "very bad" log likelihood
+        temp=np.log(1-p_of_x_i)
+        location = np.logical_not(np.isfinite(temp))
+        temp[location]=-100.0
+        B = np.dot(1.0-Y, temp)
+
         log_lik      = (A+B)*self.shards
         return_value = np.max([log_lik, self.log_lik])
         return(return_value)
@@ -48,7 +53,7 @@ class probit_sin_wave_particle:
             np.transpose(self.bo),
             self.Tau_inv*np.identity(len(self.bo)),
             1
-        ).astype(float).reshape(self.p,1).flatten()*self.std_rescale
+            ).astype(float).reshape(self.p,1).flatten()*self.std_rescale
 
         if time_value != None:
             idx = int(self.this_time)
