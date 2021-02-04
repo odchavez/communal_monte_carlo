@@ -184,7 +184,16 @@ def get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_co
 
         shard_unlisted = np.array(shard_unlisted)
         shard_cov=np.cov(shard_unlisted.T)*shard_count
-        shard_cov_inv = np.linalg.inv(shard_cov)
+        #############################
+        if np.linalg.matrix_rank(shard_cov) == shard_cov.shape[1]:
+                shard_cov_inv = np.linalg.inv(shard_cov)
+        else:
+            S = np.identity(shard_cov.shape[1])
+            diag_values = shard_cov.diagonal()
+            max_var = max(diag_values)
+            shard_cov_inv = np.linalg.inv(S*max_var*shard_count)
+        #############################
+        
         unsummed_denominator.append(shard_cov_inv)
 
         for p in range(particle_count):
