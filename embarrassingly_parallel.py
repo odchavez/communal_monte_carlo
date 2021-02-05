@@ -14,6 +14,9 @@ from scipy.stats import multivariate_normal
 #from joblib import parallel_backend
 
 
+def logsumexp(x):
+    c = x.max()
+    return c + np.log(np.sum(np.exp(x - c)))
 
 def particle_filter_init_wrapper(f_shards_data, f_part_num, f_model, f_sample_method):
     pfo = particle_filter.particle_filter(f_shards_data, f_part_num, f_model, f_sample_method)
@@ -246,9 +249,17 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
         
         mu, Sigma = get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_count)
         
-        kernel_weights = multivariate_normal.pdf(unlisted, mean=mu, cov=Sigma)
-        #print("kernel_weights=", kernel_weights)
-        normalized_kernel_weights = kernel_weights/np.sum(kernel_weights)
+        x = multivariate_normal.logpdf(unlisted, mean=mu, cov=Sigma)
+        finite_values = x[np.isfinite(x)]
+        finite_max = np.nanmax(finite_values)
+        finite_min = np.nanmin(finite_values)
+        x[x>finite_max] = finite_max
+        x[x<finite_min] = finite_min
+        x[np.isnan(x)] = finite_min
+        normalized_kernel_weights = np.exp(x - logsumexp(x))
+        if any(np.isnan(x)):
+            normalized_kernel_weights = np.ones(len(x))/len(x)
+
         idx=list(range(len(unlisted)))
         rows = np.random.choice(idx, size = len(idx), p=normalized_kernel_weights)
         sampled_unlisted = unlisted[rows,:]

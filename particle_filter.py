@@ -9,6 +9,9 @@ from matplotlib import pyplot as plt
 def is_invertible(a):
     return a.shape[0] == a.shape[1] and np.linalg.matrix_rank(a) == a.shape[0]
 
+def logsumexp(x):
+    c = x.max()
+    return c + np.log(np.sum(np.exp(x - c)))
 
 class particle_filter:
 #particle filter class
@@ -66,24 +69,17 @@ class particle_filter:
     
     def shuffle_particles(self):
         
-        self.not_norm_wts[np.isnan(self.not_norm_wts)] = -100.0
+        x=self.not_norm_wts
+        finite_values = x[np.isfinite(x)]
+        finite_max = np.nanmax(finite_values)
+        finite_min = np.nanmin(finite_values)
+        x[x>finite_max] = finite_max
+        x[x<finite_min] = finite_min
+        x[np.isnan(x)] = finite_min
+        norm_wts = np.exp(x - logsumexp(x))
+        if any(np.isnan(x)):
+            norm_wts = np.ones(len(self.not_norm_wts))/len(self.not_norm_wts)
         
-        top    = np.exp(self.not_norm_wts)
-        top_min = np.nanmin(top)
-        fill_min = np.min([top_min, 1/len(top)])
-        top[np.isnan(top)]=fill_min
-
-        bottom = np.sum(top)
-        if bottom == 0:
-            max_val  = np.max(self.not_norm_wts)
-            top      = np.exp(self.not_norm_wts - max_val)
-            bottom   = np.sum(top)
-            norm_wts = top/bottom
-        elif np.isinf(bottom):
-            norm_wts = np.ones(len(top))/len(top)
-        else:
-            norm_wts=top/bottom
-
         particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
         temp_index=np.zeros(self.PART_NUM)
         temp_index.astype(int)
