@@ -191,10 +191,21 @@ def get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_co
         if np.linalg.matrix_rank(shard_cov) == shard_cov.shape[1]:
                 shard_cov_inv = np.linalg.inv(shard_cov)
         else:
-            S = np.identity(shard_cov.shape[1])
+            #S = np.identity(shard_cov.shape[1])
+            #diag_values = shard_cov.diagonal()
+            #max_var = max(diag_values)
+            #shard_cov_inv = np.linalg.inv(S*max_var*shard_count)
+            
+            I = np.identity(shard_cov.shape[1])
+            #print("I.shape:", I.shape)
             diag_values = shard_cov.diagonal()
-            max_var = max(diag_values)
-            shard_cov_inv = np.linalg.inv(S*max_var*shard_count)
+            max_var = np.nanmax(diag_values)
+            I_s = I*max_var/100
+            #print("I_s.shape:", I_s.shape)
+            Sigma = shard_cov + I_s
+            #print("Sigma.shape:", Sigma.shape)
+            #print("np.linalg.matrix_rank(Sigma):", np.linalg.matrix_rank(Sigma))
+            shard_cov_inv = np.linalg.inv(Sigma)
         #############################
         
         unsummed_denominator.append(shard_cov_inv)
@@ -257,6 +268,7 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
         x[x<finite_min] = finite_min
         x[np.isnan(x)] = finite_min
         normalized_kernel_weights = np.exp(x - logsumexp(x))
+        normalized_kernel_weights = normalized_kernel_weights/np.sum(normalized_kernel_weights)
         if any(np.isnan(x)):
             normalized_kernel_weights = np.ones(len(x))/len(x)
 

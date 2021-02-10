@@ -77,6 +77,7 @@ class particle_filter:
         x[x<finite_min] = finite_min
         x[np.isnan(x)] = finite_min
         norm_wts = np.exp(x - logsumexp(x))
+        norm_wts = norm_wts/np.sum(norm_wts)
         if any(np.isnan(x)):
             norm_wts = np.ones(len(self.not_norm_wts))/len(self.not_norm_wts)
         
@@ -249,10 +250,15 @@ class particle_filter:
             if np.linalg.matrix_rank(cov_parmas[V_s]) == self.p:
                 shard_cov_inv_list.append(np.linalg.inv(cov_parmas[V_s]*self.shards))
             else:
-                S = np.identity(self.p)
+                I = np.identity(self.p)
+                #print("I.shape:", I.shape)
                 diag_values = cov_parmas[V_s].diagonal()
-                max_var = max(max(diag_values), self.particle_list[0].Tau_inv)
-                shard_cov_inv_list.append(np.linalg.inv(S*max_var*self.shards))
+                max_var = np.nanmax(diag_values)
+                I_s = I*max_var/100
+                #print("I_s.shape:", I_s.shape)
+                Sigma = cov_parmas[V_s]*self.shards + I_s
+                #print("Sigma.shape:", Sigma.shape)
+                shard_cov_inv_list.append(np.linalg.inv(Sigma))
         
         # get Global covariance
         V_inv = np.zeros(shard_cov_inv_list[0].shape)
