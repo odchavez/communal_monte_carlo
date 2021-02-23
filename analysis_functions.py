@@ -2072,6 +2072,7 @@ class analysis_obj:
         self.pf_run_time_array = np.zeros(len(self.wi_comm_list))
         self.particle_commm_array = np.zeros(len(self.wi_comm_list))
         self.adjusted_run_time_array = np.zeros(len(self.wi_comm_list))
+        self.total_program_run_time_array = np.zeros(len(self.wi_comm_list))
         
         for i in range(len(self.wi_comm_list)):
             
@@ -2091,7 +2092,7 @@ class analysis_obj:
                 self.wi_comm_list[i].comm_time_scatter_particles - 
                 self.wi_comm_list[i].comm_time_scatter_data
             )
-        
+
         #print("self.pf_run_time_array = ", self.pf_run_time_array)
         
         self.mean_run_time = np.mean(self.run_time_array)
@@ -2099,11 +2100,17 @@ class analysis_obj:
         #print("self.pf_run_time_array = ", self.pf_run_time_array)
         self.mean_pf_run_time = np.mean(self.pf_run_time_array)
         self.mean_particle_comm_time = np.mean(self.particle_commm_array)
+        self.mean_total_program_run_time = np.mean(self.total_program_run_time_array)
+        
         
         self.std_run_time = np.std(self.run_time_array)/math.sqrt(len(self.run_time_array))
         self.std_adjusted_run_time = np.std(self.adjusted_run_time_array)/math.sqrt(len(self.adjusted_run_time_array))
         self.std_pf_run_time = np.std(self.pf_run_time_array)/math.sqrt(len(self.pf_run_time_array))
         self.std_particle_comm_time = np.std(self.particle_commm_array)/math.sqrt(len(self.particle_commm_array))
+        self.std_total_program_run_time = (
+            np.std(self.total_program_run_time_array)
+            /math.sqrt(len(self.total_program_run_time_array))
+        )
 
 
 class exp_file_path:

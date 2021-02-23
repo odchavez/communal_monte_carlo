@@ -215,8 +215,8 @@ for fn in tqdm(range(len(epoch_files_to_process))):
     exists = os.path.isfile(data_path)
     #. determine which indices to keep in each shard
     if rank == 0:
-        if exists:
-            print("processing file ", data_path, " out of ", str(list(range(len(epoch_files_to_process)))))
+        if exists: 
+            print("processing file ", data_path, " out of ", str( len(epoch_files_to_process) ) )
             data_obj = prep_simulation_data.prep_data()
             data_obj.load_new_data(params_obj.get_params(), data_path, shard_subset=None)
             indices_to_scatter = data_obj.partition_index()
@@ -271,7 +271,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         #  IF COMMUNICATE == TRUE (1): RUN THE CODE BELOW
         #print("len(epoch_files_to_process)=", len(epoch_files_to_process))
         if (args.communicate == 1) or (fn == len(epoch_files_to_process)-1):
-            print("COMMUNICATING BETWEEN SHARDS FROM RANK: ", str(rank), "...")
+            #print("COMMUNICATING BETWEEN SHARDS FROM RANK: ", str(rank), "...")
             comm_time_gather_particles-=time.clock()
             #print("A")
             shard_pfo.collect_params() # logging should be outside of timing

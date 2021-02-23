@@ -96,7 +96,16 @@ class probit_sin_wave_particle:
         self.bo=not_this_particle.bo.copy()
         self.particle_id_history=not_this_particle.particle_id_history #[0]
         #self.N=not_this_particle.N
-
+    
+    def get_parameter_dimension(self):
+        return len(self.bo)
+    
+    def get_parameter_set(self):
+        return self.bo.copy()
+    
+    def set_particle_parameters(self, param_vals):
+        self.bo=param_vals.copy()
+        
     def print_vals(self):
         print(self.bo)
         print(self.Bo)

@@ -13,38 +13,47 @@ rm *.bak
 
 # BATCH 1 TO TEST
 #sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv=0
+
 sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=0_GPv=1
+
 #sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=1_GPv=0
-sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=1_GPv=1
+#sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=1_GPv=1
 #sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=2_GPv=0
-sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=2_GPv=1
+#sbatch job_scripts/Xy_N=1000000/LFCMC/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=2_GPv=1
 #sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=3_GPv=0
-sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=3_GPv=1
+#sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=10/Epoch_N=1000/shard=10_p=100_part=1000_js_expn=3_GPv=1
 
 #sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv=0
+
 sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=0_GPv=1
-sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=1_GPv=0
-sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=1_GPv=1
-sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=2_GPv=0
-sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=2_GPv=1
+
+#sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=1_GPv=0
+#sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=1_GPv=1
+#sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=2_GPv=0
+#sbatch job_scripts/Xy_N=1000000/LFCMC/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=2_GPv=1
 #sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=3_GPv=0
-sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=3_GPv=1
+#sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=50/Epoch_N=1000/shard=50_p=100_part=1000_js_expn=3_GPv=1
 
 #sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv=0
+
 sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=0_GPv=1
-sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=1_GPv=0
-sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=1_GPv=1
-sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=2_GPv=0
-sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=2_GPv=1
+
+#sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=1_GPv=0
+#sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=1_GPv=1
+#sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=2_GPv=0
+#sbatch job_scripts/Xy_N=1000000/LFCMC/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=2_GPv=1
 #sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=3_GPv=0
-sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=3_GPv=1
+#sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=100/Epoch_N=1000/shard=100_p=100_part=1000_js_expn=3_GPv=1
 
 #sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv=0
+
 sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=0_GPv=1
-sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=1_GPv=0
-sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=1_GPv=1
+
+#sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=1_GPv=0
+#sbatch job_scripts/Xy_N=1000000/kernel_weights/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=1_GPv=1
 #sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=2_GPv=0
-sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=2_GPv=1
+#sbatch job_scripts/Xy_N=1000000/LFCMC/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=2_GPv=1
+
 sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=3_GPv=0
 sbatch job_scripts/Xy_N=1000000/scott_variance_weight/shard=500/Epoch_N=1000/shard=500_p=100_part=1000_js_expn=3_GPv=1
 

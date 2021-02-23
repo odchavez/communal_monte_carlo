@@ -1,0 +1,1 @@
+python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 0 --Epoch_N 1 --Nt 1 --p 76 --N_Node 4 --particles_per_shard 20 --experiment_number 99 --save_history 0 --GP_version 0 --randomize_shards 0 --files_to_process_path HENSMAN_file_name_stems --results_sub_folder airline_data --source_folder data --communicate 0

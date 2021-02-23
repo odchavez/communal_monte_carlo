@@ -82,22 +82,37 @@ class particle_filter:
             norm_wts = np.ones(len(self.not_norm_wts))/len(self.not_norm_wts)
         
         particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
-        temp_index=np.zeros(self.PART_NUM)
-        temp_index.astype(int)
 
-        for pn in range(self.PART_NUM):
-            temp_index[particles_kept[pn]]+=1
+        base_particle_parameter_matrix = np.zeros(
+            (
+                self.PART_NUM,  
+                self.particle_list[0].get_parameter_dimension()
+            )
+        )
 
-        not_chosen=np.where(temp_index==0)[0]
-        for nci in range(len(not_chosen)):
-            for ti in range(self.PART_NUM):
-                break_ti_for=False
-                while(temp_index[ti]>=2):
-                    temp_index[ti]-=1
-                    self.particle_list[not_chosen[nci]].copy_particle_values(self.particle_list[ti])
-                    break_ti_for=True
-                    break
-                if break_ti_for: break
+        for p in range(self.PART_NUM):
+            base_particle_parameter_matrix[p, :] = self.particle_list[p].get_parameter_set()
+        
+        for p in range(base_particle_parameter_matrix.shape[0]):
+            params = base_particle_parameter_matrix[particles_kept[p], :]
+            self.particle_list[p].set_particle_parameters(params) 
+
+        #temp_index=np.zeros(self.PART_NUM)
+        #temp_index.astype(int)
+#
+        #for pn in range(self.PART_NUM):
+        #    temp_index[particles_kept[pn]]+=1
+#
+        #not_chosen=np.where(temp_index==0)[0]
+        #for nci in range(len(not_chosen)):
+        #    for ti in range(self.PART_NUM):
+        #        break_ti_for=False
+        #        while(temp_index[ti]>=2):
+        #            temp_index[ti]-=1
+        #            self.particle_list[not_chosen[nci]].copy_particle_values(self.particle_list[ti])
+        #            break_ti_for=True
+        #            break
+        #        if break_ti_for: break
 
     def print_stuff(self):
         print("self.not_norm_wts=",self.not_norm_wts)

@@ -1,0 +1,10 @@
+sbatch job_scripts/make_data/js_make_data_Xy_N=1000000_Nt=100_pred_num=100_GP=0.slurm
+sbatch job_scripts/make_data/js_make_data_Xy_N=1000000_Nt=100_pred_num=100_GP=1.slurm
+sbatch job_scripts/make_data/js_make_data_Xy_N=1000000_Nt=100_pred_num=100_GP=2.slurm
+sbatch job_scripts/make_data/js_make_data_Xy_N=1000000_Nt=100_pred_num=100_GP=3.slurm
+sbatch job_scripts/make_data/js_make_data_Xy_N=1000000_Nt=100_pred_num=100_GP=4.slurm
+sbatch job_scripts/make_data/js_make_data_Xy_N=1000000_Nt=100_pred_num=100_GP=5.slurm
+sbatch job_scripts/make_data/js_make_data_Xy_N=1000000_Nt=100_pred_num=100_GP=6.slurm
+sbatch job_scripts/make_data/js_make_data_Xy_N=1000000_Nt=100_pred_num=100_GP=7.slurm
+sbatch job_scripts/make_data/js_make_data_Xy_N=1000000_Nt=100_pred_num=100_GP=8.slurm
+sbatch job_scripts/make_data/js_make_data_Xy_N=1000000_Nt=100_pred_num=100_GP=9.slurm
