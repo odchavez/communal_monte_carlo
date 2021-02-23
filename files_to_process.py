@@ -1900,4 +1900,7 @@ files_to_process = {
         "synth_data/Xy_N=400000_Epoch_N=2000_Nt=100_p=32/GP_version=0/fn=198.csv",
         "synth_data/Xy_N=400000_Epoch_N=2000_Nt=100_p=32/GP_version=0/fn=199.csv",
     ],
+    "synth_data/Xy_N=4000_Epoch_N=4000_Nt=1_p=32/GP_version=0":[
+        "synth_data/Xy_N=4000_Epoch_N=4000_Nt=1_p=32/GP_version=0/fn=0.csv",
+    ],
 }
