@@ -1903,4 +1903,10 @@ files_to_process = {
     "synth_data/Xy_N=4000_Epoch_N=4000_Nt=1_p=32/GP_version=0":[
         "synth_data/Xy_N=4000_Epoch_N=4000_Nt=1_p=32/GP_version=0/fn=0.csv",
     ],
+    "synth_data/Xy_N=10000_Epoch_N=10000_Nt=100_p=32/GP_version=0":[
+        "synth_data/Xy_N=10000_Epoch_N=10000_Nt=100_p=32/GP_version=0/fn=0.csv",
+    ],
+    "synth_data/Xy_N=10000_Epoch_N=10000_Nt=100_p=2/GP_version=0":[
+        "synth_data/Xy_N=10000_Epoch_N=10000_Nt=100_p=2/GP_version=0/fn=0.csv",
+    ],
 }

@@ -37,7 +37,7 @@ class probit_sin_wave_particle:
         return_value = np.max([log_lik, self.log_lik])
         return(return_value)
 
-    def update_particle_importance(self,XtX, X, Y, time_value = None):
+    def update_particle_importance(self, X, Y, time_value = None):
         if time_value != None:
             self.time_delta = time_value - self.this_time
             self.this_time  += self.time_delta
@@ -51,7 +51,7 @@ class probit_sin_wave_particle:
 
         self.bo = np.random.multivariate_normal(
             np.transpose(self.bo),
-            self.Tau_inv*np.identity(len(self.bo)),
+            np.sqrt(self.sudo_epoch_time)*self.Tau_inv*np.identity(len(self.bo)),
             1
             ).astype(float).reshape(self.p,1).flatten()*self.std_rescale
 
