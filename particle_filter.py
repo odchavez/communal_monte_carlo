@@ -50,10 +50,10 @@ class particle_filter:
 
                 row_index = self.time_values == self.unique_time_values[n]
                 
-                XtXpre = self.X[row_index,:]
-                XtX = XtXpre.transpose().dot(XtXpre)
+                #XtXpre = self.X[row_index,:]
+                #XtX = XtXpre.transpose().dot(XtXpre)
                 self.particle_list[pn].update_particle_importance(
-                    XtX,
+                    #XtX,
                     self.X[row_index,:],
                     self.Y[row_index],
                     self.unique_time_values[n]
@@ -80,7 +80,7 @@ class particle_filter:
         norm_wts = norm_wts/np.sum(norm_wts)
         if any(np.isnan(x)):
             norm_wts = np.ones(len(self.not_norm_wts))/len(self.not_norm_wts)
-        
+        #use multinomial vs choice
         particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
 
         base_particle_parameter_matrix = np.zeros(
