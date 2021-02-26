@@ -1,4 +1,4 @@
-import pf_models as pf
+#import pf_models as pf
 import numpy as np
 import pandas as pd
 import time
@@ -26,10 +26,12 @@ def loglik(b, X, y, sigma=None, method='classification', mult_obs=False):
             # re-write, not very efficient
             if method == 'classification':
                 if y[i] == 1:
-                    ll += log_sigmoid(-1*bX[:, i])
+                    #ll += log_sigmoid(-1*bX[:, i])
+                    ll += log_sigmoid(bX[:, i])
                 else:
                     assert y[i] == 0
-                    ll += log_sigmoid(bX[:, i])
+                    #ll += log_sigmoid(bX[:, i])
+                    ll += log_sigmoid(-1*bX[:, i])
                     
             elif method == 'regression':
                 ll += stats.norm.logpdf(y[i], bX[:, i], sigma)
@@ -38,10 +40,12 @@ def loglik(b, X, y, sigma=None, method='classification', mult_obs=False):
     else:
         if method == 'classification':
             if y == 1:
-                ll = log_sigmoid(-1*bX)
+                #ll = log_sigmoid(-1*bX)
+                ll = log_sigmoid(bX)
             else:
                 assert y == 0
-                ll = log_sigmoid(bX)
+                #ll = log_sigmoid(bX)
+                ll = log_sigmoid(-1*bX)
         elif method == 'regression':
             ll = stats.norm.logpdf(y, bX, sigma)
         else:
@@ -52,42 +56,30 @@ class particle_filter:
 #particle filter class
     def __init__(self, dat, params_obj, pf_rank = 0, run_number = 0, save_history=True, method='classification'):
 
-        self.PART_NUM           = params_obj.get_particles_per_shard()
-        self.particle_list      = list()
-        self.model              = params_obj.get_model()
-        self.sample_method      = params_obj.get_sample_method()
-        self.time_values        = [0]
-        self.unique_time_values = np.unique(self.time_values)
-        self.rank               = pf_rank
-        self.run_number         = run_number
-        
-        #########################
-        # Needed args: X, y, times, num_particles, b_prior_mean=0., b_prior_std = 1., stepsize=0.05,  save_history=True, sigma=1., method='classification'
         b_prior_mean=0.
-        self.b_prior_std = 1.
+        self.b_prior_std = dat['B']#1.
         self.sigma=1.
         self.times = dat['time_value']
         self.method=method
         self.shards = dat['shards']
-        self.stepsize = dat['Tau_inv_std']
+        self.stepsize = dat['Tau_inv_std']*5
         self.X = dat['X_matrix']
         self.y = dat['Y'] 
         self.save_history = save_history
         self.unique_times = np.unique(self.times)
-        #print("self.unique_times=",self.unique_times)
-        if len(self.unique_times) < len(self.times):
-            self.repeat_obs = True
-        else:
-            self.repeat_obs = False
+        self.PART_NUM= params_obj.get_particles_per_shard()
+        self.sample_method      = params_obj.get_sample_method()
+        
+        self.repeat_obs = self.get_repeat_obs_bool()
+        
         # initialize particles
         self.N, self.D = self.X.shape
         self.T = len(self.unique_times)
         
         self.particles = np.random.normal(b_prior_mean, self.b_prior_std, size=[self.PART_NUM, self.D])
-        #print("self.times=",self.times)
-        #print("self.unique_times[0]=", self.unique_times[0])
-        #print(self.times==np.min(self.unique_times))
-        obs_inds = self.times==np.min(self.unique_times)#np.argwhere(self.times==np.min(self.unique_times)).squeeze()
+        
+        obs_inds = self.times==np.min(self.unique_times)
+        
         ll = loglik(
             self.particles, 
             self.X[obs_inds, :], 
@@ -103,58 +95,20 @@ class particle_filter:
         self.last_processed_time = np.min(self.unique_times)
         if self.save_history:
             self.history = np.mean(self.particles, axis=0)
-        #########################
-        
-        if self.model== "probit_sin_wave":
-            self.p=dat['p']
 
-            self.shards=dat['shards']
-            for pn in range(self.PART_NUM):
-                temp_particle=pf.probit_sin_wave_particle( 
-                    np.array(dat['b'][0]), dat['B'], dat['Tau_inv_std'], (self.rank, pn)
-                )
-                temp_particle.set_shard_number(self.shards)
-                self.particle_list.append(temp_particle)
-        else:
-            print(model, " not implemented yet...")
 
     def run_particle_filter(self):
-        #single interation of P particles
-        
-        self.not_norm_wts=np.ones(self.PART_NUM)
-                
-        for n in range(len(self.unique_time_values)):
-            # Code in PART_NUM loop should be eliminated
-            for pn in range(self.PART_NUM):
 
-                row_index = self.time_values == self.unique_time_values[n]
-                
-                #XtXpre = self.X[row_index,:]
-                #XtX = XtXpre.transpose().dot(XtXpre)
-                self.particle_list[pn].update_particle_importance(
-                    #XtX,
-                    self.X[row_index,:],
-                    self.Y[row_index],
-                    self.unique_time_values[n]
-                )
-                self.not_norm_wts[pn]=self.particle_list[pn].evaluate_likelihood(self.X[row_index,:], self.Y[row_index])
-            
-            self.shuffle_particles()
-            # REPLACE CODE TO HERE...
-        ################################
-        # new version of PF
-        for j in range(0, len(self.unique_times)):
-            
-            # get the right sized time step
+        for j in range(0, len(self.unique_times)):            
             if self.last_processed_time < self.unique_times[j]:
                 timestepsize = self.stepsize * (self.unique_times[j]-self.last_processed_time)
             else:
                 timestepsize = self.stepsize/10000
                 
             rescale_const = self.b_prior_std / np.sqrt(self.b_prior_std**2 + timestepsize**2)
-            self.particles += np.random.normal(0, self.stepsize, size=[self.PART_NUM, self.D])
+            self.particles += np.random.normal(0, timestepsize, size=[self.PART_NUM, self.D])
             self.particles = rescale_const * self.particles
-            obs_inds = self.times==self.unique_times[j]#np.argwhere(times==unique_times[j]).squeeze()
+            obs_inds = self.times==self.unique_times[j]
             repeat_obs = self.get_repeat_obs_bool()
             ll = loglik(
                 self.particles, 
@@ -167,68 +121,62 @@ class particle_filter:
             log_weights = ll - logsumexp(ll)
             new_inds = np.random.choice(self.PART_NUM, self.PART_NUM, p=np.exp(log_weights))
             self.particles = self.particles[new_inds, :]
-            #print(type(self.particles))
-            #print(self.particles.shape)
+
             if self.save_history:
                 new_means = np.mean(self.particles, axis=0)
                 self.history = np.vstack((self.history, new_means))
-            ################################
+            
             self.last_processed_time = self.unique_times[j]
-            ################################
-        #print(self.history)
+
         return
-
-    #def resample_locally(weights):
-    #    print("resample_locally(weights) Not Implemented...")
-    #    return
     
-    def shuffle_particles(self):
-        
-        x=self.not_norm_wts
-        finite_values = x[np.isfinite(x)]
-        finite_max = np.nanmax(finite_values)
-        finite_min = np.nanmin(finite_values)
-        x[x>finite_max] = finite_max
-        x[x<finite_min] = finite_min
-        x[np.isnan(x)] = finite_min
-        norm_wts = np.exp(x - logsumexp(x))
-        norm_wts = norm_wts/np.sum(norm_wts)
-        if any(np.isnan(x)):
-            norm_wts = np.ones(len(self.not_norm_wts))/len(self.not_norm_wts)
-        #use multinomial vs choice
-        particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
-
-        base_particle_parameter_matrix = np.zeros(
-            (
-                self.PART_NUM,  
-                self.particle_list[0].get_parameter_dimension()
-            )
-        )
-
-        for p in range(self.PART_NUM):
-            base_particle_parameter_matrix[p, :] = self.particle_list[p].get_parameter_set()
-        
-        for p in range(base_particle_parameter_matrix.shape[0]):
-            params = base_particle_parameter_matrix[particles_kept[p], :]
-            self.particle_list[p].set_particle_parameters(params) 
-        #print(type(self.particle_list))
-        #print(self.particle_list.shape)
-        #temp_index=np.zeros(self.PART_NUM)
-        #temp_index.astype(int)
+    #def shuffle_particles(self):
+    #    
+    #    x=self.not_norm_wts
+    #    finite_values = x[np.isfinite(x)]
+    #    finite_max = np.nanmax(finite_values)
+    #    finite_min = np.nanmin(finite_values)
+    #    x[x>finite_max] = finite_max
+    #    x[x<finite_min] = finite_min
+    #    x[np.isnan(x)] = finite_min
+    #    norm_wts = np.exp(x - logsumexp(x))
+    #    norm_wts = norm_wts/np.sum(norm_wts)
+    #    if any(np.isnan(x)):
+    #        norm_wts = np.ones(len(self.not_norm_wts))/len(self.not_norm_wts)
+    #    #use multinomial vs choice
+    #    particles_kept = np.random.choice(range(self.PART_NUM),size=self.PART_NUM, p=norm_wts)
 #
-        #for pn in range(self.PART_NUM):
-        #    temp_index[particles_kept[pn]]+=1
+    #    base_particle_parameter_matrix = np.zeros(
+    #        (
+    #            self.PART_NUM,  
+    #            self.particle_list[0].get_parameter_dimension()
+    #        )
+    #    )
 #
-        #not_chosen=np.where(temp_index==0)[0]
-        #for nci in range(len(not_chosen)):
-        #    for ti in range(self.PART_NUM):
-        #        break_ti_for=False
-        #        while(temp_index[ti]>=2):
-        #            temp_index[ti]-=1
-        #            self.particle_list[not_chosen[nci]].copy_particle_values(self.particle_list[ti])
-        #            break_ti_for=True
-        #            break
-        #        if break_ti_for: break
+    #    for p in range(self.PART_NUM):
+    #        base_particle_parameter_matrix[p, :] = self.particle_list[p].get_parameter_set()
+    #    
+    #    for p in range(base_particle_parameter_matrix.shape[0]):
+    #        params = base_particle_parameter_matrix[particles_kept[p], :]
+    #        self.particle_list[p].set_particle_parameters(params) 
+    #    #print(type(self.particle_list))
+    #    #print(self.particle_list.shape)
+    #    #temp_index=np.zeros(self.PART_NUM)
+    #    #temp_index.astype(int)
+##
+    #    #for pn in range(self.PART_NUM):
+    #    #    temp_index[particles_kept[pn]]+=1
+##
+    #    #not_chosen=np.where(temp_index==0)[0]
+    #    #for nci in range(len(not_chosen)):
+    #    #    for ti in range(self.PART_NUM):
+    #    #        break_ti_for=False
+    #    #        while(temp_index[ti]>=2):
+    #    #            temp_index[ti]-=1
+    #    #            self.particle_list[not_chosen[nci]].copy_particle_values(self.particle_list[ti])
+    #    #            break_ti_for=True
+    #    #            break
+    #    #        if break_ti_for: break
 
     #def print_stuff(self):
     #    print("self.not_norm_wts=",self.not_norm_wts)
@@ -253,17 +201,17 @@ class particle_filter:
 
     def update_data(self, dat, run_number):
 
-        self.run_number = run_number
-        self.X = dat['X_matrix']
-        self.Y = dat['Y']
-
-        self.time_values = dat['time_value']
-        self.unique_time_values = np.unique(self.time_values)
-        self.all_shard_unique_time_values = dat['all_shard_unique_time_values']
-
-        for pn in range(self.PART_NUM):
-            self.particle_list[pn].set_bo_list(self.all_shard_unique_time_values)
-            self.particle_list[pn].this_time = 0
+        #self.run_number = run_number
+        #self.X = dat['X_matrix']
+        #self.Y = dat['Y']
+#
+        #self.time_values = dat['time_value']
+        #self.unique_time_values = np.unique(self.time_values)
+        #self.all_shard_unique_time_values = dat['all_shard_unique_time_values']
+#
+        #for pn in range(self.PART_NUM):
+        #    self.particle_list[pn].set_bo_list(self.all_shard_unique_time_values)
+        #    self.particle_list[pn].this_time = 0
             
         # update data used in new particle filter
         self.run_number = run_number
@@ -273,8 +221,12 @@ class particle_filter:
         self.unique_times = np.unique(self.times)
 
     def update_params(self, updated_params):
-        for i in range(len(self.particle_list)):
-            self.particle_list[i].bo = updated_params[i]
+        #print("type(updated_params[0])=",type(updated_params[0]))
+        #print("len(updated_params)=",len(updated_params))
+        #print("type(updated_params)=",type(updated_params))
+        self.particles = np.vstack(updated_params)
+        #for i in range(len(self.particle_list)):
+        #    self.particle_list[i].bo = updated_params[i]
             
     #def update_particle_id_history(self, updated_machine_history_id, updated_particle_history_id):
     #    for i in range(len(self.particle_list)):

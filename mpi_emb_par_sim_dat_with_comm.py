@@ -385,3 +385,10 @@ if rank == 0:
     #for file in epoch_files_to_process:
     #    print("deleting: ", file)
     #    os.remove(file)
+
+if args.save_history == 1:
+    pd.DataFrame(shard_pfo.history).to_csv(
+        "test_shard=" + str(rank) + 
+        "pn=" + str(params_obj.get_particles_per_shard()) + 
+        ".csv"
+    )

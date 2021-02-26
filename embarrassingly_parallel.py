@@ -235,6 +235,9 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
     #print("in embarrassingly_parallel.py")
     #print("in shuffel_embarrassingly_parallel_params function")
     #print("weighting_type comes in as:", weighting_type)
+    #print("len(all_shard_params)=", len(all_shard_params))
+    #print("(all_shard_params[0].shape)=", (all_shard_params[0].shape))
+    #print("np.vstack(all_shard_params).shape=",np.vstack(all_shard_params).shape)
     unlisted = list()
     particle_count = len(all_shard_params[0])
     shard_count = len(all_shard_params)
@@ -246,8 +249,11 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
     #use appropriate weighting scheme
     if weighting_type == "uniform_weighting":
         #print("if weighting_type == uniform_weighting")
+        
         rows = np.random.randint(len(unlisted), size = len(unlisted))
-        sampled_unlisted = unlisted[rows,:]
+        sampled_unlisted = np.vstack(all_shard_params)[rows,:]
+        output = np.array_split(sampled_unlisted, shard_count)
+        return(output)
         
     if weighting_type == "kernel_weighting":
         #print("if weighting_type == kernel_weighting")
