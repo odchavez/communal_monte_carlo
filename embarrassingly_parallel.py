@@ -231,26 +231,15 @@ def get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_co
     #print("combined_mean=",combined_mean)
     return combined_mean, V
 
-def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uniform_weighting", machine_id_history=False, particle_id_history=False,):
-    #print("in embarrassingly_parallel.py")
-    #print("in shuffel_embarrassingly_parallel_params function")
-    #print("weighting_type comes in as:", weighting_type)
-    #print("len(all_shard_params)=", len(all_shard_params))
-    #print("(all_shard_params[0].shape)=", (all_shard_params[0].shape))
-    #print("np.vstack(all_shard_params).shape=",np.vstack(all_shard_params).shape)
+def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uniform_weighting",):
+    
     unlisted = list()
     particle_count = len(all_shard_params[0])
     shard_count = len(all_shard_params)
-    for m in range(shard_count):
-        for p in range(particle_count):
-            unlisted.append(all_shard_params[m][p])
-    unlisted = np.array(unlisted)
     
     #use appropriate weighting scheme
-    if weighting_type == "uniform_weighting":
-        #print("if weighting_type == uniform_weighting")
-        
-        rows = np.random.randint(len(unlisted), size = len(unlisted))
+    if weighting_type == "uniform_weighting":        
+        rows = np.random.randint(particle_count*shard_count, size = particle_count*shard_count)
         sampled_unlisted = np.vstack(all_shard_params)[rows,:]
         output = np.array_split(sampled_unlisted, shard_count)
         return(output)
@@ -289,49 +278,15 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
         sampled_unlisted = np.random.multivariate_normal(
             combined_mean, V, size=particle_count*shard_count, check_valid='warn', tol=1e-8)
         
-
-                
-    if machine_id_history:
-        unlisted_machine = list()
-        unlisted_partilce_id = list()
-        for m in range(len(machine_id_history)):
-            for p in range(len(machine_id_history[0])):
-                unlisted_machine.append(machine_id_history[m][p])
-                unlisted_partilce_id.append(particle_id_history[m][p])
-        unlisted_machine = np.array(unlisted_machine)
-        unlisted_partilce_id=np.array(unlisted_partilce_id)
-        #rows = np.random.randint(len(unlisted), size = len(unlisted))
-        sampled_unlisted_machine_ids = unlisted_machine[rows]
-        sampled_unlisted_particle_ids = unlisted_partilce_id[rows]
-        
-        output = list()
-        output_machine_id = list()
-        output_particle_id = list()
-        index = 0
-        for m in range(len(all_shard_params)):
-            shard_part = list()
-            shard_part_machine = list()
-            shard_part_particle_id = list()
-            for p in range(len(all_shard_params[0])):
-                shard_part.append(sampled_unlisted[index,:].copy())
-                shard_part_machine.append(sampled_unlisted_machine_ids[index])
-                shard_part_particle_id.append(sampled_unlisted_particle_ids[index])
-                index+=1
-            output.append(shard_part)
-            output_machine_id.append(shard_part_machine)
-            output_particle_id.append(shard_part_particle_id)
-        # use rows to transfer history records
-        return output, output_machine_id, output_particle_id
-    else:
-        output = list()
-        index = 0
-        for m in range(len(all_shard_params)):
-            shard_part = list()
-            for p in range(len(all_shard_params[0])):
-                shard_part.append(sampled_unlisted[index,:].copy())
-                index+=1
-            output.append(shard_part)
-        return(output)
+    output = list()
+    index = 0
+    for m in range(len(all_shard_params)):
+        shard_part = list()
+        for p in range(len(all_shard_params[0])):
+            shard_part.append(sampled_unlisted[index,:].copy())
+            index+=1
+        output.append(shard_part)
+    return(output)
 
 
 def convert_to_list_of_type(params_nd_list, f_type = float):
