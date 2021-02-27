@@ -14,10 +14,10 @@ from scipy.stats import multivariate_normal
 #from joblib import parallel_backend
 
 
-#def logsumexp(x):
-#    c = x.max()
-#    return c + np.log(np.sum(np.exp(x - c)))
-#
+def logsumexp(x):
+    c = x.max()
+    return c + np.log(np.sum(np.exp(x - c)))
+
 #def particle_filter_init_wrapper(f_shards_data, f_part_num, f_model, f_sample_method):
 #    pfo = particle_filter.particle_filter(f_shards_data, f_part_num, f_model, f_sample_method)
 #    return(pfo)
@@ -174,61 +174,37 @@ from scipy.stats import multivariate_normal
 #    return pf_obj
 
 def get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_count):
-    #print("in shuffel_embarrassingly_parallel_params with normal_consensus_weighting")
-    all_shard_cov = list()
-    all_shard_cov_inv = list()
-    unlisted_numerators=list()
-    unsummed_denominator = list()
+    
+    dim = all_shard_params[0].shape[1]
+    Sig_i_inv_x_mu_i = np.zeros((particle_count,dim,shard_count))
+    
+    Sig_i_inv = np.zeros((dim,dim,shard_count))
 
     for m in range(shard_count):
-        shard_unlisted = list()
-        for p in range(particle_count):
-            shard_unlisted.append(all_shard_params[m][p])
-
-        shard_unlisted = np.array(shard_unlisted)
-        shard_cov=np.cov(shard_unlisted.T)*shard_count
-        #############################
+        shard_cov=np.cov(all_shard_params[m].T)*shard_count
+        
         if np.linalg.matrix_rank(shard_cov) == shard_cov.shape[1]:
-                shard_cov_inv = np.linalg.inv(shard_cov)
-        else:
-            #S = np.identity(shard_cov.shape[1])
-            #diag_values = shard_cov.diagonal()
-            #max_var = max(diag_values)
-            #shard_cov_inv = np.linalg.inv(S*max_var*shard_count)
-            
+                Sig_i_inv[:,:,m] = np.linalg.inv(shard_cov)
+        else: 
             I = np.identity(shard_cov.shape[1])
-            #print("I.shape:", I.shape)
             diag_values = shard_cov.diagonal()
             max_var = np.nanmax(diag_values)
             I_s = I*max_var/100
-            #print("I_s.shape:", I_s.shape)
             Sigma = shard_cov + I_s
-            #print("Sigma.shape:", Sigma.shape)
-            #print("np.linalg.matrix_rank(Sigma):", np.linalg.matrix_rank(Sigma))
-            shard_cov_inv = np.linalg.inv(Sigma)
-        #############################
-        
-        unsummed_denominator.append(shard_cov_inv)
+            Sig_i_inv[:,:,m] = np.linalg.inv(Sigma)
 
-        for p in range(particle_count):
-            temp_param = all_shard_params[m][p]
-            temp_numerator = np.matmul(shard_cov_inv, temp_param)
-            unlisted_numerators.append(temp_numerator)
-    
-    summed_Sig_i_inv_x_mu_i = np.zeros(unlisted_numerators[0].shape)
-    for i in range(len(unlisted_numerators)):
-        summed_Sig_i_inv_x_mu_i = np.add(summed_Sig_i_inv_x_mu_i, unlisted_numerators[i])
-    
-    V_inv = np.zeros(unsummed_denominator[0].shape)
-    for i in range(len(unsummed_denominator)):
-        V_inv = np.add(V_inv,unsummed_denominator[i]*particle_count)        
+        Sig_i_inv_x_mu_i[:,:,m] = np.matmul(Sig_i_inv[:,:,m], all_shard_params[m].T).T
+        
+    summed_Sig_i_inv_x_mu_i = np.sum(np.sum(Sig_i_inv_x_mu_i, axis=0), axis=1)
+    #print("summed_Sig_i_inv_x_mu_i.shape=",summed_Sig_i_inv_x_mu_i.shape)
+    V_inv = np.sum(Sig_i_inv, axis=2)*particle_count          
     V = np.linalg.inv(V_inv)
-    
-    #print("len(unlisted_numerators)=",len(unlisted_numerators))
-    #print("unlisted_numerators[0].shape=",unlisted_numerators[0].shape)
-    #print("unlisted_numerators[0]=",unlisted_numerators[0])
-    combined_mean = np.matmul(V, summed_Sig_i_inv_x_mu_i)
+    combined_mean = np.matmul(V, summed_Sig_i_inv_x_mu_i.T).T
+    #final_len = particle_count*shard_count
+    #combined_mean = np.tile(temp_combined_mean, particle_count).reshape((final_len,dim))
     #print("combined_mean=",combined_mean)
+    #print("V=",V)
+    #print(np.tile(combined_mean, particle_count).reshape((final_len,dim)))
     return combined_mean, V
 
 def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uniform_weighting",):
@@ -236,7 +212,7 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
     unlisted = list()
     particle_count = len(all_shard_params[0])
     shard_count = len(all_shard_params)
-    
+
     #use appropriate weighting scheme
     if weighting_type == "uniform_weighting":        
         rows = np.random.randint(particle_count*shard_count, size = particle_count*shard_count)
@@ -254,7 +230,12 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
         """
         
         mu, Sigma = get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_count)
-        
+        #for m in range(shard_count):
+        #    x = multivariate_normal.logpdf(all_shard_params[m], mean=mu, cov=Sigma)
+        unlisted = np.vstack(all_shard_params)
+        #print(unlisted.shape)
+        #print(mu.shape)
+        #print(Sigma.shape)
         x = multivariate_normal.logpdf(unlisted, mean=mu, cov=Sigma)
         finite_values = x[np.isfinite(x)]
         finite_max = np.nanmax(finite_values)
@@ -270,6 +251,8 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
         idx=list(range(len(unlisted)))
         rows = np.random.choice(idx, size = len(idx), p=normalized_kernel_weights)
         sampled_unlisted = unlisted[rows,:]
+        output = np.array_split(sampled_unlisted, shard_count)
+        return(output)
     
     if weighting_type == "normal_consensus_weighting":
         

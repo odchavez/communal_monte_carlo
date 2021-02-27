@@ -1,3 +1,5 @@
+from tqdm import tqdm
+
 import pandas as pd
 import numpy as np
 import random
@@ -147,7 +149,8 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code=None)
     
     epoch_counter = 0
     left_over_data = None
-    for ftp in range(len(files_to_process)):
+    print("Checking model data...")
+    for ftp in tqdm(range(len(files_to_process))):
         #load data
         if data_type == "synth_data":
             file_data = pd.read_csv(files_to_process[ftp], index_col=0)
@@ -162,13 +165,13 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code=None)
         if epochs_in_file >=1:
             start = 0
             end = Epoch_N
-            for eif in range(epochs_in_file):
+            for eif in tqdm(range(epochs_in_file)):
                 #print("################################## LOOP ITERATION BEGIN ##################################")
                 #print("iteration:"+str(eif)+"out of"+str(range(epochs_in_file)))
                 if 'time' in file_data.columns:
                     #print("file_data.iloc[start:end]=", file_data.iloc[start:end])
-                    print("file_data.shape"+str(file_data.shape))
-                    print("start:end=", str(start)+":"+str(end))
+                    #print("file_data.shape"+str(file_data.shape))
+                    #print("start:end=", str(start)+":"+str(end))
                     temp_index = np.max(file_data.iloc[start:end].index.values)
                     #print("temp_index = ",str(temp_index))
                     current_time = file_data.time[temp_index]
@@ -190,18 +193,19 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code=None)
                 if output.shape[0] >= Epoch_N:
                     #print("in if output.shape[0] >= Epoch_N:")
                     #print(output)
-                    print("NOT:",not os.path.exists(data_path))
-                    print("affirmative:", os.path.exists(data_path))
+                    #print("NOT:",not os.path.exists(data_path))
+                    #print("affirmative:", os.path.exists(data_path))
                     if not os.path.exists(data_path):
                         output.to_csv(data_path)
-                        print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape,
-                          " in epochs_in_file >=1:")
+                        #print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape,
+                        #  " in epochs_in_file >=1:")
                     else:
-                        print(
-                            "file exists - NOT writing epoch ", epoch_counter, 
-                            " with t=", current_time," and shape:", output.shape, 
-                            " in left_over_data"
-                        )
+                        #print(
+                        #    "file exists - NOT writing epoch ", epoch_counter, 
+                        #    " with t=", current_time," and shape:", output.shape, 
+                        #    " in left_over_data"
+                        #)
+                        None
                         
                     epoch_files_to_process.append(data_path)
                     epoch_counter+=1
@@ -230,17 +234,18 @@ def make_epoch_files(files_to_process, data_type, file_stem, Epoch_N, code=None)
         output = output.reset_index(drop=True)
         #print("in if left_over_data is not None:")
         #print(output)
-        print("NOT:",not os.path.exists(data_path))
-        print("affirmative:", os.path.exists(data_path))
+        #print("NOT:",not os.path.exists(data_path))
+        #print("affirmative:", os.path.exists(data_path))
         if not os.path.exists(data_path):
             output.to_csv(data_path)
-            print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape, " in left_over_data")
+            #print("writing epoch ", epoch_counter, " with t=", current_time," and shape:", output.shape, " in left_over_data")
         else:
-            print(
-                "file exists - NOT writing epoch ", epoch_counter, 
-                " with t=", current_time," and shape:", output.shape, 
-                " in left_over_data"
-            )
+            #print(
+            #    "file exists - NOT writing epoch ", epoch_counter, 
+            #    " with t=", current_time," and shape:", output.shape, 
+            #    " in left_over_data"
+            #)
+            None
         epoch_files_to_process.append(data_path)
         
     return epoch_files_to_process

@@ -209,7 +209,7 @@ for fn in tqdm(range(len(epoch_files_to_process))):
     #. determine which indices to keep in each shard
     if rank == 0:
         if exists: 
-            print("processing file ", data_path, " out of ", str( len(epoch_files_to_process) ) )
+            #print("processing file ", data_path, " out of ", str( len(epoch_files_to_process) ) )
             data_obj = prep_simulation_data.prep_data()
             data_obj.load_new_data(params_obj.get_params(), data_path, shard_subset=None)
             indices_to_scatter = data_obj.partition_index()
