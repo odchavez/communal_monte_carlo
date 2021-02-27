@@ -76,11 +76,6 @@ def get_args():
         required=True
     )
     parser.add_argument(
-        '--keep_history', type=int,
-        help='keep a full record of sampled particles if 1.  If 0 do not track history.',
-        required=False,  default=0
-    )
-    parser.add_argument(
         '--experiment_number', type=str,
         help='The experimental run number',
         required=True
@@ -304,14 +299,12 @@ if rank == 0:
     parameter_history_obj.write_stats_results(
         f_stats_df=stats_results_file, 
         f_other_stats_file=params_results_file_path,
-        save_history=args.save_history,
     )
 
 if args.save_history == 1:
     all_histories = comm.gather(shard_pfo.history, root=0)
     if rank == 0:
         mean_history = sum(all_histories)/size
-        
         history_path = (
         'experiment_results/history/' + 
          args.results_sub_folder + 
@@ -322,5 +315,4 @@ if args.save_history == 1:
         '_exp_num=' + args.experiment_number + 
         '_communicate=' + str(True if args.communicate == 1 else False) +
         '.csv')
-        
         pd.DataFrame(mean_history).to_csv(history_path)
