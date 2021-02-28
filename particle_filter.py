@@ -138,17 +138,17 @@ class particle_filter:
         self.particles = np.vstack(updated_params)
 
     def get_pf_parameter_means(self):
-        self.params_to_ship_mean = np.mean(self.params_to_ship, axis=0)
+        self.particles_mean = np.mean(self.particles, axis=0)
         
     def get_pf_parameter_cov(self):
-        self.params_to_ship_cov = np.cov(self.params_to_ship.T)
+        self.particles_cov = np.cov(self.particles.T)
          
     def compute_particle_kernel_weights(self, mean_params, cov_parmas):
 
         # get shard inverse covariances * shard count        
         shard_cov_inv_list=[]
         for V_s in range(len(cov_parmas)):
-            if np.linalg.matrix_rank(cov_parmas[V_s]) == self.p:
+            if np.linalg.matrix_rank(cov_parmas[V_s]) == self.D:
                 shard_cov_inv_list.append(np.linalg.inv(cov_parmas[V_s]*self.shards))
             else:
                 I = np.identity(self.p)
@@ -176,8 +176,14 @@ class particle_filter:
         global_mean = np.matmul(V, S_inv_x_shard_mean_sum)
         
         #particles are in self.params_to_ship
-        self.not_norm_wts = multivariate_normal.pdf(
-            self.params_to_ship, mean=global_mean, cov=V)
-
+        #self.not_norm_wts = multivariate_normal.pdf( #
+        #    self.particles, mean=global_mean, cov=V)
+        
+        ll = multivariate_normal.logpdf(self.particles, mean=global_mean, cov=V)
+        log_weights = ll - logsumexp(ll)
+        #log_weights = ll - logsumexp(ll)
+        new_inds = np.random.choice(self.PART_NUM, self.PART_NUM, p=np.exp(log_weights))
+        self.particles = self.particles[new_inds, :]
+            
     def get_repeat_obs_bool(self):
         return len(self.unique_times) < len(self.times)

@@ -196,15 +196,14 @@ def get_Communal_Monte_Carlo_mu_Sigma(all_shard_params, particle_count, shard_co
         Sig_i_inv_x_mu_i[:,:,m] = np.matmul(Sig_i_inv[:,:,m], all_shard_params[m].T).T
         
     summed_Sig_i_inv_x_mu_i = np.sum(np.sum(Sig_i_inv_x_mu_i, axis=0), axis=1)
-    #print("summed_Sig_i_inv_x_mu_i.shape=",summed_Sig_i_inv_x_mu_i.shape)
     V_inv = np.sum(Sig_i_inv, axis=2)*particle_count          
     V = np.linalg.inv(V_inv)
+    
+    # ensure V maintains positive semi-definite property
+    # code here
+    
     combined_mean = np.matmul(V, summed_Sig_i_inv_x_mu_i.T).T
-    #final_len = particle_count*shard_count
-    #combined_mean = np.tile(temp_combined_mean, particle_count).reshape((final_len,dim))
-    #print("combined_mean=",combined_mean)
-    #print("V=",V)
-    #print(np.tile(combined_mean, particle_count).reshape((final_len,dim)))
+
     return combined_mean, V
 
 def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uniform_weighting",):
@@ -261,16 +260,9 @@ def shuffel_embarrassingly_parallel_params(all_shard_params, weighting_type="uni
         sampled_unlisted = np.random.multivariate_normal(
             combined_mean, V, size=particle_count*shard_count, check_valid='warn', tol=1e-8)
         
-    output = list()
-    index = 0
-    for m in range(len(all_shard_params)):
-        shard_part = list()
-        for p in range(len(all_shard_params[0])):
-            shard_part.append(sampled_unlisted[index,:].copy())
-            index+=1
-        output.append(shard_part)
-    return(output)
-
+        output = np.array_split(sampled_unlisted, shard_count)
+        return(output)
+        
 
 def convert_to_list_of_type(params_nd_list, f_type = float):
     all_shards = list()
