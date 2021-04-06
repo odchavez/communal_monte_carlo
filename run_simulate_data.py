@@ -1,7 +1,7 @@
 """
 classification run with: python run_simulate_data.py --N_total 400000 --Epoch_N 2000 --predictor_N 32 --N_per_tic 100 --GP 1 --GP_version 0 
 
-regression run with: python run_simulate_data.py --N_total 100000 --Epoch_N 10000 --predictor_N 32 --N_per_tic 1 --GP_version 0 --model_type regression --regression_error 1.0
+regression run with: python run_simulate_data.py --N_total 20000 --Epoch_N 10000 --predictor_N 32 --N_per_tic 1 --GP_version 1 --model_type regression --regression_error 1.0 --covariance_cutoff .999
 """
 
 import argparse
@@ -69,12 +69,27 @@ def get_args():
     parser.add_argument(
         '--model_type', type=str,
         help='create classification or regression data',
-        required=False, default= "classification"
+        required=True
     )
     parser.add_argument(
         '--regression_error', type=float,
         help='Amount of noise to add to Y = X*Beta + error',
         required=False, default= 1.
+    )
+    parser.add_argument(
+        '--covariance_cutoff', type=float,
+        help='set to zero all values of covariance below cutoff',
+        required=False, default= 0.
+    )
+    parser.add_argument(
+        '--h', type=float,
+        help='cov param',
+        required=False, default= 0.
+    )
+    parser.add_argument(
+        '--lam', type=float,
+        help='cov param',
+        required=False, default= 0.
     )
     return parser.parse_args()
 

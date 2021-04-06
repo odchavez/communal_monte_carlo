@@ -2023,4 +2023,20 @@ files_to_process = {
         "synth_data/Xy_N=100000_Epoch_N=10000_Nt=100_p=32/GP_version=0/fn=8.csv",
         "synth_data/Xy_N=100000_Epoch_N=10000_Nt=100_p=32/GP_version=0/fn=9.csv",
     ],
+    "synth_data/regression/Xy_N=20000_Epoch_N=10000_Nt=1_p=32/GP_version=0":[
+        "synth_data/regression/Xy_N=20000_Epoch_N=10000_Nt=1_p=32/GP_version=0/fn=0.csv",
+        "synth_data/regression/Xy_N=20000_Epoch_N=10000_Nt=1_p=32/GP_version=0/fn=1.csv",
+    ],
+    "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0":[
+        "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0/fn=0.csv",
+        "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0/fn=1.csv",
+        "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0/fn=2.csv",
+        "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0/fn=3.csv",
+        "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0/fn=4.csv",
+        "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0/fn=5.csv",
+        "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0/fn=6.csv",
+        "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0/fn=7.csv",
+        "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0/fn=8.csv",
+        "synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0/fn=9.csv",
+    ],
 }

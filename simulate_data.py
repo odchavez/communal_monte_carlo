@@ -1,10 +1,15 @@
 import pandas as pd
 import numpy as np
+
 from tqdm import tqdm
 from scipy.stats import norm
 import math
+
 from matplotlib import pyplot as plt
 import os
+
+import scipy
+import seaborn as sns
 
 
 class simulated_data2:
@@ -55,61 +60,62 @@ class simulated_data2:
         if not os.path.exists(self.output_folder_name):
             os.makedirs(self.output_folder_name)
 
-    def make_linear_trajectory(self, f_time_tic, y_2 = 1.0, y_1 = -1.0,):
-
-        T_max = max(f_time_tic)
-        T_min = min(f_time_tic)
-        m = (y_2 - y_1)/(T_max - T_min)
-        T = np.array(range(int(T_min), int(T_max+1.0)))
-        output = m*(T-y_1) + y_1
-        return output
-
-    def make_logrithmic_trajectory(self, f_time_tic,):
-
-        T_max = max(f_time_tic)
-        T_min = min(f_time_tic)
-        T = np.array(range(int(T_min), int(T_max+1.0)))
-        output = np.log((T+300000)/300000)
-        return output
-
-    def make_sin_wave_trajectory(self, f_time_tic, sin_or_cos='cos',):
-
-        T_max = max(f_time_tic)
-        T_min = min(f_time_tic)
-        T = np.array(range(int(T_min), int(T_max+1.0)))
-        if sin_or_cos == 'cos':
-            output = np.cos((T-T_min)*2*math.pi/T_max)
-        else:
-            output = np.sin((T-T_min)*2*math.pi/T_max)
-        return output
-
-    def make_K(self, x, h, lam):
-        """
-        Make covariance matrix from covariance kernel
-        """
-        # for a data array of length x, make a covariance matrix x*x:
-        K = np.zeros((len(x),len(x)))
-        for i in range(0,len(x)):
-            for j in range(0,len(x)):
-                # calculate value of K for each separation:
-                K[i,j] = self.cov_kernel(x[i],x[j],h,lam)
-    
-        return K
-
-    def cov_kernel(self, x1,x2,h,lam):
-        """
-        Squared-Exponential covariance kernel
-        """
-        k12 = h**2*np.exp(-1.*(x1 - x2)**2/lam**2)
-        return k12
-    
-    def make_GP_trajectory(self, f_time_tic):
-        #t = np.arange(0, f_time_tic)
-        h=1.0
-        lam=len(f_time_tic)/2 #100
-        K = self.make_K(f_time_tic,h,lam)
-        y = np.random.multivariate_normal(np.zeros(len(f_time_tic)),K)
-        return y-y[0]
+    #def make_linear_trajectory(self, f_time_tic, y_2 = 1.0, y_1 = -1.0,):
+#
+    #    T_max = max(f_time_tic)
+    #    T_min = min(f_time_tic)
+    #    m = (y_2 - y_1)/(T_max - T_min)
+    #    T = np.array(range(int(T_min), int(T_max+1.0)))
+    #    output = m*(T-y_1) + y_1
+    #    return output
+#
+    #def make_logrithmic_trajectory(self, f_time_tic,):
+#
+    #    T_max = max(f_time_tic)
+    #    T_min = min(f_time_tic)
+    #    T = np.array(range(int(T_min), int(T_max+1.0)))
+    #    output = np.log((T+300000)/300000)
+    #    return output
+#
+    #def make_sin_wave_trajectory(self, f_time_tic, sin_or_cos='cos',):
+#
+    #    T_max = max(f_time_tic)
+    #    T_min = min(f_time_tic)
+    #    T = np.array(range(int(T_min), int(T_max+1.0)))
+    #    if sin_or_cos == 'cos':
+    #        output = np.cos((T-T_min)*2*math.pi/T_max)
+    #    else:
+    #        output = np.sin((T-T_min)*2*math.pi/T_max)
+    #    return output
+#
+    #def make_K(self, x, h, lam, cutoff=.1):
+    #    """
+    #    Make covariance matrix from covariance kernel
+    #    """
+    #    # for a data array of length x, make a covariance matrix x*x:
+    #    K = np.zeros((len(x),len(x)))
+    #    for i in range(0,len(x)):
+    #        for j in range(0,len(x)):
+    #            # calculate value of K for each separation:
+    #            K[i,j] = self.cov_kernel(x[i],x[j],h,lam,cutoff)
+    #
+    #    return K
+#
+    #def cov_kernel(self, x1,x2,h,lam, cutoff=.1):
+    #    """
+    #    Squared-Exponential covariance kernel
+    #    """
+    #    k12 = h**2*np.exp(-1.*(x1 - x2)**2/lam**2)
+    #    output = k12 if k12>=cutoff else 0
+    #    return output
+    #
+    #def make_GP_trajectory(self, f_time_tic, cutoff=0.1):
+    #    #t = np.arange(0, f_time_tic)
+    #    h=1.0
+    #    lam=len(f_time_tic)/2 #100
+    #    K = self.make_K(f_time_tic,h,lam, cutoff)
+    #    y = np.random.multivariate_normal(np.zeros(len(f_time_tic)),K)
+    #    return y-y[0]
 
     def generate_Betas(self, sin_or_cos, intercepts_1, intercepts_2, intercepts_3):
         print("generating regression coefficients...")
@@ -137,7 +143,7 @@ class simulated_data2:
             beta_cnames = list(range(self.pred_number))
             Beta_vals={}
             for pn in tqdm(range(self.pred_number)):
-                Beta_vals['B_'+str(pn)] = self.make_GP_trajectory(f_time_tic= self.time_tics)
+                Beta_vals['B_'+str(pn)] = self.make_GP_trajectory(f_time_tic= self.time_tics, cutoff=cutoff)
                 beta_cnames[pn] = 'B_'+str(pn)
             self.Beta_vals_df = pd.DataFrame(Beta_vals)[beta_cnames]
             
@@ -249,33 +255,33 @@ class simulated_data_Dynamic_Gaussian_Mixture:
         self.make_dynamic_GM_path()
         self.generate_DGM_data()
             
-    def make_K(self, x, h, lam):
-        """
-        Make covariance matrix from covariance kernel
-        """
-        # for a data array of length x, make a covariance matrix x*x:
-        K = np.zeros((len(x),len(x)))
-        for i in range(0,len(x)):
-            for j in range(0,len(x)):
-                # calculate value of K for each separation:
-                K[i,j] = self.cov_kernel(x[i],x[j],h,lam)
-    
-        return K
-
-    def cov_kernel(self, x1,x2,h,lam):
-        """
-        Squared-Exponential covariance kernel
-        """
-        k12 = h**2*np.exp(-1.*(x1 - x2)**2/lam**2)
-        return k12
-    
-    def make_GP_trajectory(self, f_time_tic):
-        #t = np.arange(0, f_time_tic)
-        h=1.0
-        lam=len(f_time_tic)/2 #100
-        K = self.make_K(f_time_tic,h,lam)
-        y = np.random.multivariate_normal(np.zeros(len(f_time_tic)),K)
-        return y-y[0]
+    #def make_K(self, x, h, lam):
+    #    """
+    #    Make covariance matrix from covariance kernel
+    #    """
+    #    # for a data array of length x, make a covariance matrix x*x:
+    #    K = np.zeros((len(x),len(x)))
+    #    for i in range(0,len(x)):
+    #        for j in range(0,len(x)):
+    #            # calculate value of K for each separation:
+    #            K[i,j] = self.cov_kernel(x[i],x[j],h,lam)
+    #
+    #    return K
+#
+    #def cov_kernel(self, x1,x2,h,lam):
+    #    """
+    #    Squared-Exponential covariance kernel
+    #    """
+    #    k12 = h**2*np.exp(-1.*(x1 - x2)**2/lam**2)
+    #    return k12
+    #
+    #def make_GP_trajectory(self, f_time_tic):
+    #    #t = np.arange(0, f_time_tic)
+    #    h=1.0
+    #    lam=len(f_time_tic)/2 #100
+    #    K = self.make_K(f_time_tic,h,lam)
+    #    y = np.random.multivariate_normal(np.zeros(len(f_time_tic)),K)
+    #    return y-y[0]
     
     def make_dynamic_GM_path(self):
         #initialize path containers
@@ -335,7 +341,7 @@ class simulated_data_Dynamic_Gaussian_Mixture:
         
 class simulated_data_regression:
 
-    def __init__(self, n_per_file, N_total = 10000000, n_per_tic = 1, pred_number = 32, seed = 0, GP_version=0, err_std=1):
+    def __init__(self, n_per_file, N_total=1000000, n_per_tic = 1, pred_number = 32, seed = 0, GP_version=0, err_std=1):
 
         self.time_tics = np.array(range(int(N_total/n_per_tic)))
         self.row = len(self.time_tics) * n_per_tic
@@ -347,6 +353,10 @@ class simulated_data_regression:
         self.seed = seed
         self.GP_version = GP_version
         self.error_std=err_std
+        #self.nb_of_samp_per_function = nb_of_samp_per_function
+        
+        self.nb_of_samples = 1000
+        self.number_of_functions = int(len(self.time_tics)/self.nb_of_samples)
         
         self.output_folder_name = (
             "synth_data/regression/"
@@ -371,42 +381,105 @@ class simulated_data_regression:
         if not os.path.exists(self.output_folder_name):
             os.makedirs(self.output_folder_name)
 
-    def make_K(self, x, h, lam):
-        """
-        Make covariance matrix from covariance kernel
-        """
-        # for a data array of length x, make a covariance matrix x*x:
-        K = np.zeros((len(x),len(x)))
-        for i in range(0,len(x)):
-            for j in range(0,len(x)):
-                # calculate value of K for each separation:
-                K[i,j] = self.cov_kernel(x[i],x[j],h,lam)
+    #def make_K(self, x, h, lam, cutoff):
+    #    """
+    #    Make covariance matrix from covariance kernel
+    #    """
+    #    # for a data array of length x, make a covariance matrix x*x:
+    #    # Use this format rather than double loop [(x,y) for x in a for y in b]
+    #    # then reshape to ndarray
+    #    
+    #    K = np.zeros((len(x),len(x)))
+    #    for i in tqdm(range(0,len(x))):
+    #        #for j in range(i,len(x)):
+    #            # calculate value of K for each separation:
+    #        K[i:,i] = K[i,i:] = self.cov_kernel(x[i],x[i:],h,lam, cutoff)
+    #        
+    #    print("K quantiles before cutoff:", np.quantile(K, q=[.9,.91,.92,.93,.94,.95,.96,.97,.98,.99]))
+    #    q95=np.quantile(K, q=.95)
+    #    K[K<q95] = 0
+    #    print("K quantiles after cutoff:", np.quantile(K, q=[.9,.91,.92,.93,.94,.95,.96,.97,.98,.99]))
+    #    return K
+    #
+    #def cov_kernel(self, x1,x2,h,lam, cutoff):
+    #    """
+    #    Squared-Exponential covariance kernel
+    #    """
+    #    k12 = h**2*np.exp(-1.*(x1 - x2)**2/lam**2)
+    #    #output = k12 if k12>=cutoff else 0
+    #    return k12 #output
     
-        return K
+    
 
-    def cov_kernel(self, x1,x2,h,lam):
+    def make_single_GP_path(self):
         """
-        Squared-Exponential covariance kernel
+        Function will create a GP with nb_of_samples * number_of_functions number of observations.
+        The GP segments are broken up to decrease the need to inverte such a large covariance matrix 
+        to compute the GP.
         """
-        k12 = h**2*np.exp(-1.*(x1 - x2)**2/lam**2)
-        return k12
-    
-    def make_GP_trajectory(self, f_time_tic):
-        #t = np.arange(0, f_time_tic)
-        h=1.0
-        lam=len(f_time_tic)/2 #100
-        K = self.make_K(f_time_tic,h,lam)
-        y = np.random.multivariate_normal(np.zeros(len(f_time_tic)),K)
-        return y-y[0]
+        def exponentiated_quadratic(xa, xb):
+            """Exponentiated quadratic  with σ=1"""
+            # L2 distance (Squared Euclidian)
+            sq_norm = -0.5 * scipy.spatial.distance.cdist(xa, xb, 'sqeuclidean')
+            return np.exp(sq_norm)
+        
+        X = np.expand_dims(np.linspace(0, 1, self.nb_of_samples), 1)
+        #X = np.reshape(
+        #        broken_up_times[i], 
+        #        (len(broken_up_times[i]),1)
+        #    )
+        #nb_of_samples=len(broken_up_times[i])
+        
+        
+        Sigma = exponentiated_quadratic(X, X)  # Kernel of data points
+            #print("Sigma.shape", Sigma.shape)
+            # Draw samples from the prior at our data points.
+            # Assume a mean of 0 for simplicity
+        ys = np.random.multivariate_normal(
+            mean=np.zeros(self.nb_of_samples), cov=Sigma, 
+            size=self.number_of_functions)
+        
+        #broken_up_times = np.array_split(f_time_tic, self.number_of_functions)
+        
+        for i in (range(self.number_of_functions)): #
+            
+            #print("ys.shape=", ys.shape)
+            if i ==0:
+                glued_gp = ys[0]
+            else:
+                glued_gp = np.hstack((glued_gp, np.std(pd.Series(glued_gp).diff())+ys[i]+(glued_gp[-1] - ys[i][0])))
+        
+        gpmin,gpmax = np.min(glued_gp), np.max(glued_gp)
+        glued_gp = 2*(((glued_gp-gpmin)/(gpmax-gpmin))-.5)
+        glued_gp = glued_gp - glued_gp[0]
+        return glued_gp
+
+    def make_GP_trajectory(self, number_of_predictors):
+        #y = np.random.multivariate_normal(
+        #    np.zeros(len(f_time_tic)),
+        #    K, 
+        #    size=number_of_predictors
+        #) # make size = pred_number to avoid loop
+        output = np.zeros((len(self.time_tics), number_of_predictors))
+        for i in tqdm(range(number_of_predictors)):
+            #output[:,i] = y[i] - y[i,0]
+            output[:,i] = self.make_single_GP_path()
+        return output # y-y[0]
 
     def generate_Betas(self):
-        print("generating regression coefficients...")
+        
         beta_cnames = list(range(self.pred_number))
+        # compute K covariance only once here...
+        #h=1.0
+        #lam=len(self.time_tics)/2 #100
+        #K = self.make_K(x=self.time_tics, h=h, lam=lam, cutoff=cutoff)
+        #print("covariance matrix complete...")
         Beta_vals={}
-        for pn in tqdm(range(self.pred_number)):
-            Beta_vals['B_'+str(pn)] = self.make_GP_trajectory(f_time_tic= self.time_tics)
-            beta_cnames[pn] = 'B_'+str(pn)
-        self.Beta_vals_df = pd.DataFrame(Beta_vals)[beta_cnames]
+        #print("generating regression coefficients...")
+        
+        Beta_vals = self.make_GP_trajectory(number_of_predictors=self.pred_number)
+        beta_cnames = ['B_'+str(pn) for pn in range(self.pred_number)]
+        self.Beta_vals_df = pd.DataFrame(Beta_vals, columns=beta_cnames)
         
         self.Beta_vals_df.to_csv(self.output_folder_name + self.Beta_file_name , index=False)
 
@@ -448,7 +521,7 @@ class simulated_data_regression:
             Y_vals = X_B_t + error
 
             X_i['y'] = Y_vals
-            #X_i['Tau_inv_std'] = self.Tau_inv_std
+            #X_i['Tau_inv_std'] = self.Tau_inv_std ...text...
             #X_i['Bo_std'] = self.Bo_std
             X_i['time'] = tt
 
@@ -470,4 +543,7 @@ class simulated_data_regression:
 
         print("data generation complete...")
         
+        
+def fun():
+    pass
       
