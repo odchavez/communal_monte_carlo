@@ -196,7 +196,7 @@ particles, history = (
         init_particles=particles,
         last_times=last_times,
         prev_history=history,
-        shard_count=size
+        shard_count=1
     )
 )
 
