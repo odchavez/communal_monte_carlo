@@ -215,7 +215,6 @@ for fn in tqdm(range(len(epoch_files_to_process))):
     #. determine which indices to keep in each shard
     if rank == 0:
         if exists:
-            print("processing file ", data_path, " out of ", str(list(range(len(epoch_files_to_process)))))
             data_obj = prep_simulation_data.prep_data()
             data_obj.load_new_data(params_obj.get_params(), data_path, shard_subset=None)
             indices_to_scatter = data_obj.partition_index()
@@ -263,11 +262,10 @@ for fn in tqdm(range(len(epoch_files_to_process))):
         #  IF COMMUNICATE == TRUE (1): RUN THE CODE BELOW
         #print("len(epoch_files_to_process)=", len(epoch_files_to_process))
         if (args.communicate == 1) or (fn == len(epoch_files_to_process)-1):
-            print("COMMUNICATING BETWEEN SHARDS FROM RANK: ", str(rank), "...")
             
             #print("A")
             particle_filter_run_time -= time.clock()
-            shard_pfo.collect_params() # logging should be outside of timing
+            #shard_pfo.collect_params() # logging should be outside of timing
             
             #print("B")
             """
@@ -283,14 +281,14 @@ for fn in tqdm(range(len(epoch_files_to_process))):
             particle_filter_run_time +=time.clock()
             
             comm_time_gather_particles-=time.clock()
-            params_means_from_all_shards = comm.allgather(shard_pfo.params_to_ship_mean)
-            params_cov_from_all_shards = comm.allgather(shard_pfo.params_to_ship_cov)
+            params_means_from_all_shards = comm.allgather(shard_pfo.particles_mean)
+            params_cov_from_all_shards = comm.allgather(shard_pfo.particles_cov)
             comm_time_gather_particles+=time.clock()
             
             particle_filter_run_time -=time.clock()
             shard_pfo.compute_particle_kernel_weights(
                 params_means_from_all_shards, params_cov_from_all_shards)
-            post_shuffle_params = shard_pfo.shuffle_particles()
+            #post_shuffle_params = shard_pfo.shuffle_particles()
             particle_filter_run_time +=time.clock()
 
 
@@ -300,18 +298,18 @@ comm_time_scatter_data_all      = str(comm.gather(comm_time_scatter_data, root=0
 comm_time_gather_particles_all  = str(comm.gather(comm_time_gather_particles, root=0))
 comm_time_scatter_particles_all = str(comm.gather(comm_time_scatter_particles, root=0))
 
-shard_pfo.collect_params()
-all_shard_params = comm.gather(shard_pfo.params_to_ship, root=0)
+#shard_pfo.collect_params()
+all_shard_params = comm.gather(shard_pfo.particles, root=0)
 
-if rank == 0:
-    shuffled_particles = (
-        embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
-            all_shard_params, weighting_type=args.global_weighting))
-    output_shuffled_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles)
+if rank == 0: 
+    #shuffled_particles = ( ########################## THIS LINE NEEDS TO BE DEAL WITH - REMOVED MOST LIKELY
+    #    embarrassingly_parallel.shuffel_embarrassingly_parallel_params(
+    #        all_shard_params, weighting_type=args.global_weighting))
+    #output_shuffled_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles)
     """
         NOTE: embarrassingly_parallel.convert_to_list_of_type(all_shard_params) might need to change the format of all_shard_params to the format that shuffled_particles has in order to be saved correctly.
     """
-    output_shuffled_particles = embarrassingly_parallel.convert_to_list_of_type(shuffled_particles)
+    output_shuffled_particles = embarrassingly_parallel.convert_to_list_of_type(all_shard_params)
     stats_results_file = pd.DataFrame(
         {
             'shards'                     : [size],
@@ -338,9 +336,21 @@ if rank == 0:
     parameter_history_obj.write_stats_results(
         f_stats_df=stats_results_file, 
         f_other_stats_file=params_results_file_path,
-        save_history=args.save_history,
     )
-    #print(epoch_files_to_process)
-    #for file in epoch_files_to_process:
-    #    print("deleting: ", file)
-    #    os.remove(file)
+
+if args.save_history == 1:
+    all_histories = comm.gather(shard_pfo.history, root=0)
+    if rank == 0:
+        mean_history = sum(all_histories)/size
+        history_path = (
+        'experiment_results/history/' + 
+         args.results_sub_folder + 
+        '/results_emb_par_fit_test_with_comm' + 
+        '_shard_num=' + str(size) +
+        '_' + output_stem + 
+        '_part_num=' + str(args.particles_per_shard) +
+        '_exp_num=' + args.experiment_number + 
+        '_communicate=' + str(True if args.communicate == 1 else False) +
+        '.csv')
+        pd.DataFrame(mean_history).to_csv(history_path)
+
