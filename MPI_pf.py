@@ -100,7 +100,8 @@ args = get_args()
 if args.comm_frequency >= args.max_time_in_data:
     communication_times=[args.max_time_in_data]
 else:
-    communication_times = list(range(args.comm_frequency, args.max_time_in_data, args.comm_frequency))
+    temp = list(range(args.comm_frequency, args.max_time_in_data, args.comm_frequency))
+    communication_times = [item - 1 for item in temp]
     if args.max_time_in_data not in communication_times:
         communication_times.append(args.max_time_in_data)
 file_paths = ftp.files_to_process[args.files_to_process_path]
@@ -112,67 +113,111 @@ history = None
 for fp in tqdm(range(len(file_paths))):
     # Nees a slicker way to run pf with many files.  
     # main problems was with some nodes being out of data while other nodes still had data to process.  
+    print("opening file")
     with open(file_paths[fp]) as f_in:
-        temp = np.genfromtxt(itertools.islice(f_in, rank, args.num_obs, size), delimiter=',',)
-    if fp==0:
-        data=temp
-    else:
-        data=np.vstack((data, temp))
+        #temp = np.genfromtxt(itertools.islice(f_in, rank, args.num_obs, size), delimiter=',',)
+        data = np.genfromtxt(itertools.islice(f_in, rank, args.num_obs, size), delimiter=',',)
+    print("opening file done")
+    #if fp==0:
+    #    data=temp
+    #else:
+    #    data=np.vstack((data, temp))
         
-D = data.shape[1] - 2
-X = data[:, :D]
-y = data[:, D]
-times = data[:, D+1] 
-epoch_start = 0
-current_file_comm_times = communication_times
-
-for c_time in tqdm(range(len(current_file_comm_times))):
-    try:
-        epoch_end = next(t[0] for t in enumerate(times) if t[1] > current_file_comm_times[c_time])
-    except:
-        epoch_end = len(times)
-
-    X_small = X[epoch_start: epoch_end, :]
-    y_small = y[epoch_start: epoch_end]
-    times_small = times[epoch_start: epoch_end]
-    print("Rank,", rank, " processing last time of: ", times_small[-1])
-    particles, history = (
-        spf.pf(
-            X_small, y_small, times_small,
-            args.particles_per_shard,
-            args.stationary_prior_mean,
-            args.stationary_prior_std,
-            args.stepsize,
-            save_history=args.save_history,
-            method=args.method_type,
-            init_particles=particles,
-            last_times=last_times,
-            prev_history=history,
-            shard_count=size
+    D = data.shape[1] - 2
+    X = data[:, :D]
+    y = data[:, D]
+    times = data[:, D+1] 
+    epoch_start = 0
+    
+    # get the proper communication time for each shard
+    current_file_comm_times=[]
+    
+    for c_time in range(len(communication_times)):
+        try:
+            epoch_end = (next(t[0] for t in enumerate(times) if t[1] > communication_times[c_time]))
+        except:
+            epoch_end = len(times)
+            
+        current_file_comm_times.append(times[epoch_end-1])
+        
+    current_file_comm_times = sorted(list(set(current_file_comm_times)))    
+    
+    #current_file_comm_times = communication_times
+    # get intersection of times in current file and all communication times
+    #current_file_comm_times = [value for value in times if value in communication_times]
+    #if len(current_file_comm_times) >= 1:
+    #    loop_range_size = range(len(current_file_comm_times))
+    #else:
+    #    loop_range_size = range(1)
+    
+    c_time=-1
+    while epoch_start < len(times):
+        c_time+=1
+    #for c_time in tqdm(loop_range_size):
+        if c_time < len(current_file_comm_times):
+            try:
+                epoch_end = next(t[0] for t in enumerate(times) if t[1] > current_file_comm_times[c_time])
+                communicate = True
+            except:
+                print(rank, "called exception...")
+                epoch_end = len(times)
+                if len(current_file_comm_times) == 0:
+                    communicate = False
+                elif current_file_comm_times[c_time] == times[-1]:
+                    communicate = True
+                else:
+                    communicate = False
+        else:
+            epoch_end = len(times)
+            communicate = False
+            
+        X_small = X[epoch_start: epoch_end, :]
+        y_small = y[epoch_start: epoch_end]
+        times_small = times[epoch_start: epoch_end]
+        print("Rank,", rank, " processing last time of: ", times_small[-1])
+        particles, history = (
+            spf.pf(
+                X_small, y_small, times_small,
+                args.particles_per_shard,
+                args.stationary_prior_mean,
+                args.stationary_prior_std,
+                args.stepsize,
+                save_history=args.save_history,
+                method=args.method_type,
+                init_particles=particles,
+                last_times=last_times,
+                prev_history=history,
+                shard_count=size
+            )
         )
-    )
+        if communicate == True:
+            print(rank, " communication set to True")
 
-    particles = np.hstack((particles, times[epoch_end-1]*np.ones((particles.shape[0], 1))))
-
-    particlesGathered = np.zeros([args.particles_per_shard * size, D+1])
-
-    split_sizes = np.array([args.particles_per_shard*(D+1)]*size)
-
-    displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
-
-    comm.Barrier()
-    comm.Allgatherv(
-        [particles, MPI.DOUBLE],
-        [particlesGathered, split_sizes, displacements, MPI.DOUBLE]
-    )
-
-    new_inds = np.random.choice(args.particles_per_shard * size, args.particles_per_shard)
-
-    part_tmp = particlesGathered[new_inds, :]
-    particles = part_tmp[:, :D]
-    last_times = part_tmp[:, D]
-    epoch_start = epoch_end
-
+            particles = np.hstack((particles, times[epoch_end-1]*np.ones((particles.shape[0], 1))))
+        
+            particlesGathered = np.zeros([args.particles_per_shard * size, D+1])
+        
+            split_sizes = np.array([args.particles_per_shard*(D+1)]*size)
+        
+            displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
+        
+            comm.Barrier()
+            comm.Allgatherv(
+                [particles, MPI.DOUBLE],
+                [particlesGathered, split_sizes, displacements, MPI.DOUBLE]
+            )
+        
+            new_inds = np.random.choice(args.particles_per_shard * size, args.particles_per_shard)
+        
+            part_tmp = particlesGathered[new_inds, :]
+            particles = part_tmp[:, :D]
+            last_times = part_tmp[:, D]
+            epoch_start = epoch_end
+        if communicate == False:
+            print(rank, " communication set to False")
+            last_times = times[epoch_end-1]*np.ones((particles.shape[0], 1))
+            epoch_start = epoch_end
+            
 # be smarter about this.  Read at rank 0 and communicate data or read file backwards and stop after time changes
 # need something slick
 with open(file_paths[-1]) as f_in:
