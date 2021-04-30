@@ -131,49 +131,60 @@ for fp in tqdm(range(len(file_paths))):
     
     # get the proper communication time for each shard
     current_file_comm_times=[]
+    current_file_check_times=[]
+    
+    communication_times = [ct for ct in communication_times if ct>times[0]]
     
     for c_time in range(len(communication_times)):
         try:
+            print("Remaining Global communication_times:", communication_times)
             epoch_end = (next(t[0] for t in enumerate(times) if t[1] > communication_times[c_time]))
+            #print("appending to comm and check", times[epoch_end-1])
+            current_file_comm_times.append(times[epoch_end-1])
+            current_file_check_times.append(times[epoch_end-1])
         except:
             epoch_end = len(times)
-            
-        current_file_comm_times.append(times[epoch_end-1])
+            #print("appending to check", times[epoch_end-1])
+            current_file_check_times.append(times[epoch_end-1])
+            if abs(times[-1] - communication_times[c_time]) < size:
+                #print("appending to comm", times[epoch_end-1])
+                current_file_comm_times.append(times[epoch_end-1])
+                
+            #print(rank, " has times[-1] =", times[-1], " communication_times[c_time]=", communication_times[c_time], " diff =",  abs(times[-1] - communication_times[c_time]))
+        
         
     current_file_comm_times = sorted(list(set(current_file_comm_times)))    
-    
-    #current_file_comm_times = communication_times
-    # get intersection of times in current file and all communication times
-    #current_file_comm_times = [value for value in times if value in communication_times]
-    #if len(current_file_comm_times) >= 1:
-    #    loop_range_size = range(len(current_file_comm_times))
-    #else:
-    #    loop_range_size = range(1)
+    current_file_check_times = sorted(list(set(current_file_check_times)))
+    print("Rank:", rank, "current_file_comm_times=", current_file_comm_times)
+    print("Rank:", rank, "current_file_check_times=", current_file_check_times)
+
     
     c_time=-1
     while epoch_start < len(times):
         c_time+=1
     #for c_time in tqdm(loop_range_size):
-        if c_time < len(current_file_comm_times):
+        if c_time < len(current_file_check_times):
             try:
-                epoch_end = next(t[0] for t in enumerate(times) if t[1] > current_file_comm_times[c_time])
-                communicate = True
+                epoch_end = next(t[0] for t in enumerate(times) if t[1] > current_file_check_times[c_time])
+                #communicate = True
             except:
                 print(rank, "called exception...")
                 epoch_end = len(times)
-                if len(current_file_comm_times) == 0:
-                    communicate = False
-                elif current_file_comm_times[c_time] == times[-1]:
-                    communicate = True
-                else:
-                    communicate = False
         else:
             epoch_end = len(times)
-            communicate = False
+            #communicate = False
             
         X_small = X[epoch_start: epoch_end, :]
         y_small = y[epoch_start: epoch_end]
         times_small = times[epoch_start: epoch_end]
+        if times_small[-1] in current_file_comm_times:
+            print("first if in exception")
+            print(rank, " communication = True")
+            communicate = True
+        else:
+            print("else if in exception")
+            print(rank, " communication = False")
+            communicate = False
         print("Rank,", rank, " processing last time of: ", times_small[-1])
         particles, history = (
             spf.pf(
@@ -191,7 +202,7 @@ for fp in tqdm(range(len(file_paths))):
             )
         )
         if communicate == True:
-            print(rank, " communication set to True")
+            #print(rank, " communication = True")
 
             particles = np.hstack((particles, times[epoch_end-1]*np.ones((particles.shape[0], 1))))
         
@@ -214,8 +225,8 @@ for fp in tqdm(range(len(file_paths))):
             last_times = part_tmp[:, D]
             epoch_start = epoch_end
         if communicate == False:
-            print(rank, " communication set to False")
-            last_times = times[epoch_end-1]*np.ones((particles.shape[0], 1))
+            #print(rank, " communication = False")
+            last_times = times[epoch_end-1]*np.ones((particles.shape[0]))
             epoch_start = epoch_end
             
 # be smarter about this.  Read at rank 0 and communicate data or read file backwards and stop after time changes
