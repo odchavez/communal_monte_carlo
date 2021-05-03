@@ -97,13 +97,16 @@ args = get_args()
 #  Commmand Line Args Above Here  #
 ###################################
 
-if args.comm_frequency >= args.max_time_in_data:
+if False: #args.comm_frequency >= args.max_time_in_data:
     communication_times=[args.max_time_in_data]
 else:
     temp = list(range(args.comm_frequency, args.max_time_in_data, args.comm_frequency))
     communication_times = [item - 1 for item in temp]
-    if args.max_time_in_data not in communication_times:
-        communication_times.append(args.max_time_in_data)
+    if args.max_time_in_data in communication_times:
+        communication_times = [ct for ct in communication_times if ct != args.max_time_in_data]
+    #if args.max_time_in_data not in communication_times:
+    #    communication_times.append(args.max_time_in_data)
+print("all communication_times = ", communication_times)
 file_paths = ftp.files_to_process[args.files_to_process_path]
 
 particles = None
@@ -111,18 +114,13 @@ last_times = None
 history = None
 
 for fp in tqdm(range(len(file_paths))):
-    # Nees a slicker way to run pf with many files.  
-    # main problems was with some nodes being out of data while other nodes still had data to process.  
-    print("opening file")
+    print("shard:", rank, " opening ", file_paths[fp])
     with open(file_paths[fp]) as f_in:
         #temp = np.genfromtxt(itertools.islice(f_in, rank, args.num_obs, size), delimiter=',',)
         data = np.genfromtxt(itertools.islice(f_in, rank, args.num_obs, size), delimiter=',',)
-    print("opening file done")
-    #if fp==0:
-    #    data=temp
-    #else:
-    #    data=np.vstack((data, temp))
-        
+    print("shard:", rank, " done...")
+
+   
     D = data.shape[1] - 2
     X = data[:, :D]
     y = data[:, D]
@@ -137,7 +135,7 @@ for fp in tqdm(range(len(file_paths))):
     
     for c_time in range(len(communication_times)):
         try:
-            print("Remaining Global communication_times:", communication_times)
+            #print("Remaining Global communication_times:", communication_times)
             epoch_end = (next(t[0] for t in enumerate(times) if t[1] > communication_times[c_time]))
             #print("appending to comm and check", times[epoch_end-1])
             current_file_comm_times.append(times[epoch_end-1])
@@ -155,8 +153,8 @@ for fp in tqdm(range(len(file_paths))):
         
     current_file_comm_times = sorted(list(set(current_file_comm_times)))    
     current_file_check_times = sorted(list(set(current_file_check_times)))
-    print("Rank:", rank, "current_file_comm_times=", current_file_comm_times)
-    print("Rank:", rank, "current_file_check_times=", current_file_check_times)
+    #print("Rank:", rank, "current_file_comm_times=", current_file_comm_times)
+    #print("Rank:", rank, "current_file_check_times=", current_file_check_times)
 
     
     c_time=-1
@@ -168,7 +166,7 @@ for fp in tqdm(range(len(file_paths))):
                 epoch_end = next(t[0] for t in enumerate(times) if t[1] > current_file_check_times[c_time])
                 #communicate = True
             except:
-                print(rank, "called exception...")
+                #print(rank, "called exception...")
                 epoch_end = len(times)
         else:
             epoch_end = len(times)
@@ -178,14 +176,14 @@ for fp in tqdm(range(len(file_paths))):
         y_small = y[epoch_start: epoch_end]
         times_small = times[epoch_start: epoch_end]
         if times_small[-1] in current_file_comm_times:
-            print("first if in exception")
-            print(rank, " communication = True")
+            #print("first if in exception")
+            #print(rank, " communication = True")
             communicate = True
         else:
-            print("else if in exception")
-            print(rank, " communication = False")
+            #print("else if in exception")
+            #print(rank, " communication = False")
             communicate = False
-        print("Rank,", rank, " processing last time of: ", times_small[-1])
+        #print("Rank,", rank, " processing last time of: ", times_small[-1])
         particles, history = (
             spf.pf(
                 X_small, y_small, times_small,
@@ -231,6 +229,7 @@ for fp in tqdm(range(len(file_paths))):
             
 # be smarter about this.  Read at rank 0 and communicate data or read file backwards and stop after time changes
 # need something slick
+print("Processing last observation in data...")
 with open(file_paths[-1]) as f_in:
     data = np.genfromtxt(itertools.islice(f_in, 0, args.num_obs, 1), delimiter=',',)
 
@@ -255,7 +254,9 @@ particles, history = (
         shard_count=1
     )
 )
-
+      
+print("shard:", rank, " final communication...")
+particles = np.hstack((particles, times[epoch_end-1]*np.ones((particles.shape[0], 1))))
 particlesGathered = np.zeros([args.particles_per_shard * size, D+1])
 split_sizes = np.array([args.particles_per_shard*(D+1)]*size)
 displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
@@ -267,7 +268,7 @@ new_inds = np.random.choice(args.particles_per_shard * size, args.particles_per_
 final_particles = particlesGathered[new_inds, :]
 
 all_shard_params = comm.gather(final_particles, root=0)
-
+print("shard:", rank, " done...")
 if rank == 0:
     print("writing output")
     file_name = (
