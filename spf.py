@@ -80,7 +80,6 @@ def pf(X, y, times, num_particles, b_prior_mean=0., b_prior_std = 1., stepsize=0
             for d in range(D):
                 try:
                     timestepsize = stepsize * delays
-
                     particles[:, d] = particles[:, d] + np.random.normal(np.zeros(num_particles), timestepsize)
                 except ValueError:
                     print('len(delays): {}; N={}'.format(len(delays), N))
