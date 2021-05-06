@@ -11,6 +11,7 @@ import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import random as random
 
 from tqdm import tqdm
 from mpi4py import MPI
@@ -115,9 +116,20 @@ history = None
 
 for fp in tqdm(range(len(file_paths))):
     print("shard:", rank, " opening ", file_paths[fp])
+    if rank == 0:
+        starting_point = random.sample(range(size), size)#.reshape((size,1))
+        starting_point = [[item] for item in starting_point]
+    else:
+        starting_point = None #np.zeros(1, dtype=int)
+    # Broadcast n to all processes
+    #print("Process ", rank, " before starting_point = ", starting_point)
+    comm.Barrier()
+    starting_point = comm.scatter(starting_point, root=0)[0]
+    #print("Process ", rank, " after starting_point = ", starting_point)
+
     with open(file_paths[fp]) as f_in:
         #temp = np.genfromtxt(itertools.islice(f_in, rank, args.num_obs, size), delimiter=',',)
-        data = np.genfromtxt(itertools.islice(f_in, rank, args.num_obs, size), delimiter=',',)
+        data = np.genfromtxt(itertools.islice(f_in, starting_point, args.num_obs, size), delimiter=',',)
     print("shard:", rank, " done...")
 
    

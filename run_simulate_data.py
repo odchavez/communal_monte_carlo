@@ -1,7 +1,7 @@
 """
 classification run with: python run_simulate_data.py --N_total 400000 --Epoch_N 2000 --predictor_N 32 --N_per_tic 100 --GP 1 --GP_version 0 
 
-regression run with: python run_simulate_data.py --N_total 20000 --Epoch_N 10000 --predictor_N 32 --N_per_tic 1 --GP_version 1 --model_type regression --regression_error 1.0 --covariance_cutoff .999
+regression run with: python run_simulate_data.py --N_total 1000000 --Epoch_N 10000 --predictor_N 32 --N_per_tic 1 --GP_version 0 --model_type regression --regression_error 1.0
 """
 
 import argparse
@@ -76,21 +76,6 @@ def get_args():
         help='Amount of noise to add to Y = X*Beta + error',
         required=False, default= 1.
     )
-    parser.add_argument(
-        '--covariance_cutoff', type=float,
-        help='set to zero all values of covariance below cutoff',
-        required=False, default= 0.
-    )
-    parser.add_argument(
-        '--h', type=float,
-        help='cov param',
-        required=False, default= 0.
-    )
-    parser.add_argument(
-        '--lam', type=float,
-        help='cov param',
-        required=False, default= 0.
-    )
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -119,7 +104,7 @@ if __name__ == "__main__":
             N_total = args.N_total, 
             n_per_tic = args.N_per_tic, 
             pred_number=args.predictor_N,
-            seed = args.data_seed,
+            seed = args.GP_version,
             GP_version=args.GP_version,
             err_std = args.regression_error
         )
