@@ -23,9 +23,9 @@
 #
 #----------------------------------------------------
 
-#SBATCH -J         Xy_N=1000000_Epoch_N=50000_N_Node=50_p=100_particles=1000_expn=0     # Job name
-#SBATCH -o exp_out/Xy_N=1000000_Epoch_N=50000_N_Node=50_p=100_particles=1000_expn=0.o%j # Name of stdout output file
-#SBATCH -e exp_err/Xy_N=1000000_Epoch_N=50000_N_Node=50_p=100_particles=1000_expn=0.e%j # Name of stderr error file
+#SBATCH -J         Xy_N=1000000_Epoch_N=1000_N_Node=50_p=32_particles=5000_GP_version=0_expn=0     # Job name
+#SBATCH -o exp_out/Xy_N=1000000_Epoch_N=1000_N_Node=50_p=32_particles=5000_GP_version=0_expn=0.o%j # Name of stdout output file
+#SBATCH -e exp_err/Xy_N=1000000_Epoch_N=1000_N_Node=50_p=32_particles=5000_GP_version=0_expn=0.e%j # Name of stderr error file
 #SBATCH -p normal                                                # Queue (partition) name
 #SBATCH -N 1                                                     # Total # of nodes
 #SBATCH -n 50                                                    # Total # of mpi tasks
@@ -42,9 +42,4 @@
 # Launch MPI code...
 # Use ibrun instead of mpirun or mpiexec
 
-ibrun python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 1000000 --Epoch_N 50000 --Nt 1000 --p 100 --N_Node 50 --particles_per_shard 1000 --experiment_number 0 --save_history 0 --GP_version 6 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=1000000_Epoch_N=10000_Nt=1000_p=100/GP_version=6 --results_sub_folder synth_data --source_folder synth_data
-
-ibrun python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 1000000 --Epoch_N 50000 --Nt 1000 --p 100 --N_Node 50 --particles_per_shard 1000 --experiment_number 0 --save_history 0 --GP_version 7 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=1000000_Epoch_N=10000_Nt=1000_p=100/GP_version=7 --results_sub_folder synth_data --source_folder synth_data
-
-
-# ---------------------------------------------------
+ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.001 --num_obs 100000000000000 --method_type regression --max_time_in_data 999999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version=0 --particles_per_shard 5000 --comm_frequency 1000
