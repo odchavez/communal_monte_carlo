@@ -13,8 +13,11 @@ rm *.bak
 
 # BATCH 1 TO TEST
 
-sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=64/Epoch_N=1000/shard=64_p=32_part=10000_js_expn=0_GPv=0.slurm
-sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=64/Epoch_N=1000000/shard=64_p=32_part=10000_js_expn=0_GPv=0.slurm
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000/shard=50_p=32_part=5000_js_expn=0_GPv=0.slurm
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=50/Epoch_N=1000000/shard=50_p=32_part=5000_js_expn=0_GPv=0.slurm
+
+
+sbatch job_scripts/Xy_N=1000000/uniform_weights/shard=4/Epoch_N=1000/shard=4_p=32_part=50000_js_expn=0_GPv=0.slurm
 
 ###########################################################################################
 ###########################################################################################
