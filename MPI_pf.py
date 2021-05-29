@@ -29,6 +29,8 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
+PARTICLES_PER_SEND = 100
+
 def get_args():
     parser = argparse.ArgumentParser(
         description='Runs particle filter using MPI in prallel.'
@@ -81,7 +83,7 @@ def get_args():
     )
     parser.add_argument(
         '--particles_per_shard', type=int,
-        help='number of particles per shard - must be in multiples of 1000',
+        help='number of particles per shard - must be in multiples of PARTICLES_PER_SEND',
         required=True
     )
     parser.add_argument(
@@ -217,7 +219,7 @@ for fp in tqdm(range(len(file_paths))):
 
             particles = np.hstack((particles, times[epoch_end-1]*np.ones((particles.shape[0], 1))))
             
-            particles_per_send_per_shard = int(min(1000,args.particles_per_shard))
+            particles_per_send_per_shard = int(min(PARTICLES_PER_SEND,args.particles_per_shard))
             number_of_sends = int(args.particles_per_shard / particles_per_send_per_shard)
             
             ################################
@@ -281,7 +283,7 @@ particles, history = (
 print("shard:", rank, " final communication...")
 particles = np.hstack((particles, times[epoch_end-1]*np.ones((particles.shape[0], 1))))
 
-particles_per_send_per_shard = int(min(1000,args.particles_per_shard))
+particles_per_send_per_shard = int(min(PARTICLES_PER_SEND,args.particles_per_shard))
 number_of_sends = int(args.particles_per_shard / particles_per_send_per_shard)
 for nos in range(number_of_sends):
     particlesGathered = np.zeros([particles_per_send_per_shard * size, D+1])
