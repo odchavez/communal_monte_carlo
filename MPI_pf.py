@@ -236,8 +236,8 @@ for fp in tqdm(range(len(file_paths))):
                 send_stop = (nos+1)*particles_per_send_per_shard
                 print("A")
                 comm.Allgatherv(
-                    [particles[send_start:send_stop,:], MPI.DOUBLE],
-                    [particlesGathered, split_sizes, displacements, MPI.DOUBLE]
+                    [particles[send_start:send_stop,:].astype(np.double), MPI.DOUBLE],
+                    [particlesGathered.astype(np.double), split_sizes, displacements, MPI.DOUBLE]
                 )
                 print("B")
                 if nos==0:
