@@ -226,7 +226,7 @@ for fp in tqdm(range(len(file_paths))):
             #  Loop for sending particles  #
             ################################
             for nos in range(number_of_sends):
-                print(rank, ":loop for sending particles" )
+                print(rank, ":loop for sending particles  " )
                 particlesGathered = np.zeros([particles_per_send_per_shard * size, D+1])
                 split_sizes = np.array([particles_per_send_per_shard*(D+1)]*size)
                 displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
