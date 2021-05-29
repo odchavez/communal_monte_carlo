@@ -1,11 +1,10 @@
 #!/bin/bash
 
-mpirun -np 4 python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 1000000 --Epoch_N 100000 --Nt 1000 --p 100 --N_Node 4 --particles_per_shard 2 --experiment_number 0 --save_history 0 --GP_version 0 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=1000000_Epoch_N=10000_Nt=1000_p=100/GP_version=0 --results_sub_folder synth_data --source_folder synth_data
+mpirun -np 4 python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.001 --num_obs 100000000000000 --method_type regression --max_time_in_data 999999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version=0 --particles_per_shard 10000 --comm_frequency 100000
 
-mpirun -np 4 python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 1000000 --Epoch_N 100000 --Nt 1000 --p 100 --N_Node 4 --particles_per_shard 10 --experiment_number 1 --save_history 0 --GP_version 0 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=1000000_Epoch_N=10000_Nt=1000_p=100/GP_version=0 --results_sub_folder synth_data --source_folder synth_data --global_weighting kernel_weighting
-
-mpirun -np 4 python MPI_LFCMC.py  --Xy_N 1000000 --Epoch_N 100000 --Nt 1000 --p 100 --N_Node 4 --particles_per_shard 10 --experiment_number 2 --save_history 0 --GP_version 0 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=1000000_Epoch_N=10000_Nt=1000_p=100/GP_version=0 --results_sub_folder synth_data --source_folder synth_data
+mpirun -np 4 python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.001 --num_obs 100000000000000 --method_type regression --max_time_in_data 999999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version=1 --particles_per_shard 10000 --comm_frequency 100000
 
 
-mpirun -np 4 python mpi_emb_par_sim_dat_with_comm.py  --Xy_N 1000000 --Epoch_N 100000 --Nt 1000 --p 100 --N_Node 4 --particles_per_shard 10 --experiment_number 3 --save_history 0 --GP_version 0 --randomize_shards 0 --files_to_process_path synth_data/Xy_N=1000000_Epoch_N=10000_Nt=1000_p=100/GP_version=0 --results_sub_folder synth_data --source_folder synth_data --global_weighting normal_consensus_weighting
+mpirun -np 4 python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.001 --num_obs 100000000000000 --method_type regression --max_time_in_data 999999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version=0 --particles_per_shard 10000 --comm_frequency 1000000
 
+mpirun -np 4 python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.001 --num_obs 100000000000000 --method_type regression --max_time_in_data 999999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version=1 --particles_per_shard 10000 --comm_frequency 1000000
