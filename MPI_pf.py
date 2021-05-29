@@ -29,7 +29,7 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-PARTICLES_PER_SEND = 100
+PARTICLES_PER_SEND = 1
 
 def get_args():
     parser = argparse.ArgumentParser(
