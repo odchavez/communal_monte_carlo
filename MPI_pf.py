@@ -226,6 +226,7 @@ for fp in tqdm(range(len(file_paths))):
             #  Loop for sending particles  #
             ################################
             for nos in range(number_of_sends):
+                print(rank, ":loop for sending particles )
                 particlesGathered = np.zeros([particles_per_send_per_shard * size, D+1])
                 split_sizes = np.array([particles_per_send_per_shard*(D+1)]*size)
                 displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
@@ -233,10 +234,12 @@ for fp in tqdm(range(len(file_paths))):
                 comm.Barrier()
                 send_start = nos*particles_per_send_per_shard
                 send_stop = (nos+1)*particles_per_send_per_shard
+                print("A")
                 comm.Allgatherv(
                     [particles[send_start:send_stop,:], MPI.DOUBLE],
                     [particlesGathered, split_sizes, displacements, MPI.DOUBLE]
                 )
+                print("B")
                 if nos==0:
                     all_particlesGathered = particlesGathered.copy()
                 else:
