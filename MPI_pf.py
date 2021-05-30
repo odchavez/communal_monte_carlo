@@ -29,7 +29,7 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-PARTICLES_PER_SEND = 10
+PARTICLES_PER_SEND = 1000
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -226,25 +226,32 @@ for fp in tqdm(range(len(file_paths))):
             #  Loop for sending particles  #
             ################################
             for nos in range(number_of_sends):
-                print(rank, ":loop for sending particles  " )
-                particlesGathered = np.zeros([particles_per_send_per_shard * size, D+1])
-                split_sizes = np.array([particles_per_send_per_shard*(D+1)]*size)
-                displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
+                #print(rank, ":loop for sending particles  " )
+                #particlesGathered = np.zeros([particles_per_send_per_shard * size, D+1])
+                #split_sizes = np.array([particles_per_send_per_shard*(D+1)]*size)
+                #displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
                 
                 comm.Barrier()
                 send_start = nos*particles_per_send_per_shard
                 send_stop = (nos+1)*particles_per_send_per_shard
-                print("A")
-                comm.Allgatherv(
-                    [particles[send_start:send_stop,:], MPI.DOUBLE],
-                    [particlesGathered, split_sizes, displacements, MPI.DOUBLE]
-                )
-                print("B")
+                #print("A")
+                #comm.Allgatherv(
+                #    [particles[send_start:send_stop,:], MPI.DOUBLE],
+                #    [particlesGathered, split_sizes, displacements, MPI.DOUBLE]
+                #)
+                all_gathered_stuff = comm.allgather(particles[send_start:send_stop,:])
+                #print(rank, "len(all_gathered_stuff)=", len(all_gathered_stuff))
+                #print(rank, "all_gathered_stuff[0].shape=", all_gathered_stuff[0].shape)
+                vstacked_stuff = np.vstack(all_gathered_stuff)
+                #print(rank, "vstacked_stuff.shape=", vstacked_stuff.shape)
+                #print("B")
                 if nos==0:
-                    all_particlesGathered = particlesGathered.copy()
+                    all_particlesGathered = vstacked_stuff.copy() #particlesGathered.copy()
                 else:
-                    all_particlesGathered = np.vstack((all_particlesGathered, particlesGathered.copy()))
-                    
+                    #all_particlesGathered = np.vstack((all_particlesGathered, particlesGathered.copy()))
+                    all_particlesGathered = np.vstack((all_particlesGathered, vstacked_stuff.copy()))
+                
+            #print(rank, "all_particlesGathered.shape=", all_particlesGathered.shape)
             new_inds = np.random.choice(args.particles_per_shard * size, args.particles_per_shard)
             part_tmp = all_particlesGathered[new_inds, :]
             particles = part_tmp[:, :D]
@@ -289,27 +296,33 @@ particles = np.hstack((particles, times[epoch_end-1]*np.ones((particles.shape[0]
 particles_per_send_per_shard = int(min(PARTICLES_PER_SEND,args.particles_per_shard))
 number_of_sends = int(args.particles_per_shard / particles_per_send_per_shard)
 for nos in range(number_of_sends):
-    particlesGathered = np.zeros([particles_per_send_per_shard * size, D+1])
-    split_sizes = np.array([particles_per_send_per_shard*(D+1)]*size)
-    displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
+    #particlesGathered = np.zeros([particles_per_send_per_shard * size, D+1])
+    #split_sizes = np.array([particles_per_send_per_shard*(D+1)]*size)
+    #displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
     
     comm.Barrier()
     send_start = nos*particles_per_send_per_shard
     send_stop = (nos+1)*particles_per_send_per_shard
-    comm.Gatherv(
-        [particles[send_start:send_stop,:], MPI.DOUBLE],
-        [particlesGathered, split_sizes, displacements, MPI.DOUBLE],
-        root=0
-    )
+    #comm.Gatherv(
+    #    [particles[send_start:send_stop,:], MPI.DOUBLE],
+    #    [particlesGathered, split_sizes, displacements, MPI.DOUBLE],
+    #    root=0
+    #)
+    
+    final_gathered_stuff = comm.gather(particles[send_start:send_stop,:], root=0)
+    
     if rank == 0:
+        print(rank, "len(final_gathered_stuff)=", len(final_gathered_stuff))
+        print(rank, "final_gathered_stuff[0].shape=", final_gathered_stuff[0].shape)
+        final_vstacked_stuff = np.vstack(final_gathered_stuff)
+        print(rank, "final_vstacked_stuff.shape=", final_vstacked_stuff.shape)
         if nos==0:
-            all_particlesGathered = particlesGathered.copy()
+            final_particlesGathered = final_vstacked_stuff.copy()
         else:
-            all_particlesGathered = np.vstack((all_particlesGathered, particlesGathered.copy()))
+            final_particlesGathered = np.vstack((final_particlesGathered, final_vstacked_stuff.copy()))
 
 print("shard:", rank, " done...")
 if rank == 0:
-    particles = all_particlesGathered
     print("writing output")
     file_name = (
         "/exp_num="+str(args.experiment_number) +
@@ -320,7 +333,7 @@ if rank == 0:
     if not os.path.exists("experiment_results/" + args.files_to_process_path):
             os.makedirs("experiment_results/" + args.files_to_process_path)
     final_particle_paths = ("experiment_results/" + args.files_to_process_path + file_name)
-    np.save(final_particle_paths, particles)
+    np.save(final_particle_paths, final_particlesGathered)
 
     if args.save_history:
         history_paths = ("experiment_results/history/" + args.files_to_process_path)
