@@ -3,11 +3,13 @@ run with: mpirun -np 4 python MPI_pf.py --stationary_prior_mean 0 --stationary_p
 """
 
 import os
+import sys
 import time
 import itertools
 import pdb
 import argparse
 import math
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,6 +32,14 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 
 PARTICLES_PER_SEND = 1000
+
+# time related items
+if (sys.version_info > (3, 0)):
+    # Python 3 code in this block
+    time.clock = time.process_time
+start_time=time.clock()
+pf_run_time = 0
+comm_time   = 0
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -199,6 +209,7 @@ for fp in tqdm(range(len(file_paths))):
             #print(rank, " communication = False")
             communicate = False
         #print("Rank,", rank, " processing last time of: ", times_small[-1])
+        pf_run_time -= time.clock()
         particles, history = (
             spf.pf(
                 X_small, y_small, times_small,
@@ -214,6 +225,7 @@ for fp in tqdm(range(len(file_paths))):
                 shard_count=size
             )
         )
+        pf_run_time += time.clock()
         if communicate == True:
             #print(rank, " communication = True")
 
@@ -239,7 +251,9 @@ for fp in tqdm(range(len(file_paths))):
                 #    [particles[send_start:send_stop,:], MPI.DOUBLE],
                 #    [particlesGathered, split_sizes, displacements, MPI.DOUBLE]
                 #)
+                comm_time -= time.clock()
                 all_gathered_stuff = comm.allgather(particles[send_start:send_stop,:])
+                comm_time += time.clock()
                 #print(rank, "len(all_gathered_stuff)=", len(all_gathered_stuff))
                 #print(rank, "all_gathered_stuff[0].shape=", all_gathered_stuff[0].shape)
                 vstacked_stuff = np.vstack(all_gathered_stuff)
@@ -274,6 +288,8 @@ epoch_start = next(t[0] for t in enumerate(times) if t[1] == max_time)
 X_small = data[epoch_start:, :D]
 y_small = data[epoch_start:, D]
 times_small = data[epoch_start:, D+1]
+
+pf_run_time -= time.clock()
 particles, history = (
     spf.pf(
         X_small, y_small, times_small,
@@ -289,7 +305,8 @@ particles, history = (
         shard_count=1
     )
 )
-      
+pf_run_time += time.clock()
+  
 print("shard:", rank, " final communication...")
 particles = np.hstack((particles, times[epoch_end-1]*np.ones((particles.shape[0], 1))))
 
@@ -308,9 +325,9 @@ for nos in range(number_of_sends):
     #    [particlesGathered, split_sizes, displacements, MPI.DOUBLE],
     #    root=0
     #)
-    
+    comm_time -= time.clock()
     final_gathered_stuff = comm.gather(particles[send_start:send_stop,:], root=0)
-    
+    comm_time += time.clock()
     if rank == 0:
         print(rank, "len(final_gathered_stuff)=", len(final_gathered_stuff))
         print(rank, "final_gathered_stuff[0].shape=", final_gathered_stuff[0].shape)
@@ -323,6 +340,14 @@ for nos in range(number_of_sends):
 
 print("shard:", rank, " done...")
 if rank == 0:
+    final_particlesGathered = np.hstack(
+        (final_particlesGathered, pf_run_time*np.ones((final_particlesGathered.shape[0], 1))))
+    final_particlesGathered = np.hstack(
+        (final_particlesGathered, comm_time*np.ones((final_particlesGathered.shape[0], 1))))
+    total_run_time = time.clock() - start_time
+    final_particlesGathered = np.hstack(
+        (final_particlesGathered, total_run_time*np.ones((final_particlesGathered.shape[0], 1))))
+
     print("writing output")
     file_name = (
         "/exp_num="+str(args.experiment_number) +
