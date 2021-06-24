@@ -1,10 +1,12 @@
 def get_string(version, item):
-    return f"synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version={version}/fn={item}.csv"
+    output=f"synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version={version}/fn={item}.csv"
+    return output
 
 def get_files_to_process(files_to_process_path, version):
     
     if files_to_process_path == "synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version=":
-        return [get_string(version, item) for item in range(1000)]
+        output=[get_string(version, item) for item in range(1000)]
+        return output
     
 
 
