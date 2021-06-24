@@ -341,7 +341,7 @@ class simulated_data_Dynamic_Gaussian_Mixture:
         
 class simulated_data_regression:
 
-    def __init__(self, n_per_file, N_total=1000000, n_per_tic = 1, pred_number = 32, seed = 0, GP_version=0, err_std=1):
+    def __init__(self, n_per_file, N_total=1000000, n_per_tic = 1, pred_number = 32, seed = 0, GP_version=0, err_std=1, beta_total_amplitude=1):
 
         self.time_tics = np.array(range(int(N_total/n_per_tic)))
         self.row = len(self.time_tics) * n_per_tic
@@ -353,6 +353,7 @@ class simulated_data_regression:
         self.seed = seed
         self.GP_version = GP_version
         self.error_std=err_std
+        self.beta_total_amplitude=beta_total_amplitude
         #self.nb_of_samp_per_function = nb_of_samp_per_function
         
         self.nb_of_samples = 1000
@@ -381,36 +382,6 @@ class simulated_data_regression:
         if not os.path.exists(self.output_folder_name):
             os.makedirs(self.output_folder_name)
 
-    #def make_K(self, x, h, lam, cutoff):
-    #    """
-    #    Make covariance matrix from covariance kernel
-    #    """
-    #    # for a data array of length x, make a covariance matrix x*x:
-    #    # Use this format rather than double loop [(x,y) for x in a for y in b]
-    #    # then reshape to ndarray
-    #    
-    #    K = np.zeros((len(x),len(x)))
-    #    for i in tqdm(range(0,len(x))):
-    #        #for j in range(i,len(x)):
-    #            # calculate value of K for each separation:
-    #        K[i:,i] = K[i,i:] = self.cov_kernel(x[i],x[i:],h,lam, cutoff)
-    #        
-    #    print("K quantiles before cutoff:", np.quantile(K, q=[.9,.91,.92,.93,.94,.95,.96,.97,.98,.99]))
-    #    q95=np.quantile(K, q=.95)
-    #    K[K<q95] = 0
-    #    print("K quantiles after cutoff:", np.quantile(K, q=[.9,.91,.92,.93,.94,.95,.96,.97,.98,.99]))
-    #    return K
-    #
-    #def cov_kernel(self, x1,x2,h,lam, cutoff):
-    #    """
-    #    Squared-Exponential covariance kernel
-    #    """
-    #    k12 = h**2*np.exp(-1.*(x1 - x2)**2/lam**2)
-    #    #output = k12 if k12>=cutoff else 0
-    #    return k12 #output
-    
-    
-
     def make_single_GP_path(self):
         """
         Function will create a GP with nb_of_samples * number_of_functions number of observations.
@@ -424,17 +395,11 @@ class simulated_data_regression:
             return np.exp(sq_norm)
         
         X = np.expand_dims(np.linspace(0, 1, self.nb_of_samples), 1)
-        #X = np.reshape(
-        #        broken_up_times[i], 
-        #        (len(broken_up_times[i]),1)
-        #    )
-        #nb_of_samples=len(broken_up_times[i])
-        
         
         Sigma = exponentiated_quadratic(X, X)  # Kernel of data points
-            #print("Sigma.shape", Sigma.shape)
-            # Draw samples from the prior at our data points.
-            # Assume a mean of 0 for simplicity
+
+        # Draw samples from the prior at our data points.
+        # Assume a mean of 0 for simplicity
         ys = np.random.multivariate_normal(
             mean=np.zeros(self.nb_of_samples), cov=Sigma, 
             size=self.number_of_functions)
@@ -451,7 +416,7 @@ class simulated_data_regression:
         
         gpmin,gpmax = np.min(glued_gp), np.max(glued_gp)
         glued_gp = 2*(((glued_gp-gpmin)/(gpmax-gpmin))-.5)
-        glued_gp = glued_gp - glued_gp[0]
+        glued_gp = glued_gp * self.beta_total_amplitude  #- glued_gp[0]
         return glued_gp
 
     def make_GP_trajectory(self, number_of_predictors):

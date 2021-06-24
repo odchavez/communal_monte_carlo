@@ -20587,3 +20587,13 @@ files_to_process = {
         "synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version=19/fn=999.csv",
     ],
 }
+
+def get_files_to_process(files_to_process_path, version):
+    
+    if files_to_process_path == "synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version=":
+        
+        def get_string(version, item):
+            return f"synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version={version}/fn={item}.csv"
+        
+        return [get_string(version, item) for item in range(1000)]
+    

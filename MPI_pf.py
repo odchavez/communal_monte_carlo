@@ -1,5 +1,5 @@
 """
-run with: mpirun -np 4 python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.001 --num_obs 100000000000000 --method_type regression --max_time_in_data 999999 --experiment_number 0 --save_history 1 --files_to_process_path synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version=0 --particles_per_shard 500 --comm_frequency 50000
+run with: mpirun -np 4 python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.001 --num_obs 100000000000000 --method_type regression --max_time_in_data 999999 --experiment_number 0 --save_history 1 --files_to_process_path synth_data/regression/Xy_N=1000000_Epoch_N=100000_Nt=1_p=32/GP_version= --version 0 --particles_per_shard 500 --comm_frequency 50000
 """
 
 import os
@@ -101,6 +101,11 @@ def get_args():
         help='How often nodes/processes should communicate.  Measured in units of time',
         required=True
     )
+    parser.add_argument(
+        '--version', type=int,
+        help='which seed was used to generate the GP',
+        required=True
+    )
     return parser.parse_args()
 
 
@@ -121,7 +126,7 @@ else:
     #if args.max_time_in_data not in communication_times:
     #    communication_times.append(args.max_time_in_data)
 print("all communication_times = ", communication_times)
-file_paths = ftp.files_to_process[args.files_to_process_path]
+file_paths = ftp.get_files_to_process(args.files_to_process_path, args.version)
 
 particles = None
 last_times = None
@@ -353,15 +358,16 @@ if rank == 0:
         "/exp_num="+str(args.experiment_number) +
         "_part_num="+str(args.particles_per_shard) +
         "_shards="+str(size)+
-        "_comm_freq=" + str(args.comm_frequency)
+        "_comm_freq=" + str(args.comm_frequency) +
+        "_stepsize=" + str(args.stepsize)
     )
-    if not os.path.exists("experiment_results/" + args.files_to_process_path):
-            os.makedirs("experiment_results/" + args.files_to_process_path)
-    final_particle_paths = ("experiment_results/" + args.files_to_process_path + file_name)
+    if not os.path.exists("experiment_results/" + args.files_to_process_path + str(args.version)):
+            os.makedirs("experiment_results/" + args.files_to_process_path + str(args.version))
+    final_particle_paths = ("experiment_results/" + args.files_to_process_path + str(args.version) + file_name)
     np.save(final_particle_paths, final_particlesGathered)
 
     if args.save_history:
-        history_paths = ("experiment_results/history/" + args.files_to_process_path)
+        history_paths = ("experiment_results/history/" + args.files_to_process_path + str(args.version))
         if not os.path.exists(history_paths):
             os.makedirs(history_paths)
         np.save(history_paths+file_name, history)
