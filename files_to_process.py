@@ -1,5 +1,5 @@
 def get_string(version, item):
-    output=f"synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version={version}/fn={item}.csv"
+    output="synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version="+str(version)+"/fn="+str(item)+".csv"
     return output
 
 def get_files_to_process(files_to_process_path, version):
