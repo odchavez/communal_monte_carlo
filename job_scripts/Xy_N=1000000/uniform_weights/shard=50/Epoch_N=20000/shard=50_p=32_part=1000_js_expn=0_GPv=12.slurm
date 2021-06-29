@@ -28,7 +28,7 @@
 #SBATCH -e exp_err/Xy_N=1000000_Epoch_N=20000_N_Node=50_p=32_particles=1000_GP_version=12_expn=0.e%j # stderr error file
 #SBATCH -p normal                                                # Queue (partition) name
 #SBATCH -N 1                                                     # Total # of nodes
-#SBATCH -n 20                                                    # Total # of mpi tasks
+#SBATCH -n 50                                                    # Total # of mpi tasks
 #SBATCH -t 0:20:00                                               # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
 #SBATCH --mail-type=all                                          # Send email at begin and end of job
