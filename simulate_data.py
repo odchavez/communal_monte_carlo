@@ -3,6 +3,8 @@ import numpy as np
 
 from tqdm import tqdm
 from scipy.stats import norm
+from scipy.special import expit
+
 import math
 
 from matplotlib import pyplot as plt
@@ -509,6 +511,152 @@ class simulated_data_regression:
         print("data generation complete...")
         
         
-def fun():
-    pass
-      
+class simulated_data_classification:
+
+    def __init__(self, n_per_file, N_total=1000000, n_per_tic = 100, 
+                 pred_number = 32, seed = 0, GP_version=0, beta_total_amplitude=1):
+
+        self.time_tics = np.array(range(int(N_total/n_per_tic)))
+        self.row = len(self.time_tics) * n_per_tic
+        self.n_per_file = n_per_file/n_per_tic
+        self.pred_number =pred_number
+        self.N_total = N_total
+        self.n_per_tic = n_per_tic
+        self.n_per_epoch = n_per_file
+        self.seed = seed
+        self.GP_version = GP_version
+        #self.error_std=err_std
+        self.beta_total_amplitude=beta_total_amplitude
+        
+        self.nb_of_samples = 1000
+        self.number_of_functions = int(len(self.time_tics)/self.nb_of_samples)
+        
+        self.output_folder_name = (
+            "synth_data/classification/"
+            "Xy_N=" + str(self.N_total) +
+            "_Epoch_N=" + str(self.n_per_epoch) +
+            "_Nt=" + str(self.n_per_tic) +
+            "_p=" + str(self.pred_number) +
+            "/GP_version=" + str(self.GP_version) +
+            "/"
+        )
+        
+        self.Beta_file_name = (
+            "Beta_t" + 
+            "_Xy_N=" + str(self.N_total) +
+            "_Epoch_N=" + str(self.n_per_epoch) +
+            "_Nt=" + str(self.n_per_tic) +
+            "_p=" + str(self.pred_number) +
+            "_GP_version=" + str(self.GP_version) +
+            ".csv"
+        )
+                
+        if not os.path.exists(self.output_folder_name):
+            os.makedirs(self.output_folder_name)
+
+    def make_single_GP_path(self):
+        """
+        Function will create a GP with nb_of_samples * number_of_functions number of observations.
+        The GP segments are broken up to decrease the need to inverte such a large covariance matrix 
+        to compute the GP.
+        """
+        def exponentiated_quadratic(xa, xb):
+            """Exponentiated quadratic  with σ=1"""
+            # L2 distance (Squared Euclidian)
+            sq_norm = -0.5 * scipy.spatial.distance.cdist(xa, xb, 'sqeuclidean')
+            return np.exp(sq_norm)
+        
+        X = np.expand_dims(np.linspace(0, 1, self.nb_of_samples), 1)
+        
+        Sigma = exponentiated_quadratic(X, X)  # Kernel of data points
+
+        # Draw samples from the prior at our data points.
+        # Assume a mean of 0 for simplicity
+        ys = np.random.multivariate_normal(
+            mean=np.zeros(self.nb_of_samples), cov=Sigma, 
+            size=self.number_of_functions)
+                
+        for i in (range(self.number_of_functions)):
+            if i ==0:
+                glued_gp = ys[0]
+            else:
+                glued_gp = np.hstack((glued_gp, np.std(pd.Series(glued_gp).diff())+ys[i]+(glued_gp[-1] - ys[i][0])))
+        
+        gpmin,gpmax = np.min(glued_gp), np.max(glued_gp)
+        glued_gp = 2*(((glued_gp-gpmin)/(gpmax-gpmin))-.5)
+        glued_gp = glued_gp * self.beta_total_amplitude  #- glued_gp[0]
+        return glued_gp
+
+    def make_GP_trajectory(self, number_of_predictors):
+
+        output = np.zeros((len(self.time_tics), number_of_predictors))
+        for i in tqdm(range(number_of_predictors)):
+            output[:,i] = self.make_single_GP_path()
+        return output # y-y[0]
+
+    def generate_Betas(self):
+        
+        beta_cnames = list(range(self.pred_number))
+
+        Beta_vals={}
+        
+        Beta_vals = self.make_GP_trajectory(number_of_predictors=self.pred_number)
+        beta_cnames = ['B_'+str(pn) for pn in range(self.pred_number)]
+        self.Beta_vals_df = pd.DataFrame(Beta_vals, columns=beta_cnames)
+        
+        self.Beta_vals_df.to_csv(self.output_folder_name + self.Beta_file_name , index=False)
+
+        print("classification coefficients generation complete...")
+        print("estimating Tau_inv_std parameter...")
+        self.Tau_inv_std = np.max(self.Beta_vals_df.diff().std())
+        self.Bo_std = self.Beta_vals_df.values.std()
+        print("Tau_inv_std = ", self.Tau_inv_std)
+        print("Bo_std = ", self.Bo_std)
+        
+
+    def generate_data(self):
+
+        print("generating data...")
+        print("writing data to " + self.output_folder_name)
+        X_i_all = pd.DataFrame()
+        vcnames=list(range(self.pred_number))
+        for i in range(self.pred_number):
+            vn="v_"+str(i)
+            vcnames[i]=vn
+        file_num = 0
+        for tt in tqdm(range(len(self.time_tics))):
+            np.random.seed(tt+self.seed)
+
+            X_i =  pd.DataFrame(
+                np.random.uniform(
+                    low = -1,
+                    high = 1,
+                    size = (self.n_per_tic, self.pred_number)
+                )
+            )
+            X_i.columns=vcnames
+            Beta_t = self.Beta_vals_df.iloc[tt].T
+            X_B_t = X_i.dot(np.array(Beta_t))
+            p =  expit(X_B_t)
+            Y_vals = np.random.binomial(1,p)
+
+            X_i['y'] = Y_vals
+            X_i['time'] = tt
+
+            if X_i_all.shape[0]==0:
+                X_i_all = X_i
+            else:
+                X_i_all = pd.concat([X_i_all, X_i], axis=0)
+
+            if tt % self.n_per_file == self.n_per_file-1:
+                file_name = (
+                    "fn=" +str(file_num) +
+                    ".csv"
+                )
+
+                X_i_all.to_csv(self.output_folder_name + file_name , index=False, header=False)
+
+                file_num+=1
+                X_i_all = pd.DataFrame()
+
+        print("data generation complete...")

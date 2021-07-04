@@ -127,7 +127,7 @@ else:
     #    communication_times.append(args.max_time_in_data)
 print("all communication_times = ", communication_times)
 file_paths = ftp.get_files_to_process(args.files_to_process_path, args.version)
-
+print("file_paths=",file_paths)
 particles = None
 last_times = None
 history = None
@@ -147,7 +147,15 @@ for fp in tqdm(range(len(file_paths))):
 
     with open(file_paths[fp]) as f_in:
         #temp = np.genfromtxt(itertools.islice(f_in, rank, args.num_obs, size), delimiter=',',)
-        data = np.genfromtxt(itertools.islice(f_in, starting_point, args.num_obs, size), delimiter=',',)
+        if args.method_type == "regression":
+            data = np.genfromtxt(itertools.islice(f_in, starting_point, args.num_obs, size), delimiter=',',)
+        if args.method_type == "classification":
+            large_data = np.genfromtxt(itertools.islice(f_in, 0, args.num_obs, 1), delimiter=',',)
+            D = large_data.shape[1] - 2
+            moded_times=large_data[:, D+1] % size
+            data = large_data[moded_times==rank, :]
+            del large_data
+            del moded_times
     print("shard:", rank, " done...")
 
    
