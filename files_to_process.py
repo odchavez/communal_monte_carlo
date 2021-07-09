@@ -2,9 +2,16 @@ def get_string(version, item):
     output="synth_data/regression/Xy_N=1000000_Epoch_N=1000_Nt=1_p=32/GP_version="+str(version)+"/fn="+str(item)+".csv"
     return output
 
+
 def get_string_classification(version, item):
     output="synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version="+str(version)+"/fn="+str(item)+".csv"
     return output
+
+
+def get_string_classification_Nt_1(version, item):
+    output="synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=1_p=32/GP_version="+str(version)+"/fn="+str(item)+".csv"
+    return output
+
 
 def get_files_to_process(files_to_process_path, version):
     
@@ -13,6 +20,9 @@ def get_files_to_process(files_to_process_path, version):
         return output
     if files_to_process_path == "synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version=":
         output=[get_string_classification(version, item) for item in range(100)]
+        return output
+    if files_to_process_path == "synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=1_p=32/GP_version=":
+        output=[get_string_classification_Nt_1(version, item) for item in range(100)]
         return output
 
 
