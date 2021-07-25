@@ -129,23 +129,24 @@ history = None
 
 for fp in tqdm(range(len(file_paths))):
     print("shard:", rank, " opening ", file_paths[fp])
-    if rank == 0:
-        starting_point = random.sample(range(size), size)#.reshape((size,1))
-        starting_point = [[item] for item in starting_point]
-    else:
-        starting_point = None #np.zeros(1, dtype=int)
+    starting_point=0
+    #if rank == 0:
+    #    starting_point = random.sample(range(size), size)#.reshape((size,1))
+    #    starting_point = [[item] for item in starting_point]
+    #else:
+    #    starting_point = None #np.zeros(1, dtype=int)
     # Broadcast n to all processes
     #print("Process ", rank, " before starting_point = ", starting_point)
     #print("rank:", rank, " at Barrier 140")
-    comm.Barrier()
+    #comm.Barrier()
     #print("rank:", rank, " released 140")
-    starting_point = comm.scatter(starting_point, root=0)[0]
+    #starting_point = comm.scatter(starting_point, root=0)[0]
     #print("Process ", rank, " after starting_point = ", starting_point)
 
     with open(file_paths[fp]) as f_in:
         #temp = np.genfromtxt(itertools.islice(f_in, rank, args.num_obs, size), delimiter=',',)
         #if args.method_type == "regression":
-        data = np.genfromtxt(itertools.islice(f_in, starting_point, args.num_obs, size), delimiter=',',) 
+        data = np.genfromtxt(itertools.islice(f_in, starting_point, args.num_obs, 1), delimiter=',',) 
         #if args.method_type == "classification":
         #    large_data = np.genfromtxt(itertools.islice(f_in, 0, args.num_obs, 1), delimiter=',',)
         #    D = large_data.shape[1] - 2
