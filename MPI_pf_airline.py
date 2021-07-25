@@ -136,14 +136,16 @@ for fp in tqdm(range(len(file_paths))):
         starting_point = None #np.zeros(1, dtype=int)
     # Broadcast n to all processes
     #print("Process ", rank, " before starting_point = ", starting_point)
+    #print("rank:", rank, " at Barrier 140")
     comm.Barrier()
+    #print("rank:", rank, " released 140")
     starting_point = comm.scatter(starting_point, root=0)[0]
     #print("Process ", rank, " after starting_point = ", starting_point)
 
     with open(file_paths[fp]) as f_in:
         #temp = np.genfromtxt(itertools.islice(f_in, rank, args.num_obs, size), delimiter=',',)
         #if args.method_type == "regression":
-        data = np.genfromtxt(itertools.islice(f_in, starting_point, args.num_obs, size), delimiter=',',)
+        data = np.genfromtxt(itertools.islice(f_in, starting_point, args.num_obs, size), delimiter=',',) 
         #if args.method_type == "classification":
         #    large_data = np.genfromtxt(itertools.islice(f_in, 0, args.num_obs, 1), delimiter=',',)
         #    D = large_data.shape[1] - 2
@@ -155,9 +157,13 @@ for fp in tqdm(range(len(file_paths))):
 
    
     D = data.shape[1] - 2
-    X = data[:, :D]
-    y = data[:, D]
-    times = data[:, D+1] 
+    temp_times = data[:, D+1] 
+    this_shard_assigned_times = list(range(rank, args.max_time_in_data+1, size))
+    mask = np.isin(temp_times,this_shard_assigned_times)
+    times = data[mask, D+1] 
+    X = data[mask, :D]
+    y = data[mask, D]
+    
     epoch_start = 0
     
     # get the proper communication time for each shard
@@ -197,22 +203,33 @@ for fp in tqdm(range(len(file_paths))):
         if c_time < len(current_file_check_times):
             try:
                 epoch_end = next(t[0] for t in enumerate(times) if t[1] > current_file_check_times[c_time])
+                epoch_end_set_not_in_try = False
+                #print("rank:",rank, "epoch end set in try")
                 #communicate = True
             except:
                 #print(rank, "called exception...")
                 epoch_end = len(times)
+                epoch_end_set_not_in_try = True
+                #print("rank:",rank, "epoch end set in except")
         else:
             epoch_end = len(times)
+            epoch_end_set_not_in_try = True
+            #print("rank:",rank, "epoch end set in else")
             #communicate = False
-        
-        print("rank:",rank, " ", epoch_start, epoch_end)
-        print("rank:",rank , " x shape:", X.shape)
-        print("rank:",rank , " y shape:", y.shape)
+        #set epoch_end = len(times) if any shards in this situation to avoid unallignmnet
+        comm.Barrier()
+        ee_set_location_bool = comm.allgather(epoch_end_set_not_in_try)
+        if sum(ee_set_location_bool)> 0:
+            epoch_end = len(times)
+
+        #print("rank:",rank, " ", epoch_start, epoch_end)
+        #print("rank:",rank , " x shape:", X.shape)
+        #print("rank:",rank , " y shape:", y.shape)
         X_small = X[epoch_start: epoch_end, :]
         y_small = y[epoch_start: epoch_end]
         times_small = times[epoch_start: epoch_end]
         
-        print("rank:",rank , " y_small shape:", y_small.shape)
+        #print("rank:",rank , " y_small shape:", y_small.shape)
         
         if times_small[-1] in current_file_comm_times:
             #print("first if in exception")
@@ -222,6 +239,18 @@ for fp in tqdm(range(len(file_paths))):
             #print("else if in exception")
             #print(rank, " communication = False")
             communicate = False
+            
+        # only communicate if all shards agree
+        #print("rank:", rank, " at Barrier 234")
+        comm.Barrier()
+        #print("rank:", rank, " released 234")
+        agreed = comm.allgather(communicate)
+        #print(agreed)
+        if sum(agreed)==size:
+            communicate = True
+        else:
+            communicate = False
+        #print("rank:", rank, "communicate=", communicate)
         #print("Rank,", rank, " processing last time of: ", times_small[-1])
         pf_run_time -= time.clock()
         particles, history = (
@@ -236,7 +265,8 @@ for fp in tqdm(range(len(file_paths))):
                 init_particles=particles,
                 last_times=last_times,
                 prev_history=history,
-                shard_count=size
+                shard_count=size,
+                rank=rank
             )
         )
         pf_run_time += time.clock()
@@ -256,8 +286,9 @@ for fp in tqdm(range(len(file_paths))):
                 #particlesGathered = np.zeros([particles_per_send_per_shard * size, D+1])
                 #split_sizes = np.array([particles_per_send_per_shard*(D+1)]*size)
                 #displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
-                
+                #print("rank:", rank, " at Barrier 278")
                 comm.Barrier()
+                #print("rank:", rank, " released 278")
                 send_start = nos*particles_per_send_per_shard
                 send_stop = (nos+1)*particles_per_send_per_shard
                 #print("A")
@@ -289,6 +320,7 @@ for fp in tqdm(range(len(file_paths))):
             #print(rank, " communication = False")
             last_times = times[epoch_end-1]*np.ones((particles.shape[0]))
             epoch_start = epoch_end
+            
             
 # be smarter about this.  Read at rank 0 and communicate data or read file backwards and stop after time changes
 # need something slick
@@ -330,8 +362,9 @@ for nos in range(number_of_sends):
     #particlesGathered = np.zeros([particles_per_send_per_shard * size, D+1])
     #split_sizes = np.array([particles_per_send_per_shard*(D+1)]*size)
     #displacements = np.insert(np.cumsum(split_sizes),0,0)[0:-1]
-    
+    #print("rank:", rank, " at Barrier 353")
     comm.Barrier()
+    #print("rank:", rank, " released 353")
     send_start = nos*particles_per_send_per_shard
     send_stop = (nos+1)*particles_per_send_per_shard
     #comm.Gatherv(

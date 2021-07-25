@@ -27,7 +27,7 @@ def loglik(b, X, y, sigma=None, method='classification', mult_obs=False, shard_c
     # if method == 'regression', sigma is the standard deviation of the residuals (assumed not learned)
     
     bX = np.dot(b, X.T)
-    print("y=",y)
+    #print("y=",y)
     if isinstance(y,np.float): #type(y) == 'numpy.float64':
         mult_obs = False
     if isinstance(y,np.ndarray): #type(y) == 'numpy.ndarray':
@@ -65,7 +65,7 @@ def loglik(b, X, y, sigma=None, method='classification', mult_obs=False, shard_c
 
 def pf(X, y, times, num_particles, b_prior_mean=0., b_prior_std = 1., stepsize=0.05,         
        save_history=True, sigma=1., method='classification', init_particles=None, 
-       last_times=None, prev_history=None, shard_count=1):
+       last_times=None, prev_history=None, shard_count=1, rank=-1):
     unique_times = np.unique(times)
     #if len(unique_times) < len(times):
     #    repeat_obs = True
@@ -83,22 +83,27 @@ def pf(X, y, times, num_particles, b_prior_mean=0., b_prior_std = 1., stepsize=0
         particles = init_particles
         if last_times is not None:
             delays = times[0] - last_times
+            delays[delays<0]=0
             for d in range(D):
                 try:
                     timestepsize = stepsize * delays
                     particles[:, d] = particles[:, d] + np.random.normal(np.zeros(num_particles), timestepsize)
                 except ValueError:
+                    print("rank:", rank, " error.")
                     print('len(delays): {}; N={}'.format(len(delays), N))
+                    #print("delays=",delays)
+                    #print("times[0]=",times[0])
+                    #print("last_times=",last_times)
 
     obs_inds = np.argwhere(times==unique_times[0]).squeeze()
     #pdb.set_trace()
     
-    print("times=",times)
-    print("unique_times[0]=",unique_times[0])
-    print("obs_inds=",obs_inds)
-    print("type obs_inds=",type(obs_inds))
-    print("np.argwhere(times==unique_times[0]=",np.argwhere(times==unique_times[0]))
-    print("np.argwhere(times==unique_times[0]).squeeze()=",np.argwhere(times==unique_times[0]).squeeze())
+    #print("times=",times)
+    #print("unique_times[0]=",unique_times[0])
+    #print("obs_inds=",obs_inds)
+    #print("type obs_inds=",type(obs_inds))
+    #print("np.argwhere(times==unique_times[0]=",np.argwhere(times==unique_times[0]))
+    #print("np.argwhere(times==unique_times[0]).squeeze()=",np.argwhere(times==unique_times[0]).squeeze())
     #if len(obs_inds) > 1:
     #    repeat_obs = True
     #else:
