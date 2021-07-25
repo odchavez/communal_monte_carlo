@@ -158,10 +158,16 @@ for fp in tqdm(range(len(file_paths))):
    
     D = data.shape[1] - 2
     temp_times = data[:, D+1] 
-    print("temp_times.shape=",temp_times.shape)
-    this_shard_assigned_times = list(range(rank, args.max_time_in_data+1, size))
-    print("length(this_shard_assigned_times)=",len(this_shard_assigned_times))
-    mask = np.isin(temp_times,this_shard_assigned_times)
+    #print("temp_times.shape=",temp_times.shape)
+    this_shard_assigned_times = np.array(range(rank, args.max_time_in_data+1, size))
+    select = np.logical_and(this_shard_assigned_times >= min(temp_times), this_shard_assigned_times <= max(temp_times))
+    #print("select=",select)
+    #print("this_shard_assigned_times=",this_shard_assigned_times)
+    this_shard_assigned_times = this_shard_assigned_times[select] 
+    #print("length(this_shard_assigned_times)=",len(this_shard_assigned_times))
+    #mask = np.isin(temp_times,this_shard_assigned_times)
+    mask = [(item in this_shard_assigned_times) for item in temp_times]
+    #print("mask=",mask)
     times = data[mask, D+1] 
     X = data[mask, :D]
     y = data[mask, D]
