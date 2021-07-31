@@ -44,6 +44,6 @@
 
 ibrun python MPI_pf_airline.py --stationary_prior_mean 0 --stationary_prior_std 1.5 --stepsize 0.01 --num_obs 1000000 --method_type regression --max_time_in_data 525598 --experiment_number 0 --save_history 0 --files_to_process_path data/regression/hensman_t_in_min --particles_per_shard 1000 --comm_frequency 100
 
-ibrun python MPI_pf_airline.py --stationary_prior_mean 0 --stationary_prior_std 1.5 --stepsize 0.01 --num_obs 1000000 --method_type regression --max_time_in_data 525598 --experiment_number 0 --save_history 0 --files_to_process_path data/regression/hensman_t_in_min --particles_per_shard 1000 --comm_frequency 1000
+#ibrun python MPI_pf_airline.py --stationary_prior_mean 0 --stationary_prior_std 1.5 --stepsize 0.01 --num_obs 1000000 --#method_type regression --max_time_in_data 525598 --experiment_number 0 --save_history 0 --files_to_process_path #data/regression/hensman_t_in_min --particles_per_shard 1000 --comm_frequency 1000
 
-ibrun python MPI_pf_airline.py --stationary_prior_mean 0 --stationary_prior_std 1.5 --stepsize 0.01 --num_obs 100000000000000 --method_type regression --max_time_in_data 525598 --experiment_number 0 --save_history 0 --files_to_process_path data/regression/hensman_t_in_min --particles_per_shard 1000 --comm_frequency 5255980
+#ibrun python MPI_pf_airline.py --stationary_prior_mean 0 --stationary_prior_std 1.5 --stepsize 0.01 --num_obs 100000000000000 --#method_type regression --max_time_in_data 525598 --experiment_number 0 --save_history 0 --files_to_process_path #data/regression/hensman_t_in_min --particles_per_shard 1000 --comm_frequency 5255980
