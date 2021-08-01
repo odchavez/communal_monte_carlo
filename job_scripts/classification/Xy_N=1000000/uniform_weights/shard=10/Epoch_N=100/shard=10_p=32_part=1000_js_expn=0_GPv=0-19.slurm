@@ -29,7 +29,7 @@
 #SBATCH -p normal                                                # Queue (partition) name
 #SBATCH -N 1                                                     # Total # of nodes
 #SBATCH -n 10                                                    # Total # of mpi tasks
-#SBATCH -t 1:00:00                                               # Run time (hh:mm:ss)
+#SBATCH -t 4:00:00                                               # Run time (hh:mm:ss)
 #SBATCH --mail-user=ochavez@utexas.edu
 #SBATCH --mail-type=all                                          # Send email at begin and end of job
 
@@ -42,15 +42,15 @@
 # Launch MPI code...
 # Use ibrun instead of mpirun or mpiexec
 
-ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 0 --particles_per_shard 1000 --comm_frequency 100
+#ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type #classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path #synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 0 --particles_per_shard 1000 --#comm_frequency 100
 
-ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 1 --particles_per_shard 1000 --comm_frequency 100
+#ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type #classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path #synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 1 --particles_per_shard 1000 --#comm_frequency 100
 
-ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 2 --particles_per_shard 1000 --comm_frequency 100
+#ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type #classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path #synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 2 --particles_per_shard 1000 --#comm_frequency 100
 
-ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 3 --particles_per_shard 1000 --comm_frequency 100
+#ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type #classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path #synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 3 --particles_per_shard 1000 --#comm_frequency 100
 
-ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 4 --particles_per_shard 1000 --comm_frequency 100
+#ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type #classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path #synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 4 --particles_per_shard 1000 --#comm_frequency 100
 
 ibrun python MPI_pf.py --stationary_prior_mean 0 --stationary_prior_std 1 --stepsize 0.01 --num_obs 100000000000000 --method_type classification --max_time_in_data 99999 --experiment_number 0 --save_history 0 --files_to_process_path synth_data/classification/Xy_N=1000000_Epoch_N=10000_Nt=10_p=32/GP_version= --version 5 --particles_per_shard 1000 --comm_frequency 100
 
